@@ -1,0 +1,306 @@
+/* src/components/AboutPage.css */
+.about-page {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .about-hero {
+    background: linear-gradient(135deg, #f8fafc 0%, #ebf4ff 100%);
+    padding: 6rem 0;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .about-content {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+  }
+  
+  .profile-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .profile-image-container {
+    position: relative;
+    width: 350px;
+    height: 350px;
+  }
+  
+  .profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .profile-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(74, 108, 247, 0.1);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .profile-image-container:hover .profile-overlay {
+    opacity: 1;
+  }
+  
+  .social-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  .social-link {
+    width: 50px;
+    height: 50px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease;
+  }
+  
+  .social-link:hover {
+    transform: translateY(-5px);
+  }
+  
+  .intro-section {
+    flex: 2;
+  }
+  
+  .intro-section h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .subtitle {
+    color: var(--text-light);
+    margin-bottom: 2rem;
+  }
+  
+  .about-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .detail-card {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  .detail-icon {
+    font-size: 2.5rem;
+    background: var(--gradient-primary);
+    color: white;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .detail-content h4 {
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+  }
+  
+  .detail-content span {
+    color: var(--text-light);
+    font-size: 0.9rem;
+  }
+  
+  .skills-section {
+    margin-bottom: 2rem;
+  }
+  
+  .skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+  
+  .skill-tag {
+    background: rgba(74, 108, 247, 0.1);
+    color: var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+  }
+  
+  .cta-section {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .about-story-section {
+    background: white;
+    padding: 6rem 0;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .story-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .journey-highlights {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  
+  .highlight-card {
+    background: rgba(74, 108, 247, 0.02);
+    border: 1px solid rgba(74, 108, 247, 0.1);
+    border-radius: var(--radius-md);
+    padding: 2rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .highlight-card:hover {
+    transform: translateY(-10px);
+  }
+  
+  .highlight-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Shapes and animations from LandingPage */
+  .shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  .shape {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    opacity: 0.05;
+    filter: blur(40px);
+  }
+  .achievements-section {
+    margin-top: 2rem;
+    background: rgba(74, 108, 247, 0.02);
+    border-radius: var(--radius-md);
+    padding: 2rem;
+    border: 1px solid rgba(74, 108, 247, 0.1);
+  }
+  
+  .achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  
+  .achievement-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease;
+  }
+  
+  .achievement-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .achievement-icon {
+    font-size: 2.5rem;
+    background: var(--gradient-primary);
+    color: white;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .achievement-content h4 {
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+  }
+  
+  .achievement-content p {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+  }
+  
+  .achievement-date {
+    font-size: 0.8rem;
+    color: var(--text-xlight);
+  }
+  
+  /* Add shape animations similar to LandingPage */
+  @keyframes shapeFloat {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(20px, 20px) scale(1.05); }
+    100% { transform: translate(-20px, -20px) scale(0.95); }
+  }
+  
+  .shape-1 { top: 10%; left: 10%; width: 300px; height: 300px; animation: shapeFloat 20s infinite alternate ease-in-out; }
+  .shape-2 { top: 60%; right: 5%; width: 200px; height: 200px; background: var(--gradient-secondary); animation: shapeFloat 25s infinite alternate-reverse ease-in-out; }
+  .shape-3 { bottom: 5%; left: 30%; width: 250px; height: 250px; animation: shapeFloat 18s infinite alternate-reverse ease-in-out; }
+  .shape-4 { top: 40%; right: 30%; width: 180px; height: 180px; background: var(--gradient-secondary); animation: shapeFloat 22s infinite alternate ease-in-out; }
+  
+  /* Responsive Design */
+  @media (max-width: 1200px) {
+    .about-content {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .profile-section {
+      margin-bottom: 2rem;
+    }
+  
+    .about-details {
+      grid-template-columns: 1fr;
+    }
+  
+    .journey-highlights {
+      grid-template-columns: 1fr;
+    }
+    .achievements-grid {
+        grid-template-columns: 1fr;
+    }
+  }

@@ -1,0 +1,84 @@
+/* src/components/ChapterResources.css */
+.chapter-resource-card {
+    background: white;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .chapter-resource-card:hover {
+    box-shadow: var(--shadow-md);
+  }
+  
+  .chapter-header {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .chapter-header:hover {
+    background-color: rgba(74, 108, 247, 0.05);
+  }
+  
+  .chapter-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-dark);
+  }
+  
+  .expand-icon {
+    font-size: 1.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(74, 108, 247, 0.1);
+    color: var(--primary);
+    transition: all 0.3s ease;
+  }
+  
+  .expand-icon.expanded {
+    transform: rotate(180deg);
+  }
+  
+  .chapter-content {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    background-color: rgba(74, 108, 247, 0.02);
+  }
+  
+  .chapter-description {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  
+  .drive-embed-container {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #f8f9fa;
+  }
+  
+  .drive-embed {
+    width: 100%;
+    height: 500px;
+    border: 0;
+  }
+  
+  .error-message {
+    padding: 1rem;
+    background: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+    border-radius: var(--radius-md);
+    text-align: center;
+  }
