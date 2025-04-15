@@ -52,6 +52,17 @@ function SemesterPage() {
       { id: 7, name: 'Microprocessors', description: 'Architecture and programming', icon: '💾' },
       { id: 8, name: 'Software Engineering', description: 'Software development lifecycle', icon: '📊' },
     ],
+    4: [
+      { id: 1, name: 'Mathematics III', description: 'Advanced calculus and numerical methods', icon: '🔣' },
+      { id: 2, name: 'Database Management', description: 'Database concepts and SQL', icon: '🗄️' },
+      { id: 3, name: 'Design and Analysis of Algorithm', description: 'Ways to solve problems optimally', icon: '🖥️' },
+      { id: 4, name: 'Operating Systems', description: 'OS concepts and design', icon: '⚙️' },
+      { id: 5, name: 'Theory of Computation', description: 'Automata and formal languages', icon: '🧠' },
+      { id: 6, name: 'Web Development', description: 'Frontend and backend technologies', icon: '🌟' },
+      { id: 7, name: 'Microprocessors', description: 'Architecture and programming', icon: '💾' },
+      { id: 8, name: 'Software Engineering', description: 'Software development lifecycle', icon: '📊' },
+    ],
+    
   };
   
   // For any semester not explicitly defined, generate placeholder subjects

@@ -40,7 +40,7 @@ function AboutPage() {
             <div className="profile-section">
               <div className="profile-image-container">
                 <img 
-                  src="src\components\WhatsApp Image 2025-04-15 at 03.50.08_26c65583.jpg" 
+                  src="https://media-hosting.imagekit.io/61019d26888d41e7/WhatsApp%20Image%202025-04-15%20at%2003.50.08_26c65583.jpg?Expires=1839279654&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=czESavPdj--JVSPH5X761UDt50cK9XIntWfasC2JP2Wmdm-aeDViDahu3l9q~~p1SD5-Sj13FOdNMBH0AMSWflmt0I1qvnFc2yZUHPiPV0ubPPMiPshXKwWSetEbmrLGWaFAkqh~TOWWKFa2lCsPNNGsDDw0cdbKYWY6IBgXQUctJm20VihI-2iQTR4dW2loiUOovxjkuEAdp85J3jYI~4muSf12MhvNP7nZ4dRgODhRQxXIvSC63HAsM9rZrOLH~WDynHbyFBz6sIywI7Yj358yV4KHkDN-CH0ReZE3Jy6EMvpmFhNnGMVXpBso6fduwfpGsA~hpOZ1lYIOOt8vpw__" 
                   alt="Akshat Baranwal" 
                   className="profile-image"
                 />

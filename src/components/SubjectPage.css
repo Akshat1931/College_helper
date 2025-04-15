@@ -270,6 +270,99 @@
   height: auto;
   flex-shrink: 0;
 }
+/* Add these styles to your SubjectPage.css file */
+
+.video-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .video-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.material-card.video-item {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  height: auto;
+  min-height: 380px;
+  margin-bottom: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.video-content {
+  padding: 20px; /* Increased from 16px */
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.video-container {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  background-color: #000;
+  flex-shrink: 0;
+}
+
+.video-embed {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.material-content {
+  padding: 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+}
+
+.video-title {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  /* Ensure text doesn't overlap */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.video-description {
+  margin: 0 0 15px 0;
+  font-size: 15px;
+  color: #555;
+  flex-grow: 1;
+  /* Ensure text doesn't overlap */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.material-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #777;
+  margin-top: auto;
+}
+
+.meta-item {
+  display: inline-block;
+  margin-right: 10px;
+}
 
 .status-indicator.completed {
   background-color: #43b673;
@@ -629,6 +722,7 @@
     width: 100%;
     height: 180px;
   }
+  
 }
 
 @media (max-width: 768px) {

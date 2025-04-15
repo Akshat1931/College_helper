@@ -430,8 +430,111 @@ function SubjectPage() {
             driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORK_SECURITY_URL_HERE#list"
           }
         ]
+      },
+      "3": {
+        name: "Design and Analysis of Algorithm",
+        code: "21CSC204J",
+        description: "Covers advanced algorithmic strategies such as divide and conquer, dynamic programming, and greedy methods to design efficient and optimal solutions for computational problems.",
+        instructor: "Prof. Maria Garcia",
+        credits: 4,
+        driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
+        chapters: [
+          {
+            id: 1,
+            title: 'Unit 1: Introduction to Algorithm Design',
+            ddescription: "Fundamentals of designing efficient algorithms using basic strategies like recursion, sorting, and searching.",
+            driveEmbedUrl: "https://drive.google.com/file/d/1QGM7W-rkgV3m-UW-0IABo-D-VjTWrTzP/view?usp=sharing"
+          },
+          {
+            id: 2,
+            title: 'Unit 2: Divide and Conquer',
+            description: "Solves problems by recursively breaking them into subproblems, solving independently, and combining the results.",
+            driveEmbedUrl: "https://drive.google.com/file/d/1IQbA_QRmRAqph6YyhQ7FSZheF6SRQKN1/view?usp=sharing"
+          },
+          {
+            id: 3,
+            title: 'Unit 3: Greedy Algorithm and Dynamic Programming',
+            description: "Explores Greedy and Dynamic Programming techniques to solve optimization problems through local choices or overlapping subproblems.",
+            driveEmbedUrl: "https://drive.google.com/file/d/1MzEbBRhor5BlAo69zxyV-pKIj6AVWM0t/view?usp=sharing"
+          },
+          {
+            id: 4,
+            title: 'Unit 4: Backtracking',
+            description: "Solves problems by exploring all possible solutions through recursion and pruning invalid paths along the way.",
+            driveEmbedUrl: "https://drive.google.com/file/d/1_BIlgYw8io5tLghT5aN1BD7kAgm9ekhY/view?usp=sharing"
+          },
+          {
+            id: 5,
+            title: 'Unit 5: Introduction to Randomization and Approximation Algorithm',
+            description: "Introduces algorithms that use randomness or approximation to efficiently solve complex or intractable problems.",
+            driveEmbedUrl: "https://drive.google.com/file/d/1HgbNuAvR2xTKL4evhB6KcPXT_sWt5K0w/view?usp=sharing"
+          }
+        ],
+        previousYearQuestions: [
+          {
+            id: 1,
+            year: '2025',
+            semester: 'Mid-Term',
+            type: 'CT-1 SET-A',
+            fileUrl: 'https://docs.google.com/document/d/1bnZpleFyTeLbzsfObNX_wkHFu338fBr5/edit?usp=sharing&ouid=113246827768609351560&rtpof=true&sd=true'
+          },
+          {
+            id: 2,
+            year: '2025',
+            semester: 'Mid-Term',
+            type: 'CT-1 SET-B',
+            fileUrl: 'https://docs.google.com/document/d/1cMokj2uSBENL2Ir5hAEoSF823AcRVzBF/edit?usp=sharing&ouid=113246827768609351560&rtpof=true&sd=true'
+          }
+        ],
+        assignments: [
+          {
+            id: 1,
+            title: 'NONE',
+            description: 'NONE',
+            deadline: 'NONE',
+            fileUrl: 'NIL'
+          }
+        ],
+        videoLectures: [
+            {
+              id: 1,
+              title: 'DAA – One Shot',
+              description: 'You got it all covered',
+              url: 'https://youtu.be/z6DY_YSdyww?si=M_Ji6QIhKr1vpZQw',
+              iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/z6DY_YSdyww" title="Complete DAA Design and Analysis of Algorithm in one shot | Semester Exam | Hindi" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+            },
+            {
+              id: 2,
+              title: 'Introduction to DAA',
+              description: 'Overview of algorithm design strategies, complexity analysis, and problem-solving fundamentals in DAA.',
+              url: 'https://youtu.be/9mjGoOBy8vs',
+              iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/9mjGoOBy8vs" title="Lec 1: Introduction to Algorithm &amp; Syllabus Discussion for GATE/NET | DAA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+            },
+            {
+              id: 3,
+              title: 'Backtracking',
+              description: 'Explores backtracking as a recursive problem-solving technique for exploring all possible solutions efficiently.',
+              url: 'https://youtu.be/MHXR4PCY8c0',
+              iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/MHXR4PCY8c0" title="Backtracking | N-Queen Problem &amp; Sudoku Solver | Java and C++ | Anuj Bhaiya ✅| DSAOne Course #11" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+            },
+            {
+              id: 4,
+              title: 'Greedy Algorithm',
+              description: 'Covers greedy strategy for solving optimization problems by making locally optimal choices at each step.',
+              url: 'https://youtu.be/lfQvPHGtu6Q',
+              iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/lfQvPHGtu6Q" title="Greedy Algorithms Explained" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+            },
+            {
+              id: 4,
+              title: 'Dynamic Programming and Divide and Conquer',
+              description: 'Introduction to problem-solving using Divide and Conquer and Dynamic Programming techniques for optimal substructure and overlapping subproblems.',
+              url: 'https://youtu.be/HTGba6ta2z0',
+              iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/HTGba6ta2z0" title="What is Dynamic Programming | Dynamic Programming and Divide and Conquer | Algorithm (DAA)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+            }
+          ]
       }
     },
+    
     
     // Semester 5 Subjects
     "5": {
@@ -673,6 +776,13 @@ function SubjectPage() {
       }
     }
   };
+
+  function getYouTubeID(url) {
+    // Regular expression to extract YouTube video ID from various YouTube URL formats
+    const regExp = /^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\\&\\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  }
   
   // Get the subject data from our database using the semId and subjectId
   const subject = subjectsDatabase[semId]?.[subjectId] || {
@@ -726,7 +836,7 @@ function SubjectPage() {
                 <div className="material-content">
                   <h4>{pyq.year} {pyq.semester} {pyq.type}</h4>
                   <div className="material-actions">
-                    <a href={pyq.fileUrl || '#'} className="action-btn download-btn">Download</a>
+                    <a href={pyq.fileUrl || '#'} className="action-btn download-btn">View</a>
                   </div>
                 </div>
               </div>
@@ -746,9 +856,6 @@ function SubjectPage() {
                   <p>{assignment.description}</p>
                   <div className="material-meta">
                     <span className="meta-item">Deadline: {assignment.deadline || 'N/A'}</span>
-                    <span className={`meta-item difficulty ${assignment.difficulty?.toLowerCase()}`}>
-                      {assignment.difficulty || 'Not Specified'}
-                    </span>
                   </div>
                 </div>
                 <div className="material-actions">
@@ -760,45 +867,44 @@ function SubjectPage() {
           </div>
         );
   
-      case 'video-lectures':
-        return (
-          <div className="video-lectures-container">
-            <h3>Video Lectures</h3>
-            {(subject.videoLectures || []).map(video => (
-              <div key={video.id} className="material-card video-item">
-                {video.url ? (
-                  <iframe 
-                    src={video.url} 
-                    title={video.title}
-                    className="video-embed"
-                    allowFullScreen
-                  />
-                ) : (
-                  <div 
-                    className="video-thumbnail" 
-                    style={{backgroundImage: `url(${video.thumbnailUrl || 'https://via.placeholder.com/300x200'})`}}
-                  >
-                    <div className="play-overlay">
-                      <div className="play-icon"></div>
-                      <span className="duration">{video.duration || 'N/A'}</span>
-                    </div>
-                  </div>
-                )}
-                <div className="material-content">
-                  <h4>{video.title}</h4>
-                  <p>{video.description}</p>
-                  <div className="material-meta">
-                    <span className="meta-item">{video.instructor || 'Unknown Instructor'}</span>
-                    <span className="meta-item">{video.views || 0} views</span>
-                  </div>
-                </div>
-                <div className="material-actions">
-                  <a href={video.url || '#'} className="action-btn watch-btn">Watch</a>
-                </div>
+      // Replace the case 'video-lectures' section in your renderTabContent function with this:
+
+// Replace the video-lectures case in your renderTabContent function with this
+case 'video-lectures':
+  return (
+    <div className="video-lectures-container">
+      <h3>Video Lectures</h3>
+      <div className="video-grid">
+        {(subject.videoLectures || []).map(video => (
+          <div key={video.id} className="material-card video-item">
+            <div className="video-container">
+              {/* Extract YouTube ID and create direct iframe */}
+              <iframe 
+                src={video.url.includes('embed') ? video.url : `https://www.youtube.com/embed/${getYouTubeID(video.url)}`}
+                title={video.title}
+                className="video-embed"
+                width="100%"
+                height="100%" 
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <div className="video-content">
+              <h4 className="video-title">{video.title}</h4>
+              <p className="video-description">{video.description}</p>
+              <div className="video-meta">
+
               </div>
-            ))}
+            </div>
           </div>
-        );
+        ))}
+      </div>
+    </div>
+  );
+  
+// Add this helper function somewhere in your component (outside of any other function)
+
   
         case 'ai-help':
           return (
