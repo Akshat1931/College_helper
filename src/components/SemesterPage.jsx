@@ -22,7 +22,7 @@ function SemesterPage() {
   const subjectsData = {
     1: [
       { id: 1, name: 'Mathematics I', description: 'Calculus and Linear Algebra', icon: '🧮' },
-      { id: 2, name: 'Physics', description: 'Mechanics and Electromagnetism', icon: '⚛️' },
+      { id: 2, name: 'Chemistry', description: 'Covers atomic structure, chemical bonding, thermodynamics, and organic reactions essential to material and biological sciences.', icon: '⚛️' },
       { id: 3, name: 'Introduction to Programming', description: 'Basic programming concepts', icon: '💻' },
       { id: 4, name: 'English Communication', description: 'Technical writing and presentation skills', icon: '📝' },
       { id: 5, name: 'Engineering Drawing', description: 'Drawing techniques and principles', icon: '📐' },

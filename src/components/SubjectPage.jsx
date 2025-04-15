@@ -56,85 +56,225 @@ function SubjectPage() {
         previousYearQuestions: [
           {
             id: 1,
-            year: '2023',
-            semester: 'Mid-Term',
-            type: 'Calculus Exam',
-            fileUrl: 'https://drive.google.com/file/d/sample_math_pyq_2023/view'
+            year: 'Nov-2024',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1sH8KmHoekev8WgAopJ_cWqptZBaVQkJk/view?usp=sharing'
           },
           {
             id: 2,
-            year: '2022',
-            semester: 'Final',
-            type: 'Comprehensive Exam',
-            fileUrl: 'https://drive.google.com/file/d/sample_math_pyq_2022/view'
-          }
-        ],
-        assignments: [
-          {
-            id: 1,
-            title: 'Calculus Problem Set',
-            description: 'Solving advanced differentiation and integration problems',
-            deadline: 'March 15, 2025',
-            difficulty: 'Hard',
-            fileUrl: 'https://drive.google.com/file/d/sample_math_assignment1/view'
+            year: 'Dec-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1Qpjz7MFAo87HizgYtTmlaJWoYxjQ-O2L/view?usp=sharing'
           },
           {
-            id: 2,
-            title: 'Linear Algebra Assignment',
-            description: 'Matrix operations and linear transformations',
-            deadline: 'April 5, 2025',
-            difficulty: 'Medium',
-            fileUrl: 'https://drive.google.com/file/d/sample_math_assignment2/view'
-          }
+            id: 3,
+            year: 'Jan-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1ZQSvMAyPnqE3d4YXcY79dDhNRBGSA0mG/view?usp=sharing'
+          },
+          {
+            id: 4,
+            year: 'May-2022',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/14PZoN6f2Kzws4yx2INMKuEyk28dImUCg/view?usp=sharing'
+          },
+          {
+            id: 5,
+            year: 'May-2019',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1wZ12zbhCG0CvP0IdlvT4hakk6iHrOrIl/view?usp=sharing'
+          },
+          {
+            id: 6,
+            year: 'Nov-2018',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1oMF37_D9V-Qdp3v-QSXBUu3Hn-tqqZ0E/view?usp=sharing'
+          },
+          {
+            id: 7,
+            year: '2022-2024',
+            semester: 'Mid-sem',
+            type: 'all CTs',
+            fileUrl: 'https://drive.google.com/file/d/1Ct7FkjNCkH-QZAz5fTiVLsSO2NZtjodG/view?usp=sharing'
+          },
+          {
+            id: 8,
+            year: '2022-2024',
+            semester: 'Mid-sem',
+            type: 'all CTs MCQs',
+            fileUrl: 'https://drive.google.com/file/d/1b95wQxvjUuSt0WApPl0qQLbQf1T26mg4/view?usp=sharing'
+          },
         ],
+        
         videoLectures: [
           {
             id: 1,
-            title: 'Introduction to Limits',
-            description: 'Fundamental concepts of limits in calculus',
-            url: 'https://www.youtube.com/embed/sample_math_video1',
-            thumbnailUrl: 'https://img.youtube.com/vi/sample_math_video1/hqdefault.jpg',
-            duration: '45:30',
-            instructor: 'Dr. Sarah Johnson',
-            views: 1024
+            title: 'Unit 1 ',
+            description: 'https://www.youtube.com/watch?v=FcOIWK5SGZg&list=PLrhWE6dwHUei8J1MmzMG8tWE0Zbn7yi4E   follow the playlist for all videos.',
+            url: 'https://youtu.be/FcOIWK5SGZg?list=PLrhWE6dwHUei8J1MmzMG8tWE0Zbn7yi4E',
+            iframe: '<iframe width="1057" height="634" src="https://www.youtube.com/embed/FcOIWK5SGZg?list=PLrhWE6dwHUei8J1MmzMG8tWE0Zbn7yi4E" title="12. Finding nature from Quadratic form without Eigen values" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
           },
           {
             id: 2,
-            title: 'Advanced Differentiation Techniques',
-            description: 'Complex differentiation methods and applications',
-            url: 'https://www.youtube.com/embed/sample_math_video2',
-            thumbnailUrl: 'https://img.youtube.com/vi/sample_math_video2/hqdefault.jpg',
-            duration: '55:15',
-            instructor: 'Dr. Sarah Johnson',
-            views: 756
+            title: 'Unit 2',
+            description: 'https://www.youtube.com/watch?v=Js83wHU8TsU&list=PLrhWE6dwHUehyKmS--qiyKbK6nqfjBIYF   follow the playlist for all videos.',
+            url: 'https://youtu.be/9VfE-yfwTxI?list=PLrhWE6dwHUehyKmS--qiyKbK6nqfjBIYF',
+            iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/9VfE-yfwTxI?list=PLrhWE6dwHUehyKmS--qiyKbK6nqfjBIYF" title="1. Taylor Series Part 1—21MAB101T" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+          },
+          {
+            id: 3,
+            title: 'Unit 3',
+            description: 'https://www.youtube.com/watch?v=o4Ao3DL6jlI&list=PLrhWE6dwHUeiLzh_o2dD-HGD-yB2pKlo9   follow the playlist for all videos.',
+            url: 'https://youtu.be/Dpi4qCmJZiU?list=PLrhWE6dwHUeiLzh_o2dD-HGD-yB2pKlo9',
+            iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/Dpi4qCmJZiU?list=PLrhWE6dwHUeiLzh_o2dD-HGD-yB2pKlo9" title="1. Differential Equations Basics - Unit - 3 : 21MAB101T" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+          },
+          {
+            id: 4,
+            title: 'Unit 4',
+            description: 'https://www.youtube.com/watch?v=6wvb1ikas1o&list=PLrhWE6dwHUegXKK-B4uUR1QPuwnzcXlK8   follow the playlist for all videos.',
+            url: 'https://youtu.be/1k4ZE2KzOIs?list=PLrhWE6dwHUegXKK-B4uUR1QPuwnzcXlK8',
+            iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/1k4ZE2KzOIs?list=PLrhWE6dwHUegXKK-B4uUR1QPuwnzcXlK8" title="Beta Gamma Functions" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+          },
+          {
+            id: 4,
+            title: 'Unit 5',
+            description: 'https://www.youtube.com/watch?v=A9xJAgwbyUs&list=PLrhWE6dwHUegpsEnjr8dWHMRzCmD8TiFn  follow the playlist for all videos.',
+            url: 'https://youtu.be/2ngXxOjfmgk?list=PLrhWE6dwHUegpsEnjr8dWHMRzCmD8TiFn',
+            iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/2ngXxOjfmgk?list=PLrhWE6dwHUegpsEnjr8dWHMRzCmD8TiFn" title="1. Sequence and Series Basics - 21MAB101T - Semster 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
           }
         ]
       },
       "2": {
-        name: "Physics I",
+        name: "Chemistry",
         code: "PHY101",
-        description: "Introduction to mechanics, waves, and thermodynamics with practical applications and laboratory experiments.",
+        description: "Covers atomic structure, chemical bonding, thermodynamics, and organic reactions essential to material and biological sciences.",
         instructor: "Dr. Robert Chen",
         credits: 4,
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PHYSICS1_FOLDER_ID#list",
         chapters: [
           {
             id: 1,
-            title: 'Chapter 1: Mechanics',
-            description: 'Newton\'s laws of motion and applications',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_MECHANICS_URL_HERE#list"
+            title: 'Unit 1: Periodic Properties (handwritten)',
+            description: 'Explores the trends in the periodic table such as atomic size, ionization energy, electron affinity, and electronegativity, and their significance in chemical behavior.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1jk-mygvmU5RsvlrLwxiGXq67hDuoH_cF/view?usp=sharing"
           },
           {
             id: 2,
-            title: 'Chapter 2: Waves',
-            description: 'Wave properties, sound, and light',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_WAVES_URL_HERE#list"
+            title: 'Unit 2: Use Of Free Energy In Chemical Equilibria (handwritten)',
+            description: 'Explains how Gibbs free energy determines the spontaneity and equilibrium position of chemical reactions under constant temperature and pressure.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1pHf8CVc8MRGXZryUZ-X0nzSs5cltBZwk/view?usp=sharing"
           },
           {
             id: 3,
-            title: 'Chapter 3: Thermodynamics',
-            description: 'Heat, energy, and laws of thermodynamics',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_THERMO_URL_HERE#list"
+            title: 'Unit 3: Stereo Chemistry And Organic Reactions (handwritten)',
+            description: 'Covers the spatial arrangement of atoms in molecules, including isomerism and chirality, and their influence on the mechanisms and outcomes of organic reactions.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1y-j1Yu-ClWLvlRNcBHDnzTmFktkrnrw3/view?usp=sharing"
+          },
+          {
+            id: 4,
+            title: 'Unit 4: Polymers (handwritten)',
+           description: 'Introduces the classification, synthesis, and properties of polymers, including natural and synthetic types, and their applications in everyday materials.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1phdnCgEjs2hEBpL9ycACeMBH9QD8Iw0h/view?usp=sharing"
+          },
+          {
+            id: 5,
+            title: 'Unit 5: Advanced Engineering Materials (handwritten)',
+            description: 'Focuses on the structure, properties, and applications of advanced materials such as composites, nanomaterials, biomaterials, and smart materials used in modern engineering solutions.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1pacH5UHvNzfZugccBU73hsu7XSRqnk-l/view?usp=sharing"
+          }
+        ],
+        previousYearQuestions: [
+          {
+            id: 1,
+            year: 'May-2024',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1GJhYYSdUfO0VxpbnU05IkK5IP0xPnv7G/view?usp=sharing'
+          },
+          {
+            id: 2,
+            year: 'May-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/19KKyUwOdoimNtfCTIcGiiti4g24EWUuh/view?usp=sharing'
+          },
+          {
+            id: 3,
+            year: 'Jan-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1D8bjVEN3wwmroIr8kK0PEP7BwKgU_CSh/view?usp=sharing'
+          },
+          {
+            id: 4,
+            year: 'May-2019',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1Ad0-MIZGsOewxh67rB83BTVlQZRMlIv7/view?usp=sharing'
+          },
+          {
+            id: 5,
+            year: 'Nov-2018',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1WhmPnexSAadNL6GKUPIX3PzuRinUIwVk/view?usp=sharing'
+          },
+          {
+            id: 6,
+            year: 'Nov-2018',
+            semester: 'Mid-sem',
+            type: 'all CTs',
+            fileUrl: 'https://drive.google.com/drive/folders/1J3K6-KkxmmT-2S2wL1gzCHmZfNAoLCkK'
+          },
+          {
+            id: 7,
+            year: '2022-2024',
+            semester: 'Mid-sem',
+            type: 'all MCQs',
+            fileUrl: 'https://drive.google.com/drive/folders/1HF-FA22lkkSHXuNu25sq61_oU7otpK2V'
+          },
+        ],
+        videoLectures: [
+          {
+            id: 1,
+            title: 'Unit 1 ',
+            description: 'Periodic Properties',
+            url: 'https://youtu.be/6iXauS-MOjs',
+            iframe: '<iframe width="1144" height="575" src="https://www.youtube.com/embed/6iXauS-MOjs" title="Periodic Properties | Lecture 1 | Chemistry-I for B.Tech | BS-CH201 | MAKAUT | IAE Academy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+          },
+          {
+            id: 2,
+            title: 'Unit 2',
+            description: 'Use Of Free Energy In Chemical Equilibria',
+            url: 'https://youtu.be/a4HHpoykUXQ',
+            iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/a4HHpoykUXQ" title="Chemical Equilibrium Full Topic Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+          },
+          {
+            id: 3,
+            title: 'Unit 3',
+            description: 'Stereo Chemistry And Organic Reactions',
+            url: 'https://youtu.be/CCBJnkQwZzc',
+            iframe: '<iframe width="1057" height="626" src="https://www.youtube.com/embed/CCBJnkQwZzc" title="SN1 &amp; SN2 Reactions | Intro, Kinetics, Mechanism, Stereochemistry, ReactivityOrder, Examples BP 202T" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+          },
+          {
+            id: 4,
+            title: 'Unit 4',
+            description: 'Polymers',
+            url: 'https://youtu.be/BC1nk4x5BlQ',
+            iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/BC1nk4x5BlQ" title="POLYMERS in One Shot - All Concepts, Tricks &amp; PYQs | Class 12 | NEET" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+          },
+          {
+            id: 4,
+            title: 'Unit 5',
+            description: 'Advanced Engineering Materials',
+            url: 'https://youtu.be/DKYXjVIxIcU',
+            iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/DKYXjVIxIcU" title="Engineering Materials | Introduction | Lec 1 | GATE 2021 ME Exam | Manish Sir" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
           }
         ]
       },
@@ -651,7 +791,7 @@ function SubjectPage() {
         videoLectures: [
             {
               id: 1,
-              title: 'DAA - Unit 1 ',
+              title: 'Unit 1 ',
               description: 'https://www.youtube.com/watch?v=NebCsY4-fIw&list=PLrhWE6dwHUeiSTblHiOe9RyvGBAp8nAeo   follow the playlist for all videos.',
               url: 'https://youtu.be/NebCsY4-fIw?list=PLrhWE6dwHUeiSTblHiOe9RyvGBAp8nAeo',
               iframe: '<iframe width="1057" height="600" src="https://www.youtube.com/embed/NebCsY4-fIw?list=PLrhWE6dwHUeiSTblHiOe9RyvGBAp8nAeo" title="1. Basic Probability | UNIT 1 | Probability - 21MAB301T/ 21MAB204T" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
