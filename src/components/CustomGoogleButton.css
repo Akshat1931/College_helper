@@ -1,0 +1,91 @@
+/* src/components/CustomGoogleButton.css */
+.custom-google-button-wrapper {
+    display: inline-block;
+  }
+  
+  .custom-google-button-wrapper.mobile {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .custom-google-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-family: 'Roboto', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #3c4043;
+    cursor: pointer;
+    height: 40px;
+    min-width: 180px;
+    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.08);
+    transition: background-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .custom-google-button.mobile {
+    width: auto;
+    min-width: 120px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  
+  .custom-google-button:hover {
+    background-color: #f8f9fa;
+    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.12);
+  }
+  
+  .custom-google-button:active {
+    background-color: #f1f3f4;
+  }
+  
+  .custom-google-button .google-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 48 48'%3E%3Cpath fill='%23EA4335' d='M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z'/%3E%3Cpath fill='%23FBBC05' d='M24 38.5c-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48c6.32 0 12.06-2.12 16.34-6.2l-7.93-6.15c-2.3 1.57-5.39 2.35-8.41 2.35z'/%3E%3Cpath fill='%234285F4' d='M47 24c0-1.56-.15-3.08-.41-4.55H24v9.02h12.94c-.58 3.37-2.34 6.19-5.01 8.08v0l7.93 6.15C45.12 37.3 47 31.57 47 24z'/%3E%3Cpath fill='%2334A853' d='M24 48c6.32 0 12.06-2.12 16.34-6.2l-7.93-6.15c-2.3 1.57-5.39 2.35-8.41 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    flex-shrink: 0;
+  }
+  
+  .custom-google-button.mobile .google-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+  }
+  
+  /* Handle the Google popup styling */
+  .google-login-popup {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    animation: none !important;
+    transition: none !important;
+    z-index: 9999 !important;
+  }
+  
+  /* Override Google's dialog styles */
+  div[aria-modal="true"],
+  div[role="dialog"] {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  @media (max-width: 576px) {
+    .custom-google-button {
+      width: 100%;
+      min-width: auto;
+    }
+  }

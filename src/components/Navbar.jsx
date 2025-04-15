@@ -1,33 +1,32 @@
 // src/components/Navbar.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useUser } from '../context/UserContext';
-import MobileLoginButton from './MobileLoginButton';
+import CustomGoogleButton from './CustomGoogleButton';
 import './Navbar.css';
-// Import the new CSS fix
-
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [googleButtonFailed, setGoogleButtonFailed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { userProfile, isLoggedIn, login, logout } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
-  const googleButtonRef = useRef(null);
   
-  const CLIENT_ID = '355129341695-apk3c173ankp6207sq0idbmguhklorjq.apps.googleusercontent.com';
-
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
     
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1024);
+      const mobile = window.innerWidth <= 1024;
+      setIsMobile(mobile);
+      
+      // Auto-close mobile menu when switching to desktop
+      if (!mobile && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
     };
     
     // Set initial states
@@ -36,42 +35,11 @@ function Navbar() {
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
     
-    // Check if Google button is properly loaded
-    const checkGoogleButton = setTimeout(() => {
-      if (isMobile) {
-        const googleButton = document.querySelector('.auth-buttons iframe');
-        if (!googleButton || googleButton.clientHeight === 0) {
-          console.log('Google button failed to load properly on mobile');
-          setGoogleButtonFailed(true);
-        }
-      }
-    }, 2000); // Check after 2 seconds
-    
-    // Disable any Google one tap animations
-    const disableGoogleAnimations = () => {
-      const style = document.createElement('style');
-      style.textContent = `
-        #credential_picker_container, 
-        #credential_picker_iframe,
-        div[aria-modal="true"],
-        div[aria-modal="true"] > div,
-        div[aria-modal="true"] > div > div {
-          transition: none !important;
-          animation: none !important;
-          transform: none !important;
-        }
-      `;
-      document.head.appendChild(style);
-    };
-    
-    disableGoogleAnimations();
-    
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
-      clearTimeout(checkGoogleButton);
     };
-  }, [isMobile]);
+  }, [mobileMenuOpen]);
 
   const generateGuestName = () => {
     const adjectives = ['Clever', 'Bright', 'Sharp', 'Quick', 'Eager'];
@@ -103,33 +71,21 @@ function Navbar() {
     if (localStorage.getItem('needsProfile') === 'true') {
       // You could show a toast notification here or handle this differently
       console.log('New user - profile completion recommended');
-      // Don't redirect automatically - let the user decide when to complete their profile
     }
   };
 
-  const onGoogleLoginFailure = () => {
-    console.log('Login Failed');
-    setGoogleButtonFailed(true);
-  };
-
-  // Handle manual login for mobile fallback button
-  const handleManualLogin = () => {
-    // Prompt a new sign-in flow
-    const googleLoginContainer = document.querySelector('.auth-buttons > div');
-    if (googleLoginContainer) {
-      const googleButton = googleLoginContainer.querySelector('[role="button"]');
-      if (googleButton) {
-        googleButton.click();
-      } else {
-        console.error('Could not find Google login button to click');
-        // Implement a fallback login method if needed
-      }
-    }
+  const onGoogleLoginFailure = (error) => {
+    console.log('Login Failed:', error);
   };
 
   const handleLogout = () => {
     logout(); // Use the context logout function
     navigate('/'); // Redirect to home on logout
+    
+    // Close mobile menu on logout if open
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
   };
 
   const toggleMobileMenu = () => {
@@ -143,11 +99,21 @@ function Navbar() {
     if (location.pathname === '/') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    
+    // Close mobile menu when clicking logo
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
   }
 
   // Function to handle avatar click - always redirect to profile
   function handleAvatarClick() {
     navigate('/complete-profile');
+    
+    // Close mobile menu when clicking avatar
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
   }
   
   // Function to handle home link click
@@ -157,53 +123,54 @@ function Navbar() {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    
+    // Close mobile menu when clicking nav link
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
+  }
+  
+  // Function to handle any nav link click
+  function handleNavLinkClick() {
+    // Close mobile menu when clicking any nav link
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+    }
   }
 
   return (
-    <GoogleOAuthProvider clientId={CLIENT_ID}>
-      <header className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-        <div className="container navbar-container">
-          <div className="logo" onClick={handleLogoClick} style={{cursor: 'pointer'}}>
-            <div className="logo-icon">CH</div>
-            <span>College Helper</span>
+    <header className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+      <div className="container navbar-container">
+        <div className="logo" onClick={handleLogoClick} style={{cursor: 'pointer'}}>
+          <div className="logo-icon">CH</div>
+          <span>College Helper</span>
+        </div>
+        
+        {!isLoggedIn ? (
+          <div className="auth-buttons">
+            <CustomGoogleButton 
+              onSuccess={onGoogleLoginSuccess}
+              onError={onGoogleLoginFailure}
+              isMobile={isMobile} // Pass isMobile state to the button
+            />
           </div>
-          
-          {!isLoggedIn ? (
-            <div className="auth-buttons">
-              <div ref={googleButtonRef} className="google-login-wrapper">
-                <GoogleLogin
-                  onSuccess={onGoogleLoginSuccess}
-                  onError={onGoogleLoginFailure}
-                  useOneTap={false} // Completely disable One Tap
-                  type="standard"
-                  theme="outline"
-                  size="large"
-                  text="signin_with"
-                  shape="rectangular"
-                  logo_alignment="center"
-                  auto_select={false} // Disable auto-select
-                  cancel_on_tap_outside={true} // Close on outside tap
-                  context="signin" // Use signin context only
-                />
-              </div>
-              {googleButtonFailed && (
-                <MobileLoginButton onClick={handleManualLogin} />
-              )}
-            </div>
-          ) : (
-            <div className="user-profile">
-              <img 
-                src={userProfile?.picture} 
-                alt="User Profile" 
-                className="user-avatar"
-                onClick={handleAvatarClick}
-                style={{cursor: 'pointer'}}
-              />
-              <span>{userProfile?.name}</span>
-              <button onClick={handleLogout} className="logout-btn">Logout</button>
-            </div>
-          )}
-          
+        ) : (
+          <div className="user-profile">
+            <img 
+              src={userProfile?.picture} 
+              alt="User Profile" 
+              className="user-avatar"
+              onClick={handleAvatarClick}
+              style={{cursor: 'pointer'}}
+            />
+            {/* Only show the username on desktop */}
+            {!isMobile && <span>{userProfile?.name}</span>}
+            <button onClick={handleLogout} className="logout-btn">Logout</button>
+          </div>
+        )}
+        
+        {/* Only show hamburger icon on mobile */}
+        {isMobile && (
           <div 
             className={`mobile-menu-icon ${mobileMenuOpen ? 'active' : ''}`} 
             onClick={toggleMobileMenu}
@@ -212,17 +179,17 @@ function Navbar() {
             <span></span>
             <span></span>
           </div>
-          
-          <nav className={`nav-menu ${mobileMenuOpen ? 'active' : ''}`}>
-            <Link to="/" className="nav-link active" onClick={handleHomeClick}>Home</Link>
-            <Link to="/#features" className="nav-link">Features</Link>
-            <Link to="/#semesters" className="nav-link">Semesters</Link>
-            <Link to="/about" className="nav-link">About</Link>
-            <Link to="#" className="nav-link">Contact</Link>
-          </nav>
-        </div>
-      </header>
-    </GoogleOAuthProvider>
+        )}
+        
+        <nav className={`nav-menu ${mobileMenuOpen ? 'active' : ''} ${isMobile ? 'mobile' : 'desktop'}`}>
+          <Link to="/" className="nav-link active" onClick={handleHomeClick}>Home</Link>
+          <Link to="/#features" className="nav-link" onClick={handleNavLinkClick}>Features</Link>
+          <Link to="/#semesters" className="nav-link" onClick={handleNavLinkClick}>Semesters</Link>
+          <Link to="/about" className="nav-link" onClick={handleNavLinkClick}>About</Link>
+          <Link to="#" className="nav-link" onClick={handleNavLinkClick}>Contact</Link>
+        </nav>
+      </div>
+    </header>
   );
 }
 

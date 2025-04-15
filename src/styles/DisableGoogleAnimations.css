@@ -1,0 +1,64 @@
+/* src/styles/DisableGoogleAnimations.css */
+
+/* Target all Google dialog elements with high specificity */
+#credential_picker_container,
+#credential_picker_container *,
+div[aria-modal="true"],
+div[aria-modal="true"] *,
+div[role="dialog"],
+div[role="dialog"] *,
+.S9gUrf-YoZ4jf,
+.S9gUrf-YoZ4jf *,
+.nsm7Bb-HzV7m-LgbsSe,
+.nsm7Bb-HzV7m-LgbsSe *,
+.g3VIld-ZJ5Gmb,
+.g3VIld-ZJ5Gmb * {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+}
+
+/* Force the dialog to be centered without animations */
+#credential_picker_container,
+div[aria-modal="true"],
+div[role="dialog"],
+.S9gUrf-YoZ4jf,
+.g3VIld-ZJ5Gmb {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  max-height: 90vh !important;
+  max-width: 90vw !important;
+  overflow: auto !important;
+  z-index: 9999 !important;
+}
+
+/* Override any slide-in animations */
+@keyframes none-animation {
+  from { opacity: 1; }
+  to { opacity: 1; }
+}
+
+/* Target Animation class specifically */
+.VfPpkd-SMFzL,
+.VfPpkd-YPmvEd,
+.VfPpkd-P5QLlc,
+.g3VIld-YPqjbf {
+  animation: none-animation 0s !important;
+  transition: none !important;
+}
+
+/* Hide transitioning elements immediately */
+.VfPpkd-H9L5yb,
+[jsaction*="transition."] {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+/* Ensure crisp appearance */
+* {
+  backface-visibility: hidden;
+}
