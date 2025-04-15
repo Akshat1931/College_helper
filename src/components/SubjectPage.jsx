@@ -152,7 +152,7 @@ function SubjectPage() {
       },
       "2": {
         name: "Chemistry",
-        code: "PHY101",
+        code: "21CYB101J",
         description: "Covers atomic structure, chemical bonding, thermodynamics, and organic reactions essential to material and biological sciences.",
         instructor: "Dr. Robert Chen",
         credits: 4,
@@ -279,9 +279,9 @@ function SubjectPage() {
         ]
       },
       "3": {
-        name: "Introduction to Programming",
-        code: "CSE101",
-        description: "Fundamentals of programming concepts using C/C++, including data types, control structures, functions, and basic algorithms.",
+        name: "Philosophy Of Engineering",
+        code: "21GNH101J",
+        description: "Explores the ethical, social, and philosophical dimensions of engineering practice.",
         instructor: "Prof. Emily Wang",
         credits: 3,
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PROGRAMMING_FOLDER_ID#list",

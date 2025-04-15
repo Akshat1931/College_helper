@@ -131,6 +131,34 @@
   transform: translateY(-9px) rotate(-45deg);
 }
 
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid transparent;
+}
+
+/* Add hover effects to make it obvious the avatar is clickable */
+.user-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 2px var(--primary, #4a6cf7);
+  cursor: pointer;
+}
+
+.logout-btn {
+  background: var(--gradient-secondary);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+}
+
 @media (max-width: 1024px) {
   .mobile-menu-icon {
     display: flex;

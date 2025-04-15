@@ -3,8 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
+import { UserProvider } from './context/UserContext';
 import SemesterPage from './components/SemesterPage';
 import SubjectPage from './components/SubjectPage';
+import CompleteProfilePage from './components/CompleteProfilePage';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AboutPage from './components/AboutPage';
@@ -27,6 +29,7 @@ function ScrollToTop({ children }) {
 
 function App() {
   return (
+    <UserProvider>
     <Router>
       <ScrollToTop/>
       <div className="app-container">
@@ -34,6 +37,7 @@ function App() {
         <div className="main-content">
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/complete-profile" element={<CompleteProfilePage />} />
             <Route path="/semester/:semId" element={<SemesterPage />} />
             <Route path="/semester/:semId/subject/:subjectId" element={<SubjectPage />} />
             <Route path="/about" element={<AboutPage />} />
@@ -42,6 +46,7 @@ function App() {
         <Footer />
       </div>
     </Router>
+    </UserProvider>
   );
 }
 
