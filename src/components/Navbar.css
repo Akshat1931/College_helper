@@ -179,8 +179,16 @@
 }
 
 @media (max-width: 1024px) {
+  .navbar-container {
+    position: relative; /* Added for positioning children */
+  }
+  
   .mobile-menu-icon {
     display: flex;
+    position: absolute;
+    right: 0; /* Position at right corner */
+    top: 50%;
+    transform: translateY(-50%);
   }
   
   .nav-menu {
@@ -209,21 +217,20 @@
     padding: 1rem 0;
   }
   
-  /* Ensure auth buttons are visible on mobile */
+  /* Center auth buttons on mobile */
   .auth-buttons {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
     display: flex;
-    align-items: center;
     justify-content: center;
   }
   
-  /* Make user profile more compact on mobile */
-  .user-profile {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .user-profile span {
-    font-size: 0.9rem;
+  /* Make sure logo stays left aligned */
+  .logo {
+    margin-right: auto;
   }
 }
 
@@ -233,6 +240,14 @@
     display: none; /* Hide the text "College Helper" on very small screens */
   }
   
+  .user-profile {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    flex-wrap: nowrap;
+  }
+  
   .user-profile span {
     display: none; /* Hide username on very small screens */
   }
@@ -240,10 +255,5 @@
   .logout-btn {
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
-  }
-  
-  /* Ensure auth buttons don't overflow */
-  .auth-buttons {
-    margin-left: auto;
   }
 }

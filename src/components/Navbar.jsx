@@ -11,6 +11,7 @@ function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [googleButtonFailed, setGoogleButtonFailed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const { userProfile, isLoggedIn, login, logout } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,24 +24,33 @@ function Navbar() {
       setScrolled(window.scrollY > 50);
     };
     
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1024);
+    };
+    
+    // Set initial states
+    handleResize();
+    
     window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
     
     // Check if Google button is properly loaded
     const checkGoogleButton = setTimeout(() => {
-      const isMobile = window.innerWidth < 768;
-      const googleButton = document.querySelector('.auth-buttons iframe');
-      
-      if (isMobile && (!googleButton || googleButton.clientHeight === 0)) {
-        console.log('Google button failed to load properly on mobile');
-        setGoogleButtonFailed(true);
+      if (isMobile) {
+        const googleButton = document.querySelector('.auth-buttons iframe');
+        if (!googleButton || googleButton.clientHeight === 0) {
+          console.log('Google button failed to load properly on mobile');
+          setGoogleButtonFailed(true);
+        }
       }
     }, 2000); // Check after 2 seconds
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
       clearTimeout(checkGoogleButton);
     };
-  }, []);
+  }, [isMobile]);
 
   const generateGuestName = () => {
     const adjectives = ['Clever', 'Bright', 'Sharp', 'Quick', 'Eager'];
@@ -137,6 +147,39 @@ function Navbar() {
             <span>College Helper</span>
           </div>
           
+          {!isLoggedIn ? (
+            <div className="auth-buttons">
+              <div ref={googleButtonRef}>
+                <GoogleLogin
+                  onSuccess={onGoogleLoginSuccess}
+                  onError={onGoogleLoginFailure}
+                  useOneTap={false}
+                  type="standard"
+                  theme="outline"
+                  size="large"
+                  text="signin_with"
+                  shape="rectangular"
+                  logo_alignment="center"
+                />
+              </div>
+              {googleButtonFailed && (
+                <MobileLoginButton onClick={handleManualLogin} />
+              )}
+            </div>
+          ) : (
+            <div className="user-profile">
+              <img 
+                src={userProfile?.picture} 
+                alt="User Profile" 
+                className="user-avatar"
+                onClick={handleAvatarClick}
+                style={{cursor: 'pointer'}}
+              />
+              <span>{userProfile?.name}</span>
+              <button onClick={handleLogout} className="logout-btn">Logout</button>
+            </div>
+          )}
+          
           <div 
             className={`mobile-menu-icon ${mobileMenuOpen ? 'active' : ''}`} 
             onClick={toggleMobileMenu}
@@ -148,40 +191,11 @@ function Navbar() {
           
           <nav className={`nav-menu ${mobileMenuOpen ? 'active' : ''}`}>
             <Link to="/" className="nav-link active" onClick={handleHomeClick}>Home</Link>
-            <Link to="/#semesters" className="nav-link">Semesters</Link>
             <Link to="/#features" className="nav-link">Features</Link>
+            <Link to="/#semesters" className="nav-link">Semesters</Link>
             <Link to="/about" className="nav-link">About</Link>
             <Link to="#" className="nav-link">Contact</Link>
           </nav>
-          
-          <div className="auth-buttons">
-            {!isLoggedIn ? (
-              <>
-                <div ref={googleButtonRef}>
-                  <GoogleLogin
-                    onSuccess={onGoogleLoginSuccess}
-                    onError={onGoogleLoginFailure}
-                    useOneTap={false} // Disable one tap for better mobile compatibility
-                  />
-                </div>
-                {googleButtonFailed && (
-                  <MobileLoginButton onClick={handleManualLogin} />
-                )}
-              </>
-            ) : (
-              <div className="user-profile">
-                <img 
-                  src={userProfile?.picture} 
-                  alt="User Profile" 
-                  className="user-avatar"
-                  onClick={handleAvatarClick}
-                  style={{cursor: 'pointer'}}
-                />
-                <span>{userProfile?.name}</span>
-                <button onClick={handleLogout} className="logout-btn">Logout</button>
-              </div>
-            )}
-          </div>
         </div>
       </header>
     </GoogleOAuthProvider>
