@@ -6,6 +6,8 @@ import { jwtDecode } from 'jwt-decode';
 import { useUser } from '../context/UserContext';
 import MobileLoginButton from './MobileLoginButton';
 import './Navbar.css';
+// Import the new CSS fix
+
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -44,6 +46,25 @@ function Navbar() {
         }
       }
     }, 2000); // Check after 2 seconds
+    
+    // Disable any Google one tap animations
+    const disableGoogleAnimations = () => {
+      const style = document.createElement('style');
+      style.textContent = `
+        #credential_picker_container, 
+        #credential_picker_iframe,
+        div[aria-modal="true"],
+        div[aria-modal="true"] > div,
+        div[aria-modal="true"] > div > div {
+          transition: none !important;
+          animation: none !important;
+          transform: none !important;
+        }
+      `;
+      document.head.appendChild(style);
+    };
+    
+    disableGoogleAnimations();
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -149,17 +170,20 @@ function Navbar() {
           
           {!isLoggedIn ? (
             <div className="auth-buttons">
-              <div ref={googleButtonRef}>
+              <div ref={googleButtonRef} className="google-login-wrapper">
                 <GoogleLogin
                   onSuccess={onGoogleLoginSuccess}
                   onError={onGoogleLoginFailure}
-                  useOneTap={false}
+                  useOneTap={false} // Completely disable One Tap
                   type="standard"
                   theme="outline"
                   size="large"
                   text="signin_with"
                   shape="rectangular"
                   logo_alignment="center"
+                  auto_select={false} // Disable auto-select
+                  cancel_on_tap_outside={true} // Close on outside tap
+                  context="signin" // Use signin context only
                 />
               </div>
               {googleButtonFailed && (

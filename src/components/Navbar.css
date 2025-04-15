@@ -232,7 +232,59 @@
   .logo {
     margin-right: auto;
   }
+  /* Add this to your existing Navbar.css or create a new file called GoogleLoginFix.css */
+
+/* Fix for the Google One Tap popup animation */
+#credential_picker_container {
+  top: auto !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  transform: none !important;
+  width: 100% !important;
+  height: auto !important;
+  z-index: 9999 !important;
+  position: fixed !important;
+  transition: none !important;
+  animation: none !important;
 }
+
+#credential_picker_container iframe {
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Stop the animation of the Google One Tap dialog */
+#g_a11y_announcement,
+#g_a11y_announcement + div {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Override Google's animation with our own instant display */
+@keyframes instant-appear {
+  from { opacity: 1; transform: none; }
+  to { opacity: 1; transform: none; }
+}
+
+/* Apply our animation to Google elements */
+div[aria-modal="true"],
+div[aria-modal="true"] > div,
+div[aria-modal="true"] > div > div,
+div[aria-modal="true"] > div > div > div {
+  animation: instant-appear 0s forwards !important;
+  transition: none !important;
+}
+
+/* Fix for any other Google auth related popups */
+#gsi-material-button,
+.nsm7Bb-HzV7m-LgbsSe {
+  animation: none !important;
+  transition: none !important;
+}
+}
+
 
 /* Extra small devices */
 @media (max-width: 576px) {
