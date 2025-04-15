@@ -53,14 +53,13 @@ function SemesterPage() {
       { id: 8, name: 'Software Engineering', description: 'Software development lifecycle', icon: '📊' },
     ],
     4: [
-      { id: 1, name: 'Mathematics III', description: 'Advanced calculus and numerical methods', icon: '🔣' },
-      { id: 2, name: 'Database Management', description: 'Database concepts and SQL', icon: '🗄️' },
+      { id: 1, name: 'Artificial Intelligence', description: 'Introduction to AI techniques, including machine learning, neural networks, and natural language processing.', icon: '🤖' },
+      { id: 2, name: 'Database Management System', description: 'Database concepts and SQL', icon: '🗄️' },
       { id: 3, name: 'Design and Analysis of Algorithm', description: 'Ways to solve problems optimally', icon: '🖥️' },
-      { id: 4, name: 'Operating Systems', description: 'OS concepts and design', icon: '⚙️' },
-      { id: 5, name: 'Theory of Computation', description: 'Automata and formal languages', icon: '🧠' },
-      { id: 6, name: 'Web Development', description: 'Frontend and backend technologies', icon: '🌟' },
-      { id: 7, name: 'Microprocessors', description: 'Architecture and programming', icon: '💾' },
-      { id: 8, name: 'Software Engineering', description: 'Software development lifecycle', icon: '📊' },
+      { id: 4, name: 'Probability and Queuing Theory', description: 'Fundamentals of probability theory and queuing models for analyzing systems in operations research and performance optimization.', icon: '⚙️' },
+      { id: 5, name: 'Social Engineering', description: 'Study of psychological manipulation techniques used to exploit human behavior and breach security systems.', icon: '🧠' },
+      { id: 6, name: 'Universal Human Values', description: 'Focuses on ethics, self-awareness, harmony in relationships, and holistic well-being for personal and societal development.', icon: '🌟' },
+      { id: 7, name: 'Design and Analysis of Algorithm (Lab)', description: 'Lab activities', icon: '💾' },
     ],
     
   };

@@ -376,8 +376,8 @@ function SubjectPage() {
     // Semester 4 Subjects
     "4": {
       "1": {
-        name: "Operating Systems",
-        code: "CSE401",
+        name: "Artifical Intelligence",
+        code: "21CSC206T",
         description: "Concepts of operating systems including process management, memory management, file systems, and scheduling algorithms.",
         instructor: "Dr. Thomas Lee",
         credits: 4,
@@ -385,49 +385,95 @@ function SubjectPage() {
         chapters: [
           {
             id: 1,
-            title: 'Chapter 1: Process Management',
-            description: 'Process states, scheduling, and inter-process communication',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PROCESS_URL_HERE#list"
+            title: 'Unit 1: Introduction to AI',
+            description: 'Fundamentals of Artificial Intelligence, covering problem-solving techniques, search algorithms, and knowledge representation.',
+            driveEmbedUrl: "https://drive.google.com/file/d/15wv9K9IN8PjSGuz1DrASGikhmw7DKEgq/view?usp=sharing"
           },
           {
             id: 2,
-            title: 'Chapter 2: Memory Management',
-            description: 'Virtual memory, paging, and segmentation',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_MEMORY_URL_HERE#list"
+            title: 'Unit 2: Basic Intro to DATA structure and Search Algorithms',
+            description: 'Introduction to fundamental data structures and search algorithms, focusing on efficient data organization and retrieval techniques.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1d8D0zAd92AopN_4aAQUk1xEfEJ4mZIKu/view?usp=sharing"
           },
           {
             id: 3,
-            title: 'Chapter 3: File Systems',
-            description: 'File organization, allocation methods, and directory structures',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_FILESYSTEM_URL_HERE#list"
+            title: 'Unit 3: Adversial Search Problem and Intelligent Agent',
+            description: 'Explores adversarial search in competitive environments, such as game theory, and the role of intelligent agents in decision-making and problem-solving.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1cfszFRiMh8VVCzaCUsGSG8cruAvh7mjo/view?usp=sharing"
+          },
+          {
+            id: 4,
+            title: 'Unit 4: Knowledge Representation',
+            description: 'Covers methods of representing information in AI systems, including logic, semantic networks, and frames for effective reasoning.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1nSoXQ1DObLOK0bsnXP3PgxZJnH_ZoBAZ/view?usp=sharing"
+          },
+          {
+            id: 5,
+            title: 'Unit 5: Planning and Expert System',
+            description: 'Explores AI planning techniques for goal-oriented problem solving and the design of expert systems for decision-making and reasoning.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1Yv5YeIf8B-eqwBVVcilm3UPpW3yM_VIQ/view?usp=sharing"
           }
-        ]
+        ],
+        previousYearQuestions: [
+          {
+            id: 1,
+            year: '2023-34',
+            semester: 'Mid-Term',
+            type: 'CT-2 SET-A & B',
+            fileUrl: 'https://drive.google.com/file/d/1nbI_vRAre2V5PG7QjN3u96UIMESfMDij/view?usp=sharing'
+          },
+          
+        ],
+        assignments: [
+          {
+            id: 1,
+            title: 'none',
+            description: 'none',
+            deadline: 'depends on faculty',
+            fileUrl: ''
+          }
+        ],
+        videoLectures: [
+            
+          ]
       },
       "2": {
-        name: "Computer Networks",
-        code: "CSE402",
-        description: "Fundamentals of data communication, network protocols, TCP/IP model, and network security.",
+        name: "Database Management System",
+        code: "21CSC205P",
+        description: 'Introduction to database concepts, design, SQL, and efficient data management techniques.',
         instructor: "Prof. Maria Garcia",
         credits: 4,
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
         chapters: [
           {
             id: 1,
-            title: 'Chapter 1: Network Fundamentals',
-            description: 'Network types, topologies, and OSI model',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORK_BASICS_URL_HERE#list"
+            title: 'Unit 1: Introduction to DBMS and ER Diagram',
+            description: 'Covers basic DBMS concepts and entity-relationship diagrams for data modeling and schema design.',
+            driveEmbedUrl: "https://drive.google.com/file/d/169yUZ3IGNBpEDVx9Dyet6nuSCKmooyOh/view?usp=sharing"
           },
           {
             id: 2,
-            title: 'Chapter 2: TCP/IP Protocol Suite',
-            description: 'Internet protocols and packet routing',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_TCPIP_URL_HERE#list"
+            title: 'Unit 2: Relational Schemas and Calculus',
+            description: 'Explores relational schema design and formal query languages like relational algebra and calculus.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1k4uc0ZCj_iafvWvt1U3gJYhKczUSUF9Q/view?usp=sharing"
           },
           {
             id: 3,
-            title: 'Chapter 3: Network Security',
-            description: 'Encryption, authentication, and security protocols',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORK_SECURITY_URL_HERE#list"
+            title: 'Unit 3: SQL Commands Queris and Triggers',
+            description: 'Covers core SQL commands, query writing, and the use of triggers for automated database operations.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1yTJZRBewwVEyMK4nHr8fxyKgNINySgLT/view?usp=sharing"
+          },
+          {
+            id: 4,
+            title: 'Unit 4: Dependencies and Normalization',
+            description: 'Discusses functional dependencies and normalization techniques to eliminate data redundancy and ensure consistency.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1UYKlLWUnc4R4BcHbmFwm8cL8erARebG2/view?usp=sharing"
+          },
+          {
+            id: 5,
+            title: 'Unit 5: Transcation control, Concurrency control and Failure and Recovery Algorithms',
+            description: 'Focuses on transaction management, concurrency control techniques, and recovery algorithms to maintain database integrity.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1Ho3HN8r24l4Ma0E-dUUlKAbvIVAxWxis/view?usp=sharing"
           }
         ]
       },
@@ -442,7 +488,7 @@ function SubjectPage() {
           {
             id: 1,
             title: 'Unit 1: Introduction to Algorithm Design',
-            ddescription: "Fundamentals of designing efficient algorithms using basic strategies like recursion, sorting, and searching.",
+            description: "Fundamentals of designing efficient algorithms using basic strategies like recursion, sorting, and searching.",
             driveEmbedUrl: "https://drive.google.com/file/d/1QGM7W-rkgV3m-UW-0IABo-D-VjTWrTzP/view?usp=sharing"
           },
           {
@@ -489,10 +535,10 @@ function SubjectPage() {
         assignments: [
           {
             id: 1,
-            title: 'NONE',
-            description: 'NONE',
-            deadline: 'NONE',
-            fileUrl: 'NIL'
+            title: 'Elab',
+            description: 'Solution pdf of elab',
+            deadline: 'depends on faculty',
+            fileUrl: ''
           }
         ],
         videoLectures: [
@@ -532,7 +578,164 @@ function SubjectPage() {
               iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/HTGba6ta2z0" title="What is Dynamic Programming | Dynamic Programming and Divide and Conquer | Algorithm (DAA)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
             }
           ]
-      }
+      },
+      "4": {
+        name: "Probability and Queuing Theory",
+        code: "21MAB204T",
+        description: "Fundamentals of probability theory and queuing models for analyzing systems in operations research and performance optimization.",
+        instructor: "Prof. Maria Garcia",
+        credits: 4,
+        driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
+        chapters: [
+          {
+            id: 1,
+            title: 'Unit 1: Random Variables',
+            description: 'Introduces random variables, probability distributions, and their role in modeling uncertainty and predicting outcomes in probabilistic systems.',
+            driveEmbedUrl: "https://drive.google.com/file/d/19r_BHbI-wM3eaON4MdhgK6kEBEqbDP3_/view?usp=sharing"
+          },
+          {
+            id: 2,
+            title: 'Unit 2: Theoretical Distribution',
+            description: 'Explores various theoretical probability distributions, such as binomial, Poisson, and normal distributions, and their applications in statistical modeling and analysis.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1-v8LxP9qWA5VwhwyswvM2dSqX0Gt5ZyT/view?usp=sharing"
+          },
+          {
+            id: 3,
+            title: 'Unit 3: 2-D Random Variables',
+            description: 'Focuses on the study of two-dimensional random variables, including joint distributions, marginal distributions, and dependence between random variables.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1I_N7H6rSLoRL32NBnAyyuixB5r0h1Esm/view?usp=sharing"
+          },
+          {
+            id: 4,
+            title: 'Unit 4: Queuing Theory',
+            description: 'Introduces queuing theory, focusing on the analysis of waiting lines, queue models, and performance metrics such as arrival rates, service rates, and system efficiency.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1P5w_ZniBkbaD-Wr7T788JIDxti4dGtSk/view?usp=sharing"
+          },
+          {
+            id: 5,
+            title: 'Unit 5: Markov Chain',
+            description: 'Explores the concept of Markov chains, focusing on state transitions, transition matrices, and their applications in modeling stochastic processes and systems with memoryless properties.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1okpkcdok7fVMmELjD9L5Zy10ejo1DI5X/view?usp=sharing"
+          },
+          {
+            id: 6,
+            title: 'Unit 1: Random Variables (handwritten)',
+            description: 'Introduces random variables, probability distributions, and their role in modeling uncertainty and predicting outcomes in probabilistic systems.',
+            driveEmbedUrl: "https://drive.google.com/file/d/13SK3vuwMbfbaeVmPLpSVmG5mu0FQo-nP/view?usp=sharing"
+          },
+          {
+            id: 7,
+            title: 'Unit 4: Queuing Theory (handwritten)',
+            description: 'Introduces queuing theory, focusing on the analysis of waiting lines, queue models, and performance metrics such as arrival rates, service rates, and system efficiency.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1vIR4ZqasOyIKdKkuO_zRfTuk8ycnnWKh/view?usp=sharing"
+          }
+              ],
+        previousYearQuestions: [
+          {
+            id: 1,
+            year: '2022',
+            semester: 'Mid-Term',
+            type: 'All CTs',
+            fileUrl: 'https://drive.google.com/file/d/1qBM4J0hK48cx4T-AYQMgLrX_KnHbrGTn/view?usp=sharing'
+          }
+        ],
+        assignments: [
+          {
+            id: 1,
+            title: 'Assignment-1',
+            description: 'Maths assignment for Unit-1',
+            deadline: 'depends on faculty',
+            fileUrl: 'https://drive.google.com/file/d/1lDQ4TFwOmv7RveSVe5DBn1e9F5rRFh37/view?usp=sharing'
+          }
+        ],
+        videoLectures: [
+            {
+              id: 1,
+              title: 'DAA - Unit 1 ',
+              description: 'https://www.youtube.com/watch?v=NebCsY4-fIw&list=PLrhWE6dwHUeiSTblHiOe9RyvGBAp8nAeo   follow the playlist for all videos.',
+              url: 'https://youtu.be/NebCsY4-fIw?list=PLrhWE6dwHUeiSTblHiOe9RyvGBAp8nAeo',
+              iframe: '<iframe width="1057" height="600" src="https://www.youtube.com/embed/NebCsY4-fIw?list=PLrhWE6dwHUeiSTblHiOe9RyvGBAp8nAeo" title="1. Basic Probability | UNIT 1 | Probability - 21MAB301T/ 21MAB204T" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+            },
+            {
+              id: 2,
+              title: 'Unit 2',
+              description: 'https://www.youtube.com/watch?v=PnsPOnGu9YE&list=PLrhWE6dwHUejDwxsDGiEAgSr5seCvgUgj   follow the playlist for all videos.',
+              url: 'https://youtu.be/PnsPOnGu9YE?list=PLrhWE6dwHUejDwxsDGiEAgSr5seCvgUgj',
+              iframe: '<iframe width="1057" height="533" src="https://www.youtube.com/embed/PnsPOnGu9YE?list=PLrhWE6dwHUejDwxsDGiEAgSr5seCvgUgj" title="Binomial Distribution:  Part - 1 | UNIT 2 | Distributions:   21MAB301T/ 21MAB204T" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+            },
+            {
+              id: 3,
+              title: 'Unit 3',
+              description: 'https://www.youtube.com/watch?v=LPiPMOd-avM&list=PLrhWE6dwHUegR0LtYvoW_7omUsAAJh_74   follow the playlist for all videos.',
+              url: 'https://youtu.be/LPiPMOd-avM?list=PLrhWE6dwHUegR0LtYvoW_7omUsAAJh_74',
+              iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/LPiPMOd-avM?list=PLrhWE6dwHUegR0LtYvoW_7omUsAAJh_74" title="Joint Probability Mass Function - Basics and Problems" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+            },
+            {
+              id: 4,
+              title: 'Unit 4',
+              description: 'https://www.youtube.com/watch?v=A5woq-Arz3o&list=PLrhWE6dwHUeh5kCyy-l7_zmEPfAnrjk65   follow the playlist for all videos.',
+              url: 'https://youtu.be/A5woq-Arz3o?list=PLrhWE6dwHUeh5kCyy-l7_zmEPfAnrjk65',
+              iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/A5woq-Arz3o?list=PLrhWE6dwHUeh5kCyy-l7_zmEPfAnrjk65" title="Queueing Theory Basics | UNIT 4 | 21MAB204T" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+            },
+            {
+              id: 4,
+              title: 'Unit 5',
+              description: 'https://www.youtube.com/watch?v=jyjHBqAq0sE&list=PLrhWE6dwHUejM_Smfd40IbJwaGBXuhdSI  follow the playlist for all videos.',
+              url: 'https://youtu.be/jyjHBqAq0sE?list=PLrhWE6dwHUejM_Smfd40IbJwaGBXuhdSI',
+              iframe: '<iframe width="1057" height="595" src="https://www.youtube.com/embed/jyjHBqAq0sE?list=PLrhWE6dwHUejM_Smfd40IbJwaGBXuhdSI" title="Markov Chain Basics   | UNIT 5 |  | 21MAB204T" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+            }
+          ]
+      },
+      "5": {
+        name: "Social Engineering",
+        code: "21PDH209T",
+        description: 'Introduction to database concepts, design, SQL, and efficient data management techniques.',
+        instructor: "Prof. Maria Garcia",
+        credits: 4,
+        driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
+        chapters: [
+          {
+            id: 1,
+            title: 'All units combined',
+            description: 'All the units of social engineering combined',
+            driveEmbedUrl: "https://drive.google.com/file/d/1AcRpMsLrSxPvg_HgGLBPhYh25E4LeIpB/view?usp=sharing"
+          },
+        ],
+        previousYearQuestions: [
+          {
+            id: 1,
+            year: '2023',
+            semester: 'Mid-Term',
+            type: 'All CTs',
+            fileUrl: 'https://drive.google.com/file/d/1DPcNNtEOUfshhQrn57yKFNRMKlHcPDCE/view?usp=sharing'
+          }
+        ],
+      },
+      "6": {
+        name: "Universal Human Values",
+        code: "21PDH209T",
+        description: 'Focuses on ethics, self-awareness, harmony in relationships, and holistic well-being for personal and societal development.',
+        instructor: "Prof. Maria Garcia",
+        credits: 4,
+        driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
+        
+    },
+    "7": {
+        name: "Design and Analysis of Algorithm (Lab)",
+        code: "21CSC204J",
+        description: 'Focuses on ethics, self-awareness, harmony in relationships, and holistic well-being for personal and societal development.',
+        instructor: "Prof. Maria Garcia",
+        credits: 4,
+        driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
+        chapters: [
+          {
+            id: 1,
+            title: 'All experments',
+            description: 'All experiments to be perfomed in lab',
+            driveEmbedUrl: ""
+          },
+        ],
+    },
     },
     
     
@@ -859,8 +1062,7 @@ function SubjectPage() {
                   </div>
                 </div>
                 <div className="material-actions">
-                  <a href={assignment.fileUrl || '#'} className="action-btn download-btn">Download</a>
-                  <button className="action-btn submit-btn">Submit</button>
+                  <a href={assignment.fileUrl || '#'} className="action-btn download-btn">View</a>
                 </div>
               </div>
             ))}
