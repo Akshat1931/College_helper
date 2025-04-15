@@ -1,6 +1,6 @@
-// src/components/SubjectPage.jsx
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { DiscussionEmbed } from 'disqus-react';
 import ChapterResources from './ChapterResources';
 import './SubjectPage.css';
 
@@ -8,9 +8,14 @@ function SubjectPage() {
   const { semId, subjectId } = useParams();
   const [activeTab, setActiveTab] = useState('chapters');
   const [isLoading, setIsLoading] = useState(true);
+  const [currentSubject, setCurrentSubject] = useState(null);
   
-  // Database of subjects for all semesters
-  // You can easily modify this with your actual content
+  // Function to get YouTube ID
+  function getYouTubeID(url) {
+    const regExp = /^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\\&\\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  }
   const subjectsDatabase = {
     // Semester 1 Subjects
     "1": {
@@ -20,6 +25,7 @@ function SubjectPage() {
         description: "This course covers calculus, linear algebra, and analytical geometry. Students will learn fundamental mathematical concepts and problem-solving techniques.",
         instructor: "Dr. Sarah Johnson",
         credits: 4,
+        syllabusUrl: "https://drive.google.com/file/d/1KGFaWOLvt-M9YC9RmUuh8ZnpnhDxJGSy/view?usp=sharing",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_MATH1_FOLDER_ID#list",
         chapters: [
           {
@@ -1120,41 +1126,39 @@ function SubjectPage() {
     }
   };
 
-  function getYouTubeID(url) {
-    // Regular expression to extract YouTube video ID from various YouTube URL formats
-    const regExp = /^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\\&\\?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-  }
+
   
-  // Get the subject data from our database using the semId and subjectId
-  const subject = subjectsDatabase[semId]?.[subjectId] || {
-    name: "Subject Not Found",
-    code: "N/A",
-    description: "This subject does not exist in our database.",
-    instructor: "N/A",
-    credits: 0,
-    driveEmbedUrl: "",
-    chapters: []
-  };
   
   useEffect(() => {
     // Simulate data loading
-    const timer = setTimeout(() => {
+    setTimeout(() => {
+      // Get subject data or default
+      const foundSubject = subjectsDatabase[semId]?.[subjectId];
+      setCurrentSubject(foundSubject || {
+        name: "Subject Not Found",
+        code: "N/A",
+        description: "This subject does not exist in our database.",
+        instructor: "N/A",
+        credits: 0,
+        syllabusUrl: "#",
+        chapters: [],
+        previousYearQuestions: [],
+        videoLectures: []
+      });
       setIsLoading(false);
     }, 800);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
+  }, [semId, subjectId]);
+  
   const renderTabContent = () => {
+    if (!currentSubject) return <div>Loading content...</div>;
+    
     switch (activeTab) {
       case 'chapters':
         return (
           <div className="chapters-container">
             <h3>Chapter Notes</h3>
-            {subject.chapters && subject.chapters.length > 0 ? (
-              subject.chapters.map(chapter => (
+            {currentSubject.chapters && currentSubject.chapters.length > 0 ? (
+              currentSubject.chapters.map(chapter => (
                 <ChapterResources 
                   key={chapter.id} 
                   chapter={{
@@ -1173,17 +1177,21 @@ function SubjectPage() {
         return (
           <div className="previous-years-container">
             <h3>Previous Year Question Papers</h3>
-            {(subject.previousYearQuestions || []).map(pyq => (
-              <div key={pyq.id} className="material-card pyq-item">
-                <div className="material-icon pdf-icon"></div>
-                <div className="material-content">
-                  <h4>{pyq.year} {pyq.semester} {pyq.type}</h4>
-                  <div className="material-actions">
-                    <a href={pyq.fileUrl || '#'} className="action-btn download-btn">View</a>
+            {(currentSubject.previousYearQuestions || []).length > 0 ? (
+              currentSubject.previousYearQuestions.map(pyq => (
+                <div key={pyq.id} className="material-card pyq-item">
+                  <div className="material-icon pdf-icon"></div>
+                  <div className="material-content">
+                    <h4>{pyq.year} {pyq.semester} {pyq.type}</h4>
+                    <div className="material-actions">
+                      <a href={pyq.fileUrl || '#'} target="_blank" rel="noopener noreferrer" className="action-btn download-btn">View</a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className="error-message">No previous year questions available for this subject</div>
+            )}
           </div>
         );
   
@@ -1191,89 +1199,95 @@ function SubjectPage() {
         return (
           <div className="assignments-container">
             <h3>Assignments</h3>
-            {(subject.assignments || []).map(assignment => (
-              <div key={assignment.id} className="material-card assignment-item">
-                <div className="material-icon pdf-icon"></div>
-                <div className="material-content">
-                  <h4>{assignment.title}</h4>
-                  <p>{assignment.description}</p>
-                  <div className="material-meta">
-                    <span className="meta-item">Deadline: {assignment.deadline || 'N/A'}</span>
+            {(currentSubject.assignments || []).length > 0 ? (
+              currentSubject.assignments.map(assignment => (
+                <div key={assignment.id} className="material-card assignment-item">
+                  <div className="material-icon pdf-icon"></div>
+                  <div className="material-content">
+                    <h4>{assignment.title}</h4>
+                    <p>{assignment.description}</p>
+                    <div className="material-meta">
+                      <span className="meta-item">Deadline: {assignment.deadline || 'N/A'}</span>
+                    </div>
+                  </div>
+                  <div className="material-actions">
+                    <a href={assignment.fileUrl || '#'} target="_blank" rel="noopener noreferrer" className="action-btn download-btn">View</a>
                   </div>
                 </div>
-                <div className="material-actions">
-                  <a href={assignment.fileUrl || '#'} className="action-btn download-btn">View</a>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className="error-message">No assignments available for this subject</div>
+            )}
           </div>
         );
   
-      // Replace the case 'video-lectures' section in your renderTabContent function with this:
-
-// Replace the video-lectures case in your renderTabContent function with this
-case 'video-lectures':
-  return (
-    <div className="video-lectures-container">
-      <h3>Video Lectures</h3>
-      <div className="video-grid">
-        {(subject.videoLectures || []).map(video => (
-          <div key={video.id} className="material-card video-item">
-            <div className="video-container">
-              {/* Extract YouTube ID and create direct iframe */}
-              <iframe 
-                src={video.url.includes('embed') ? video.url : `https://www.youtube.com/embed/${getYouTubeID(video.url)}`}
-                title={video.title}
-                className="video-embed"
-                width="100%"
-                height="100%" 
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-            <div className="video-content">
-              <h4 className="video-title">{video.title}</h4>
-              <p className="video-description">{video.description}</p>
-              <div className="video-meta">
-
+      case 'video-lectures':
+        return (
+          <div className="video-lectures-container">
+            <h3>Video Lectures</h3>
+            {(currentSubject.videoLectures || []).length > 0 ? (
+              <div className="video-grid">
+                {currentSubject.videoLectures.map(video => (
+                  <div key={video.id} className="material-card video-item">
+                    <div className="video-container">
+                      <iframe 
+                        src={video.url.includes('embed') ? video.url : `https://www.youtube.com/embed/${getYouTubeID(video.url)}`}
+                        title={video.title}
+                        className="video-embed"
+                        width="100%"
+                        height="100%" 
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                    <div className="video-content">
+                      <h4 className="video-title">{video.title}</h4>
+                      <p className="video-description">{video.description}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
+            ) : (
+              <div className="error-message">No video lectures available for this subject</div>
+            )}
+          </div>
+        );
+  
+      case 'ai-help':
+        return (
+          <div className="ai-help-section">
+            <div className="ai-assistant-header">
+              <div className="ai-icon"></div>
+              <div>
+                <h3>AI Learning Assistant</h3>
+                <p>Get instant help with your subject queries</p>
+              </div>
+            </div>
+            <div className="ai-chat-container">
+              <iframe 
+                src="https://your-ai-assistant-url.com" 
+                title="AI Learning Assistant"
+                className="ai-chat-iframe"
+                width="100%"
+                height="600px"
+                frameBorder="0"
+                allowFullScreen
+              ></iframe>
             </div>
           </div>
-        ))}
-      </div>
-    </div>
-  );
-  
-// Add this helper function somewhere in your component (outside of any other function)
-
-  
-        case 'ai-help':
-          return (
-            <div className="ai-help-section">
-              <div className="ai-assistant-header">
-                <div className="ai-icon"></div>
-                <div>
-                  <h3>AI Learning Assistant</h3>
-                  <p>Get instant help with your subject queries</p>
-                </div>
-              </div>
-              <div className="ai-chat-container">
-                <iframe 
-                  src="https://your-ai-assistant-url.com" 
-                  title="AI Learning Assistant"
-                  className="ai-chat-iframe"
-                  width="100%"
-                  height="600px"
-                  frameBorder="0"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
-          );
+        );
+        
       default:
         return <div>Select a tab to view content</div>;
     }
+  };
+
+  // Configure Disqus props
+  const disqusConfig = {
+    url: window.location.href,
+    identifier: `semester-${semId}-subject-${subjectId}`,
+    title: currentSubject ? `${currentSubject.name} - ${currentSubject.code}` : `Subject ${subjectId}`,
   };
 
   if (isLoading) {
@@ -1298,59 +1312,83 @@ case 'video-lectures':
               ← Back to Semester {semId}
             </Link>
             <div className="subject-headline">
-              <h1>{subject.name}</h1>
+              <h1>{currentSubject?.name}</h1>
               <div className="subject-meta">
-                <span className="subject-code">{subject.code}</span>
-                <span className="subject-instructor">Instructor: {subject.instructor}</span>
-                <span className="subject-credits">{subject.credits} Credits</span>
+                <span className="subject-code">{currentSubject?.code}</span>
+                <span className="subject-instructor">Instructor: {currentSubject?.instructor}</span>
+                <span className="subject-credits">{currentSubject?.credits} Credits</span>
+                <a 
+                  href={currentSubject?.syllabusUrl || "#"} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="syllabus-btn"
+                >
+                  <span className="syllabus-icon"></span>
+                  View Syllabus
+                </a>
               </div>
             </div>
-            <p className="subject-description">{subject.description}</p>
+            <p className="subject-description">{currentSubject?.description}</p>
           </div>
         </div>
       </div>
       
       <div className="container">
         <div className="subject-content">
-        <div className="tabs">
-  <button 
-    className={`tab ${activeTab === 'chapters' ? 'active' : ''}`}
-    onClick={() => setActiveTab('chapters')}
-  >
-    <span className="tab-icon chapters-icon"></span>
-    Chapters & Resources
-  </button>
-  <button 
-    className={`tab ${activeTab === 'previous-years' ? 'active' : ''}`}
-    onClick={() => setActiveTab('previous-years')}
-  >
-    <span className="tab-icon pyq-icon"></span>
-    Previous Years
-  </button>
-  <button 
-    className={`tab ${activeTab === 'assignments' ? 'active' : ''}`}
-    onClick={() => setActiveTab('assignments')}
-  >
-    <span className="tab-icon assignments-icon"></span>
-    Assignments
-  </button>
-  <button 
-    className={`tab ${activeTab === 'video-lectures' ? 'active' : ''}`}
-    onClick={() => setActiveTab('video-lectures')}
-  >
-    <span className="tab-icon videos-icon"></span>
-    Video Lectures
-  </button>
-  <button 
-    className={`tab ${activeTab === 'ai-help' ? 'active' : ''}`}
-    onClick={() => setActiveTab('ai-help')}
-  >
-    <span className="tab-icon ai-icon"></span>
-    AI Help
-  </button>
-</div>
+          <div className="tabs">
+            <button 
+              className={`tab ${activeTab === 'chapters' ? 'active' : ''}`}
+              onClick={() => setActiveTab('chapters')}
+            >
+              <span className="tab-icon chapters-icon"></span>
+              Chapters & Resources
+            </button>
+            <button 
+              className={`tab ${activeTab === 'previous-years' ? 'active' : ''}`}
+              onClick={() => setActiveTab('previous-years')}
+            >
+              <span className="tab-icon pyq-icon"></span>
+              Previous Years
+            </button>
+            <button 
+              className={`tab ${activeTab === 'assignments' ? 'active' : ''}`}
+              onClick={() => setActiveTab('assignments')}
+            >
+              <span className="tab-icon assignments-icon"></span>
+              Assignments
+            </button>
+            <button 
+              className={`tab ${activeTab === 'video-lectures' ? 'active' : ''}`}
+              onClick={() => setActiveTab('video-lectures')}
+            >
+              <span className="tab-icon videos-icon"></span>
+              Video Lectures
+            </button>
+            <button 
+              className={`tab ${activeTab === 'ai-help' ? 'active' : ''}`}
+              onClick={() => setActiveTab('ai-help')}
+            >
+              <span className="tab-icon ai-icon"></span>
+              AI Help
+            </button>
+          </div>
+          
           <div className="tab-content">
             {renderTabContent()}
+          </div>
+          
+          {/* Discussion Forum Section - Below all tabs */}
+          <div className="discussion-section">
+            <div className="discussion-header">
+              <h3>Discussion Forum</h3>
+              <p>Discuss this subject with your classmates and instructors</p>
+            </div>
+            <div className="disqus-container">
+              <DiscussionEmbed
+                shortname='collegehelper-comments'
+                config={disqusConfig}
+              />
+            </div>
           </div>
         </div>
       </div>
