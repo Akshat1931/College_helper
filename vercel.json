@@ -6,13 +6,16 @@
         "use": "@vercel/static-build",
         "config": {
           "distDir": "dist",
-          "buildCommand": "npm install --legacy-peer-deps && npm run build"
+          "buildCommand": "npm install --force && npm run build"
         }
       }
     ],
     "routes": [
       {
-        "src": "/(.*)",
+        "handle": "filesystem"
+      },
+      {
+        "src": "/.*",
         "dest": "/index.html"
       }
     ]
