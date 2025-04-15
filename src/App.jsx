@@ -12,7 +12,7 @@ import Footer from './components/Footer';
 import AboutPage from './components/AboutPage';
 import './App.css';
 
-function ScrollToTop({ children }) {
+function ScrollToTop() {
   const location = useLocation();
   
   useEffect(() => {
@@ -24,28 +24,28 @@ function ScrollToTop({ children }) {
     });
   }, [location.pathname]);
 
-  return children;
+  return null;
 }
 
 function App() {
   return (
     <UserProvider>
-    <Router>
-      <ScrollToTop/>
-      <div className="app-container">
-        <Navbar />
-        <div className="main-content">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/complete-profile" element={<CompleteProfilePage />} />
-            <Route path="/semester/:semId" element={<SemesterPage />} />
-            <Route path="/semester/:semId/subject/:subjectId" element={<SubjectPage />} />
-            <Route path="/about" element={<AboutPage />} />
-          </Routes>
+      <Router>
+        <div className="app-container">
+          <Navbar />
+          <ScrollToTop />
+          <div className="main-content">
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/complete-profile" element={<CompleteProfilePage />} />
+              <Route path="/semester/:semId" element={<SemesterPage />} />
+              <Route path="/semester/:semId/subject/:subjectId" element={<SubjectPage />} />
+              <Route path="/about" element={<AboutPage />} />
+            </Routes>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-    </Router>
+      </Router>
     </UserProvider>
   );
 }

@@ -7,6 +7,7 @@ const UserContext = createContext(null);
 export function UserProvider({ children }) {
   const [userProfile, setUserProfile] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [needsProfileCompletion, setNeedsProfileCompletion] = useState(false);
 
   // Load user data from localStorage on mount
   useEffect(() => {
@@ -15,6 +16,10 @@ export function UserProvider({ children }) {
       setUserProfile(JSON.parse(storedProfile));
       setIsLoggedIn(true);
     }
+    
+    // Check if user needs to complete profile
+    const needsProfile = localStorage.getItem('needsProfile') === 'true';
+    setNeedsProfileCompletion(needsProfile);
   }, []);
 
   // Function to check if a user exists in our saved profiles
@@ -41,6 +46,11 @@ export function UserProvider({ children }) {
     // Store under the user's Google ID
     savedProfiles[userProfile.id] = updatedProfile;
     localStorage.setItem('savedUserProfiles', JSON.stringify(savedProfiles));
+    
+    // Clear the needsProfile flag
+    localStorage.removeItem('needsProfile');
+    setNeedsProfileCompletion(false);
+    
     console.log('Profile saved to persistent storage', updatedProfile);
   };
 
@@ -61,13 +71,15 @@ export function UserProvider({ children }) {
       localStorage.setItem('userProfile', JSON.stringify(updatedUser));
       // Since we found an existing user, they don't need to complete profile again
       localStorage.removeItem('needsProfile');
+      setNeedsProfileCompletion(false);
     } else {
       console.log('Creating new user profile', userData);
       // This is a new user, save their initial data
       setUserProfile(userData);
       localStorage.setItem('userProfile', JSON.stringify(userData));
-      // Mark that they need to complete their profile
+      // Mark that they need to complete their profile, but don't force a redirect
       localStorage.setItem('needsProfile', 'true');
+      setNeedsProfileCompletion(true);
     }
     
     setIsLoggedIn(true);
@@ -77,6 +89,7 @@ export function UserProvider({ children }) {
   const logout = () => {
     setUserProfile(null);
     setIsLoggedIn(false);
+    setNeedsProfileCompletion(false);
     localStorage.removeItem('userProfile');
     localStorage.removeItem('needsProfile');
   };
@@ -84,6 +97,7 @@ export function UserProvider({ children }) {
   const contextValue = {
     userProfile,
     isLoggedIn,
+    needsProfileCompletion,
     updateUserProfile,
     login,
     logout

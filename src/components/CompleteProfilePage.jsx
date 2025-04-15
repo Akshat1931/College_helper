@@ -15,7 +15,8 @@ function CompleteProfilePage() {
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Redirect if not logged in
+    // Only redirect if not logged in at all
+    // No longer redirecting users who are logged in but haven't completed their profile
     if (!isLoggedIn) {
       navigate('/');
       return;
@@ -24,7 +25,7 @@ function CompleteProfilePage() {
     // Pre-fill the form with existing user data if available
     if (userProfile) {
       setProfileData({
-        fullName: userProfile.fullName || '',
+        fullName: userProfile.fullName || userProfile.name || '',
         college: userProfile.college || '',
         branch: userProfile.branch || '',
         year: userProfile.year || '',
@@ -51,9 +52,6 @@ function CompleteProfilePage() {
       name: profileData.fullName, // Update the displayed name
       isNewUser: false
     });
-    
-    // Remove the needsProfile flag
-    localStorage.removeItem('needsProfile');
     
     console.log('Profile Data Saved:', profileData);
     navigate('/'); // Redirect to home after completing profile

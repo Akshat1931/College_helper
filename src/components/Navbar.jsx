@@ -1,3 +1,4 @@
+// src/components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
@@ -48,9 +49,11 @@ function Navbar() {
     // The login function will check if this user exists already
     login(userData);
     
-    // Check if user should be redirected to complete profile
+    // Add a notification for new users instead of automatic redirect
     if (localStorage.getItem('needsProfile') === 'true') {
-      navigate('/complete-profile');
+      // You could show a toast notification here or handle this differently
+      console.log('New user - profile completion recommended');
+      // Don't redirect automatically - let the user decide when to complete their profile
     }
   };
 

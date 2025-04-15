@@ -1,6 +1,7 @@
 // src/components/LandingPage.jsx
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import ProfileNotification from './ProfileNotification';
 import './LandingPage.css';
 
 function LandingPage() {
@@ -254,7 +255,11 @@ function LandingPage() {
         <div className="shape shape-3"></div>
         <div className="shape shape-4"></div>
       </div>
-    </div>
+      
+      {/* Add the profile notification component */}
+      <ProfileNotification />
+      </div>
+    
   );
 }
 
