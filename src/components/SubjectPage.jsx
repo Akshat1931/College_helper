@@ -291,7 +291,7 @@ function SubjectPage() {
         code: "21GNH101J",
         description: "Explores the ethical, social, and philosophical dimensions of engineering practice.",
         instructor: "Prof. Emily Wang",
-        credits: 3,
+        credits: 2,
         syllabusUrl: "https://drive.google.com/file/d/1ZWBKUJSYzV7r7QIOlOpJJ4-4nlvt5Ffn/view?usp=sharing",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PROGRAMMING_FOLDER_ID#list",
         chapters: [
@@ -381,7 +381,7 @@ function SubjectPage() {
       "4": {
         name: "Introduction To Computational Biology",
         code: "21GNH101J",
-        description: "Explores the ethical, social, and philosophical dimensions of engineering practice.",
+        description: "An introduction to the fundamentals of computational biology, focusing on data analysis, algorithms, and their applications in biological research.",
         instructor: "Prof. Emily Wang",
         credits: 3,
         syllabusUrl: "https://drive.google.com/file/d/1ZWBKUJSYzV7r7QIOlOpJJ4-4nlvt5Ffn/view?usp=sharing",
@@ -389,34 +389,34 @@ function SubjectPage() {
         chapters: [
           {
             id: 1,
-            title: 'Unit 1: Introduction to POE',
-            description: 'Explores the principles, purpose, and ethical dimensions that guide the practice of engineering in society',
-            driveEmbedUrl: "https://drive.google.com/file/d/1X60YLov7AHejKbbrvbyRdAxdMsj8Tzuk/view?usp=sharing"
+            title: 'Unit 1: Cell And Evolution',
+            description: 'Introduces the structure, function, and evolution of cells, highlighting their role in the diversity and development of life.',
+            driveEmbedUrl: "https://drive.google.com/file/d/192tyf2bgRrij7SzgN007SNr2RM8xwC5m/view?usp=sharing"
           },
           {
             id: 2,
-            title: 'Unit 2: Ontology Of Engineering',
-            description: 'Examines the nature, concepts, and categories that define engineering as a discipline and profession.',
-            driveEmbedUrl: "https://drive.google.com/file/d/1Es8WYrEVlEh6XjzzDXzBoN8T2qL6bXys/view?usp=sharing"
+            title: 'Unit 2: Basics In Biochemistry',
+            description: 'Covers the chemical foundations of biology, including biomolecules, metabolism, and enzyme functions.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1sSTfiezrPOUbb4L7EIIFk1Aj6ZqkCgQ8/view?usp=sharing"
           },
           {
             id: 3,
-            title: 'Unit 3: Epistemology Of Engineering',
-            description: 'Explores the nature and scope of engineering knowledge, including how it is acquired, validated, and applied in practice.',
-            driveEmbedUrl: "https://drive.google.com/file/d/1ZrtufKm2f0M62YHo7u7w692ADwigIQs-/view?usp=sharing"
+            title: 'Unit 3: Structure Biology',
+            description: 'Explores the three-dimensional structure of biological macromolecules and their functional significance.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1FW8IL4PwyaQxfElRMO5UrUtohJOEY2i1/view?usp=sharing"
           },
           {
             id: 4,
-            title: 'Unit 4: Methodology Of Engineering',
-            description: 'Analyzes the systematic approaches, strategies, and processes used in engineering problem-solving and design.',
-            driveEmbedUrl: "https://drive.google.com/file/d/1WnqGl1AA6hi30Zo1lmQ_6JBpYC5wrSvg/view?usp=sharing"
+            title: 'Unit 4: Neurobiology',
+            description: 'Examines the structure and function of the nervous system, from neural signaling to brain function and behavior.',
+            driveEmbedUrl: "https://drive.google.com/file/d/17i9tAS8b3IVuGrEbUQqtIkOk5T4nQGoI/view?usp=sharing"
           },
           {
             id: 5,
-            title: 'Unit 5: Axiology Of Engineering',
-            description: 'Discusses the values, ethics, and aesthetics that influence engineering decisions and professional responsibilities.',
-            driveEmbedUrl: "https://drive.google.com/file/d/1cfyi3xnetWMm4-CcGm7DqYOqSCkEolXM/view?usp=sharing"
-          }
+            title: 'Unit 5: Immunobiology',
+            description: 'Studies the immune system’s components, mechanisms, and responses to pathogens and vaccines.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1F6LoUocuX-6OOH-UHAYl5-ckxleY6LRM/view?usp=sharing"
+          }          
         ],
         previousYearQuestions: [
           {
@@ -424,50 +424,149 @@ function SubjectPage() {
             year: 'May-2024',
             semester: 'End-sem',
             type: 'all units',
-            fileUrl: 'https://drive.google.com/file/d/1zft-bre1H1nmslfzR1jBhbAKwvjWKdIg/view?usp=sharing'
+            fileUrl: 'https://drive.google.com/file/d/1WmXmcBLd91RQpbNWoAozS0a-qMYbvfCA/view'
           },
           {
             id: 2,
             year: 'Jan-2024',
             semester: 'End-sem',
             type: 'all units',
-            fileUrl: 'https://drive.google.com/file/d/1Z3o3TUzcFKEvNMDrqOFSM2wSLOYGPa_8/view?usp=sharing'
+            fileUrl: 'https://drive.google.com/file/d/1i98p0v78N2Zzuj_ThiUBFBKn_nUibQI_/view'
           },
           {
             id: 3,
             year: 'Jan-2023',
             semester: 'End-sem',
             type: 'all units',
-            fileUrl: 'https://drive.google.com/file/d/1eiXAEKVHVtsD_jXGWHt9Nq1lJPeJcOg8/view?usp=sharing'
+            fileUrl: 'https://drive.google.com/file/d/1pu7GK8lLq_KIBMdBOETeCVWMeJLHiUMb/view'
           },
           {
             id: 4,
-            year: 'May-2023',
+            year: 'July-2023',
             semester: 'End-sem',
             type: 'all units',
-            fileUrl: 'https://drive.google.com/file/d/1swlPO5epgicpgqnJ-Pi_evYAku5zrOey/view?usp=sharing'
+            fileUrl: 'https://drive.google.com/file/d/1gUpdZwc5rfFijFOUErPMb9fxQyjJsqC5/view'
           },
           {
             id: 5,
             year: 'Dec-2023',
             semester: 'End-sem',
             type: 'all units',
-            fileUrl: 'https://drive.google.com/file/d/1k9VzgfPEH3pa7qsLwixEk2f8xvQEE5hm/view?usp=sharing'
+            fileUrl: 'https://drive.google.com/file/d/1gLlh0fB1rctmKZBSPPZC35ryZt_K4Phg/view'
           },
           {
             id: 6,
             year: 'July-2023',
             semester: 'End-sem',
             type: 'all CTs',
-            fileUrl: 'https://drive.google.com/file/d/1oS0AzgKLfH5XdRvlSp8V7yGldpoaIXQL/view?usp=sharing'
+            fileUrl: 'https://drive.google.com/file/d/1gd9Om2twjB62-8UJb1vM7A0LKlBKDXTF/view'
           },
           {
             id: 7,
             year: '2022-2024',
             semester: 'Mid-sem',
             type: 'all MCQs and Questions',
-            fileUrl: 'https://drive.google.com/drive/folders/1um6ctu9sT624qLw5U1SD0PL1OETqmSCM'
+            fileUrl: 'https://drive.google.com/drive/folders/1wN2x025nxZYsCoUhyNoHJUM8WT1i-sWT?usp=drive_link'
           },
+        ]
+      },
+      "5": {
+        name: "Programming For Problem Solving",
+        code: "21CSS101J",
+        description: "Introduces fundamental programming concepts and problem-solving techniques using structured and procedural programming.",
+        instructor: "Prof. Emily Wang",
+        credits: 4,
+        syllabusUrl: "https://drive.google.com/file/d/1oQ0a7mjBp1NVhihOBwv8mDTtHOsOuVKx/view",
+        driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PROGRAMMING_FOLDER_ID#list",
+        chapters: [
+          {
+            id: 1,
+            title: 'Unit 1: Introduction to Programming',
+            description: 'Covers the basics of programming languages, flowcharts, algorithms, and structured programming concepts.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1p-vD42IC9Gr1dhNnqucrBBfv9HpUsORf/view?usp=sharing"
+          },
+          {
+            id: 2,
+            title: 'Unit 2: Conditional Statement and Arrays',
+            description: 'Introduces decision-making constructs, loops, and the use of arrays for efficient data handling.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1Vt4zhZMHnw04Wo5n4x6PIYch8i7hHKbI/view?usp=sharing"
+          },
+          {
+            id: 3,
+            title: 'Unit 3: String and Pointers',
+            description: 'Explains string manipulation techniques and the use of pointers for dynamic memory and efficient data access.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1RPU4JwgCJZW5QdUApwZjVRcZuvD37XHl/view?usp=sharing"
+          },
+          {
+            id: 4,
+            title: 'Unit 4: Introduction to Python',
+            description: 'Covers Python basics including syntax, variables, control structures, functions, and basic input/output.',
+            driveEmbedUrl: "https://drive.google.com/file/d/12XJPMJ0HmqUoHYBdtE1Rfrav4EJi4ALH/view?usp=sharing"
+          },
+          {
+            id: 5,
+            title: 'Unit 5: Python Libraries',
+            description: 'Introduces key Python libraries like NumPy, Pandas, and Matplotlib for data manipulation and visualization.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1oZFHyX2Yv9Y7JgDFUikYkS_1cbW7osZu/view?usp=sharing"
+          }          
+        ],
+        previousYearQuestions: [
+          {
+            id: 1,
+            year: 'May-2024',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1tEw8YxyX5nr6AwlbC8GwwHOsnb4yOAcj/view'
+          },
+          {
+            id: 2,
+            year: 'Jan-2024',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1kzUnjcsW1J_p9xIGTNtYDg132bFryd_e/view'
+          },
+          {
+            id: 3,
+            year: 'Jan-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1mrvBYe6mv42Tfein8AN2T8txeXHvk4Tw/view'
+          },
+          {
+            id: 4,
+            year: 'July-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1NoHu2nPzuafMCN9saUQlq6QXOjEsZOGd/view'
+          },
+          {
+            id: 5,
+            year: 'Dec-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1LRHHPbqBJ5aX8Ps4x1E_xl4RfEI0D4SI/view'
+          },
+          {
+            id: 6,
+            year: 'May-2019',
+            semester: 'End-sem',
+            type: 'all CTs',
+            fileUrl: 'https://drive.google.com/file/d/1_RN15OXdZhDpX1Nb9sNSOOdQrdxQCukx/view'
+          },
+          {
+            id: 7,
+            year: '2022-2024',
+            semester: 'Mid-sem',
+            type: 'All CTs',
+            fileUrl: 'https://drive.google.com/drive/folders/1e0OY2AVToH-FtIpYimh1iE4d0kmW-uUq'
+          },
+          {
+            id: 7,
+            year: '2022-2024',
+            semester: 'Mid-sem',
+            type: 'all MCQs',
+            fileUrl: 'https://drive.google.com/file/d/1D2Bl2164GlxUKKaoaoQBreWasAJc6UOq/view'
+          },                  
         ]
       }
     },

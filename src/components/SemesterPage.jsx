@@ -25,7 +25,7 @@ function SemesterPage() {
       { id: 2, name: 'Chemistry', description: 'Covers atomic structure, chemical bonding, thermodynamics, and organic reactions essential to material and biological sciences.', icon: '⚛️' },
       { id: 3, name: 'Philosophy Of Engineering', description: 'Explores the ethical, social, and philosophical dimensions of engineering practice.', icon: '🔧' },
       { id: 4, name: 'Introduction To Computational Biology', description: ' An introduction to the fundamentals of computational biology, focusing on data analysis, algorithms, and their applications in biological research.', icon: '📝' },
-      { id: 5, name: 'Engineering Drawing', description: 'Drawing techniques and principles', icon: '📐' },
+      { id: 5, name: 'Programming For Problem Solving', description: 'Introduces fundamental programming concepts and problem-solving techniques using structured and procedural programming.', icon: '🖥️' },
       { id: 6, name: 'Environmental Science', description: 'Introduction to environmental concepts', icon: '🌍' },
       { id: 7, name: 'Workshop Practice', description: 'Hands-on technical skills', icon: '🔧' },
       { id: 8, name: 'Professional Ethics', description: 'Ethical considerations in professional practice', icon: '⚖️' },
