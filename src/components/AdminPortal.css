@@ -308,6 +308,49 @@
     border-radius: 20px;
     display: inline-block;
   }
+  .subject-chapters,
+.subject-videos,
+.subject-assignments,
+.subject-pyq {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: rgba(0,0,0,0.02);
+  border-radius: var(--radius-md);
+}
+
+.chapter-item,
+.video-item,
+.assignment-item,
+.pyq-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.chapter-item:last-child,
+.video-item:last-child,
+.assignment-item:last-child,
+.pyq-item:last-child {
+  border-bottom: none;
+}
+  .delete-btn {
+    background-color: #ff4d4d; /* Bright red */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .delete-btn:hover {
+    background-color: #ff3333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(255, 77, 77, 0.2);
+  }
   
   /* Responsive Adjustments */
   @media (max-width: 768px) {

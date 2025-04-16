@@ -157,6 +157,114 @@ const AdminPortal = () => {
       semesterId: newChapter.semesterId
     });
   };
+  const deleteSubject = (subjectId) => {
+    const confirmDelete = window.confirm(
+      "Are you absolutely sure you want to delete this subject?\n\n" +
+      "This action will permanently remove the subject and all its associated resources:\n" +
+      "- Chapters\n" +
+      "- Video Lectures\n" +
+      "- Previous Year Questions\n" +
+      "- Assignments\n\n" +
+      "This CANNOT be undone!"
+    );
+  
+    if (confirmDelete) {
+      const updatedSubjects = subjects.filter(subject => subject.id !== subjectId);
+      setSubjects(updatedSubjects);
+      alert('Subject has been deleted successfully.');
+    }
+  };
+  // Method to delete a chapter
+const deleteChapter = (subjectId, chapterId) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this chapter?\n\n" +
+    "This action cannot be undone."
+  );
+
+  if (confirmDelete) {
+    const updatedSubjects = subjects.map(subject => {
+      if (subject.id === subjectId) {
+        return {
+          ...subject,
+          chapters: subject.chapters.filter(chapter => chapter.id !== chapterId)
+        };
+      }
+      return subject;
+    });
+
+    setSubjects(updatedSubjects);
+    alert('Chapter deleted successfully.');
+  }
+};
+
+// Method to delete a video lecture
+const deleteVideoLecture = (subjectId, videoId) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this video lecture?\n\n" +
+    "This action cannot be undone."
+  );
+
+  if (confirmDelete) {
+    const updatedSubjects = subjects.map(subject => {
+      if (subject.id === subjectId) {
+        return {
+          ...subject,
+          videoLectures: subject.videoLectures.filter(video => video.id !== videoId)
+        };
+      }
+      return subject;
+    });
+
+    setSubjects(updatedSubjects);
+    alert('Video lecture deleted successfully.');
+  }
+};
+
+// Method to delete an assignment
+const deleteAssignment = (subjectId, assignmentId) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this assignment?\n\n" +
+    "This action cannot be undone."
+  );
+
+  if (confirmDelete) {
+    const updatedSubjects = subjects.map(subject => {
+      if (subject.id === subjectId) {
+        return {
+          ...subject,
+          assignments: subject.assignments.filter(assignment => assignment.id !== assignmentId)
+        };
+      }
+      return subject;
+    });
+
+    setSubjects(updatedSubjects);
+    alert('Assignment deleted successfully.');
+  }
+};
+
+// Method to delete a previous year question
+const deletePreviousYearQuestion = (subjectId, pyqId) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this previous year question?\n\n" +
+    "This action cannot be undone."
+  );
+
+  if (confirmDelete) {
+    const updatedSubjects = subjects.map(subject => {
+      if (subject.id === subjectId) {
+        return {
+          ...subject,
+          previousYearQuestions: subject.previousYearQuestions.filter(pyq => pyq.id !== pyqId)
+        };
+      }
+      return subject;
+    });
+
+    setSubjects(updatedSubjects);
+    alert('Previous year question deleted successfully.');
+  }
+};
 
   const handleResourceSubmit = (e) => {
     e.preventDefault();
@@ -547,55 +655,94 @@ const AdminPortal = () => {
           )}
           
           {activeTab === 'view' && (
-            <div className="admin-section">
-              <h2>View Subjects Data</h2>
-              <div className="admin-data-view">
-                <select 
-                  className="semester-select"
-                  onChange={(e) => {
-                    document.getElementById(`semester-${e.target.value}`).scrollIntoView({ behavior: 'smooth' });
-                  }}
+  <div className="admin-section">
+    <h2>View Subjects Data</h2>
+    <div className="admin-data-view">
+      {semesters.map(semester => (
+        <div key={semester.id} id={`semester-${semester.id}`} className="semester-data">
+          <h3>{semester.name}</h3>
+          {getSubjectsBySemester(semester.id).map(subject => (
+            <div key={subject.id} className="subject-item">
+              <div className="subject-item-header">
+                <h4>{subject.name} ({subject.code})</h4>
+                <button 
+                  className="delete-btn" 
+                  onClick={() => deleteSubject(subject.id)}
                 >
-                  <option value="">Jump to Semester</option>
-                  {semesters.map(sem => (
-                    <option key={sem.id} value={sem.id}>
-                      {sem.name}
-                    </option>
-                  ))}
-                </select>
-                
-                {semesters.map(semester => (
-                  <div key={semester.id} id={`semester-${semester.id}`} className="semester-data">
-                    <h3>{semester.name}</h3>
-                    {getSubjectsBySemester(semester.id).length === 0 ? (
-                      <p className="no-data">No subjects added for this semester yet.</p>
-                    ) : (
-                      <div className="subjects-list">
-                        {getSubjectsBySemester(semester.id).map(subject => (
-                          <div key={subject.id} className="subject-item">
-                            <div className="subject-item-header">
-                              <h4>{subject.name} ({subject.code})</h4>
-                              <span className="subject-meta">{subject.credits} Credits | {subject.instructor}</span>
-                            </div>
-                            <p className="subject-description">{subject.description}</p>
-                            
-                            <div className="subject-resources">
-                              <div className="resource-counts">
-                                <span>Chapters: {subject.chapters?.length || 0}</span>
-                                <span>Videos: {subject.videoLectures?.length || 0}</span>
-                                <span>PYQs: {subject.previousYearQuestions?.length || 0}</span>
-                                <span>Assignments: {subject.assignments?.length || 0}</span>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                  Delete Subject
+                </button>
+              </div>
+              
+              {/* Chapters Section */}
+              <div className="subject-chapters">
+                <h5>Chapters</h5>
+                {subject.chapters && subject.chapters.map(chapter => (
+                  <div key={chapter.id} className="chapter-item">
+                    <span>{chapter.title}</span>
+                    <button 
+                      className="delete-btn" 
+                      onClick={() => deleteChapter(subject.id, chapter.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Video Lectures Section */}
+              <div className="subject-videos">
+                <h5>Video Lectures</h5>
+                {subject.videoLectures && subject.videoLectures.map(video => (
+                  <div key={video.id} className="video-item">
+                    <span>{video.title}</span>
+                    <button 
+                      className="delete-btn" 
+                      onClick={() => deleteVideoLecture(subject.id, video.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Assignments Section */}
+              <div className="subject-assignments">
+                <h5>Assignments</h5>
+                {subject.assignments && subject.assignments.map(assignment => (
+                  <div key={assignment.id} className="assignment-item">
+                    <span>{assignment.title}</span>
+                    <button 
+                      className="delete-btn" 
+                      onClick={() => deleteAssignment(subject.id, assignment.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Previous Year Questions Section */}
+              <div className="subject-pyq">
+                <h5>Previous Year Questions</h5>
+                {subject.previousYearQuestions && subject.previousYearQuestions.map(pyq => (
+                  <div key={pyq.id} className="pyq-item">
+                    <span>{pyq.year} {pyq.semester}</span>
+                    <button 
+                      className="delete-btn" 
+                      onClick={() => deletePreviousYearQuestion(subject.id, pyq.id)}
+                    >
+                      Delete
+                    </button>
                   </div>
                 ))}
               </div>
             </div>
-          )}
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
         </div>
       </div>
     </div>
