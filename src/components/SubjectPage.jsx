@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { DiscussionEmbed } from 'disqus-react';
 import ChapterResources from './ChapterResources';
+import ChatbotEmbed from './ChatbotEmbed';
 import './SubjectPage.css';
 
 function SubjectPage() {
@@ -1265,15 +1266,7 @@ function SubjectPage() {
               </div>
             </div>
             <div className="ai-chat-container">
-              <iframe 
-                src="https://your-ai-assistant-url.com" 
-                title="AI Learning Assistant"
-                className="ai-chat-iframe"
-                width="100%"
-                height="600px"
-                frameBorder="0"
-                allowFullScreen
-              ></iframe>
+            <ChatbotEmbed />
             </div>
           </div>
         );
