@@ -100,23 +100,27 @@ function LandingPage() {
   const testimonials = [
     {
       quote: "This app helped me organize my study materials and improved my grades significantly. I wish I'd found it sooner!",
-      name: "Sarah Johnson",
-      role: "Computer Science, Year 3"
+      name: "Akshit Bhatt",
+      role: "Computer Science, Year 2",
+      imageUrl: "https://media-hosting.imagekit.io/64383d363b0e433f/screenshot_1744779242688.png?Expires=1839387246&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=QSsAqJsrHHUqKJ9X6yhC9I5vaY~aRzx8WH80R4vX5WOaBL07xmFGjuNsEN9uGx702cbth4hmeBkrJZum10064Vj6x0MGznMV1qbB-PkyBAZwQBbRgcdTgFJS6tDEslDhgrgunBpK88wD3SywAtcL2ICV83ix1YjfQ5RmZzya0ANYxfTQI4qL5G0JTNVv5tXAKzuF9r0ObTICTt-9iq~7cM4ybr1K~ZIzVyRVfvSfKge7cjXkxx-HB~HV69ZswVEwFh73xEf3NXItpYvl4P5kb~aIqbklQAA0yoMB9t78i4Up1~BkfMVBZ6dTmE1fyoHn8Jo-LdRom7D-Zv7I0y~rhw__"
     },
     {
       quote: "The AI assistant helped me understand complex concepts I was struggling with. It feels like having a tutor available 24/7!",
-      name: "Michael Chen",
-      role: "Electrical Engineering, Year 2"
+      name: "Aryan Awashthi",
+      role: "Computer Science, Year 2",
+      imageUrl: "https://media-hosting.imagekit.io/865fc088fc58415e/WhatsApp%20Image%202025-04-16%20at%2010.05.46_9d0c14d2.jpg?Expires=1839387114&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=KLUJR9Sxj-huUAsv9rFrkyuPffekrDg6b-3WAegtd2Ff8ezyV~3j6aPheLX77C5dmFSTg5NSLM3JjX86-3TxZE7Z43M0aPrA4zv5FxanJquSSzKqfO2MAexT0Cm0awImrNpNEFblBXbsyER1U0u2obfiDUjOF7txsVaSyC2UrmUHy4uldNJH3Txxg1Za5x5aObEzjat-u8S08SsvUnpTWG0wsMMCQRY2Hk-K4etiV4K0J2850sBFYYwTbO2ELCCSmcJmejGnsPyUUjggRthQEkxTde5IolRkzgD3lY5QakmuxZAWf9XaNnLej7-kBnf8mrbFdGYivuSR2QHU~IZ4xg__"
     },
     {
       quote: "Having all resources in one place saved me hours of searching through emails and drives. The interface is so intuitive!",
-      name: "Priya Sharma",
-      role: "Biotechnology, Year 4"
+      name: "Rishi Puri",
+      role: "Computer Science, Year 2",
+      imageUrl: "https://media-hosting.imagekit.io/cefa194243384f7c/WhatsApp%20Image%202025-04-16%20at%2010.26.17_1e773a2f.jpg?Expires=1839387398&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=ziPYmQ2-5WXzSLaSOqiuoUAuMfSmAF9gP1~0HVp7IpkOK2MUkLWvJE0PSXDhBzHfolXHSoyYkmhziCy4y0w52UB9cKhahqfDfGOAJZE3MtPYC4hj2UBQHAxBb2pVCy7znijJK7G2B8KjlKw1ke0s5cGMv9XSpeI6J2Vxw6A-q2VHndu9r78GvjxjRkK5VWxSn3ZrizTQVj6roOh~ro2GUGPB6sZmlA1iOLpsBkEb-liZTgDZaO3y3pGZDAl8rujTTQAWp918BYPtI6M8zVODFoOq2nzVZDFYdV3s5WjRv2FqKKq2KoDdO0gLwdV4nkBec3PY076HpD~-61DMsnOdDA__"
     },
     {
       quote: "The video lectures and practice quizzes made exam preparation so much easier. I'm recommending this to all my classmates.",
-      name: "James Wilson",
-      role: "Mechanical Engineering, Year 3"
+      name: "Shivanshu Sinha",
+      role: "Computer Science, Year 2",
+      imageUrl: "https://media-hosting.imagekit.io/13e69e44d22343d2/screenshot_1744779291680.png?Expires=1839387295&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=1OL4ypBxtfcrPQxfAkbhi2YvyMf2Qf8ZPlR2BJzCzBNVnkvGHMoxncWM9Og-d8kEynz8221BIiIJ0rLylUVjLpWfMJ5k13lOidGiKQkJv3mUueq0Rog8Sdm1DDEklTvj~cc3859m78iU6cir8kgg7NjBMJDnD5k7zopKKsJs5hKcFDd7Blld0dUpymmrMXpXMNywkw8AJviQkYpe4duJFekfuv7HyrNqGEdtD2FE6PD3qDPaB~fuJuc5P6YxzwjECphm4pmoNbW3JY~6NEOZs2xuLQOHofhBf~GdHKrF9q9Bi6dQZys3x8Rn31kMuJ5XUO8B9tTJJD13aTz2yQt33w__"
     }
   ];
 
@@ -225,7 +229,7 @@ function LandingPage() {
                 <div className="student-info">
                   <div 
                     className="student-avatar" 
-                    style={{backgroundImage: `url('https://i.pravatar.cc/150?img=${index + 10}')`}}
+                    style={{backgroundImage: `url(${testimonial.imageUrl})`}}
                   ></div>
                   <div>
                     <h4>{testimonial.name}</h4>
@@ -258,8 +262,7 @@ function LandingPage() {
       
       {/* Add the profile notification component */}
       <ProfileNotification />
-      </div>
-    
+    </div>
   );
 }
 
