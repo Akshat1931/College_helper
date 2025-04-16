@@ -284,6 +284,36 @@ div[aria-modal="true"] > div > div > div {
   transition: none !important;
 }
 }
+.admin-link {
+  background: rgba(74, 108, 247, 0.1);
+  color: var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-right: 1rem;
+  transition: all 0.3s ease;
+}
+
+.admin-link:hover {
+  background: rgba(74, 108, 247, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Mobile styles for admin link */
+@media (max-width: 1024px) {
+  .admin-link {
+    display: none; /* Hide in mobile view - will show in nav menu instead */
+  }
+  
+  .nav-menu .admin-link {
+    display: block;
+    margin: 0.5rem 0;
+    text-align: center;
+    background: rgba(74, 108, 247, 0.05);
+    width: 100%;
+  }
+}
 
 
 /* Extra small devices */

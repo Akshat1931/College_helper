@@ -1391,12 +1391,40 @@ function SubjectPage() {
 
   
   
-  useEffect(() => {
-    // Simulate data loading
-    setTimeout(() => {
-      // Get subject data or default
-      const foundSubject = subjectsDatabase[semId]?.[subjectId];
-      setCurrentSubject(foundSubject || {
+  // Add this to the beginning of your useEffect in SubjectPage.jsx
+// Right where you load the subject data
+
+useEffect(() => {
+  // Load subject data
+  const loadSubject = () => {
+    setIsLoading(true);
+    
+    // First check for admin-added subjects
+    const storedSubjects = localStorage.getItem('adminSubjects');
+    if (storedSubjects) {
+      try {
+        const allSubjects = JSON.parse(storedSubjects);
+        // Find subject by ID
+        const adminSubject = allSubjects.find(subject => subject.id === subjectId);
+        
+        if (adminSubject) {
+          console.log("Found admin-added subject:", adminSubject);
+          setCurrentSubject(adminSubject);
+          setIsLoading(false);
+          return; // Stop here if found
+        }
+      } catch (error) {
+        console.error("Error parsing admin subjects:", error);
+      }
+    }
+    
+    // If not found, continue with your existing code to get subject from subjectsDatabase
+    // Your existing code below...
+    const foundSubject = subjectsDatabase[semId]?.[subjectId];
+    if (foundSubject) {
+      setCurrentSubject(foundSubject);
+    } else {
+      setCurrentSubject({
         name: "Subject Not Found",
         code: "N/A",
         description: "This subject does not exist in our database.",
@@ -1405,12 +1433,16 @@ function SubjectPage() {
         syllabusUrl: "#",
         chapters: [],
         previousYearQuestions: [],
-        videoLectures: []
+        videoLectures: [],
+        assignments: []
       });
-      setIsLoading(false);
-    }, 800);
-  }, [semId, subjectId]);
+    }
+    
+    setIsLoading(false);
+  };
   
+  loadSubject();
+}, [semId, subjectId]);
   const renderTabContent = () => {
     if (!currentSubject) return <div>Loading content...</div>;
     

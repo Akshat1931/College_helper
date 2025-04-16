@@ -1,4 +1,4 @@
-// src/components/Navbar.jsx
+// src/components/Navbar.jsx - Add admin link to navbar
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -10,7 +10,7 @@ function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { userProfile, isLoggedIn, login, logout } = useUser();
+  const { userProfile, isLoggedIn, isAdmin, login, logout } = useUser(); // Add isAdmin
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -165,6 +165,18 @@ function Navbar() {
             />
             {/* Only show the username on desktop */}
             {!isMobile && <span>{userProfile?.name}</span>}
+            
+            {/* Add admin link if user is admin */}
+            {isAdmin && (
+              <Link 
+                to="/admin" 
+                className="admin-link"
+                onClick={handleNavLinkClick}
+              >
+                Admin Portal
+              </Link>
+            )}
+            
             <button onClick={handleLogout} className="logout-btn">Logout</button>
           </div>
         )}
@@ -187,6 +199,10 @@ function Navbar() {
           <Link to="/#semesters" className="nav-link" onClick={handleNavLinkClick}>Semesters</Link>
           <Link to="/about" className="nav-link" onClick={handleNavLinkClick}>About</Link>
           <Link to="#" className="nav-link" onClick={handleNavLinkClick}>Contact</Link>
+          {/* Add admin link in mobile menu if user is admin */}
+          {isAdmin && isMobile && (
+            <Link to="/admin" className="nav-link" onClick={handleNavLinkClick}>Admin Portal</Link>
+          )}
         </nav>
       </div>
     </header>

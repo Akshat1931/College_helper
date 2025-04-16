@@ -1,4 +1,4 @@
-// src/context/UserContext.js
+// src/context/UserContext.jsx - Add admin functionality
 import React, { createContext, useState, useEffect, useContext } from 'react';
 
 // Create a context for user data
@@ -8,13 +8,23 @@ export function UserProvider({ children }) {
   const [userProfile, setUserProfile] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [needsProfileCompletion, setNeedsProfileCompletion] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false); // New admin state
+  
+  // List of admin emails - you would update this with your own email
+  const adminEmails = ['your.email@example.com', 'discordakshat04@gmail.com'];
 
   // Load user data from localStorage on mount
   useEffect(() => {
     const storedProfile = localStorage.getItem('userProfile');
     if (storedProfile) {
-      setUserProfile(JSON.parse(storedProfile));
+      const profile = JSON.parse(storedProfile);
+      setUserProfile(profile);
       setIsLoggedIn(true);
+      
+      // Check if user is an admin
+      if (profile.email && adminEmails.includes(profile.email)) {
+        setIsAdmin(true);
+      }
     }
     
     // Check if user needs to complete profile
@@ -52,6 +62,13 @@ export function UserProvider({ children }) {
     setNeedsProfileCompletion(false);
     
     console.log('Profile saved to persistent storage', updatedProfile);
+    
+    // Check if user is an admin
+    if (updatedProfile.email && adminEmails.includes(updatedProfile.email)) {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
   };
 
   // Function to handle login
@@ -72,6 +89,13 @@ export function UserProvider({ children }) {
       // Since we found an existing user, they don't need to complete profile again
       localStorage.removeItem('needsProfile');
       setNeedsProfileCompletion(false);
+      
+      // Check if user is an admin
+      if (updatedUser.email && adminEmails.includes(updatedUser.email)) {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
     } else {
       console.log('Creating new user profile', userData);
       // This is a new user, save their initial data
@@ -80,6 +104,13 @@ export function UserProvider({ children }) {
       // Mark that they need to complete their profile, but don't force a redirect
       localStorage.setItem('needsProfile', 'true');
       setNeedsProfileCompletion(true);
+      
+      // Check if new user is an admin
+      if (userData.email && adminEmails.includes(userData.email)) {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
     }
     
     setIsLoggedIn(true);
@@ -90,6 +121,7 @@ export function UserProvider({ children }) {
     setUserProfile(null);
     setIsLoggedIn(false);
     setNeedsProfileCompletion(false);
+    setIsAdmin(false);
     localStorage.removeItem('userProfile');
     localStorage.removeItem('needsProfile');
   };
@@ -98,6 +130,7 @@ export function UserProvider({ children }) {
     userProfile,
     isLoggedIn,
     needsProfileCompletion,
+    isAdmin, // Add isAdmin to context value
     updateUserProfile,
     login,
     logout
