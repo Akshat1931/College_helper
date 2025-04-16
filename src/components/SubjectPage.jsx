@@ -784,6 +784,7 @@ function SubjectPage() {
         description: "Concepts of operating systems including process management, memory management, file systems, and scheduling algorithms.",
         instructor: "Dr. Thomas Lee",
         credits: 4,
+        syllabusUrl: "https://drive.google.com/file/d/1wupYNBNpFVPNeonkKvTM5RGyoA_MFRXJ/view",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_OS_FOLDER_ID#list",
         chapters: [
           {
@@ -846,6 +847,7 @@ function SubjectPage() {
         description: 'Introduction to database concepts, design, SQL, and efficient data management techniques.',
         instructor: "Prof. Maria Garcia",
         credits: 4,
+        syllabusUrl: "https://drive.google.com/file/d/1k2atwtw5sX0MuOyZl7sXIs3gQBM52ZKw/view",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
         chapters: [
           {
@@ -886,6 +888,7 @@ function SubjectPage() {
         description: "Covers advanced algorithmic strategies such as divide and conquer, dynamic programming, and greedy methods to design efficient and optimal solutions for computational problems.",
         instructor: "Prof. Maria Garcia",
         credits: 4,
+        syllabusUrl: "https://drive.google.com/file/d/1ob48DPdNU5P4ZRjZLoHVqAeojuE8c2Vs/view",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
         chapters: [
           {
@@ -988,6 +991,7 @@ function SubjectPage() {
         description: "Fundamentals of probability theory and queuing models for analyzing systems in operations research and performance optimization.",
         instructor: "Prof. Maria Garcia",
         credits: 4,
+        syllabusUrl: "https://drive.google.com/file/d/1uQyOIFlqvm5SdSdOHVIdrvDRuj9PqX8z/view",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
         chapters: [
           {
@@ -1092,9 +1096,10 @@ function SubjectPage() {
       "5": {
         name: "Social Engineering",
         code: "21PDH209T",
-        description: 'Introduction to database concepts, design, SQL, and efficient data management techniques.',
+        description: 'Study of psychological manipulation techniques used to exploit human behavior and breach security systems.',
         instructor: "Prof. Maria Garcia",
         credits: 4,
+        syllabusUrl: "https://drive.google.com/file/d/1noTe7mnsNB218cu7-RUSnnDSb6LNrh6C/view?usp=sharing",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
         chapters: [
           {
