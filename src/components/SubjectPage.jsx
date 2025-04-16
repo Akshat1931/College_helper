@@ -26,7 +26,7 @@ function SubjectPage() {
         description: "This course covers calculus, linear algebra, and analytical geometry. Students will learn fundamental mathematical concepts and problem-solving techniques.",
         instructor: "Dr. Sarah Johnson",
         credits: 4,
-        syllabusUrl: "https://drive.google.com/file/d/1KGFaWOLvt-M9YC9RmUuh8ZnpnhDxJGSy/view?usp=sharing",
+        syllabusUrl: "https://drive.google.com/file/d/1ZyuDGExbr648v6CJBlYt0ccdUA2G39TP/view?usp=sharing",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_MATH1_FOLDER_ID#list",
         chapters: [
           {
@@ -163,6 +163,7 @@ function SubjectPage() {
         description: "Covers atomic structure, chemical bonding, thermodynamics, and organic reactions essential to material and biological sciences.",
         instructor: "Dr. Robert Chen",
         credits: 4,
+        syllabusUrl: "https://drive.google.com/file/d/1ZPgiiktby6g_ds9qfPP3lUVXp9c-9d6r/view?usp=sharing",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PHYSICS1_FOLDER_ID#list",
         chapters: [
           {
@@ -291,26 +292,182 @@ function SubjectPage() {
         description: "Explores the ethical, social, and philosophical dimensions of engineering practice.",
         instructor: "Prof. Emily Wang",
         credits: 3,
+        syllabusUrl: "https://drive.google.com/file/d/1ZWBKUJSYzV7r7QIOlOpJJ4-4nlvt5Ffn/view?usp=sharing",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PROGRAMMING_FOLDER_ID#list",
         chapters: [
           {
             id: 1,
-            title: 'Chapter 1: Basics of Programming',
-            description: 'Introduction to programming concepts and C/C++ syntax',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PROGRAMMING_BASICS_URL#list"
+            title: 'Unit 1: Introduction to POE',
+            description: 'Explores the principles, purpose, and ethical dimensions that guide the practice of engineering in society',
+            driveEmbedUrl: "https://drive.google.com/file/d/1X60YLov7AHejKbbrvbyRdAxdMsj8Tzuk/view?usp=sharing"
           },
           {
             id: 2,
-            title: 'Chapter 2: Control Structures',
-            description: 'Conditional statements and loops',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_CONTROL_STRUCTURES_URL#list"
+            title: 'Unit 2: Ontology Of Engineering',
+            description: 'Examines the nature, concepts, and categories that define engineering as a discipline and profession.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1Es8WYrEVlEh6XjzzDXzBoN8T2qL6bXys/view?usp=sharing"
           },
           {
             id: 3,
-            title: 'Chapter 3: Functions & Arrays',
-            description: 'Function declaration, parameters, and array manipulation',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_FUNCTIONS_ARRAYS_URL#list"
+            title: 'Unit 3: Epistemology Of Engineering',
+            description: 'Explores the nature and scope of engineering knowledge, including how it is acquired, validated, and applied in practice.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1ZrtufKm2f0M62YHo7u7w692ADwigIQs-/view?usp=sharing"
+          },
+          {
+            id: 4,
+            title: 'Unit 4: Methodology Of Engineering',
+            description: 'Analyzes the systematic approaches, strategies, and processes used in engineering problem-solving and design.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1WnqGl1AA6hi30Zo1lmQ_6JBpYC5wrSvg/view?usp=sharing"
+          },
+          {
+            id: 5,
+            title: 'Unit 5: Axiology Of Engineering',
+            description: 'Discusses the values, ethics, and aesthetics that influence engineering decisions and professional responsibilities.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1cfyi3xnetWMm4-CcGm7DqYOqSCkEolXM/view?usp=sharing"
           }
+        ],
+        previousYearQuestions: [
+          {
+            id: 1,
+            year: 'May-2024',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1zft-bre1H1nmslfzR1jBhbAKwvjWKdIg/view?usp=sharing'
+          },
+          {
+            id: 2,
+            year: 'Jan-2024',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1Z3o3TUzcFKEvNMDrqOFSM2wSLOYGPa_8/view?usp=sharing'
+          },
+          {
+            id: 3,
+            year: 'Jan-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1eiXAEKVHVtsD_jXGWHt9Nq1lJPeJcOg8/view?usp=sharing'
+          },
+          {
+            id: 4,
+            year: 'May-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1swlPO5epgicpgqnJ-Pi_evYAku5zrOey/view?usp=sharing'
+          },
+          {
+            id: 5,
+            year: 'Dec-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1k9VzgfPEH3pa7qsLwixEk2f8xvQEE5hm/view?usp=sharing'
+          },
+          {
+            id: 6,
+            year: 'July-2023',
+            semester: 'End-sem',
+            type: 'all CTs',
+            fileUrl: 'https://drive.google.com/file/d/1oS0AzgKLfH5XdRvlSp8V7yGldpoaIXQL/view?usp=sharing'
+          },
+          {
+            id: 7,
+            year: '2022-2024',
+            semester: 'Mid-sem',
+            type: 'all MCQs and Questions',
+            fileUrl: 'https://drive.google.com/drive/folders/1um6ctu9sT624qLw5U1SD0PL1OETqmSCM'
+          },
+        ]
+      },
+      "4": {
+        name: "Introduction To Computational Biology",
+        code: "21GNH101J",
+        description: "Explores the ethical, social, and philosophical dimensions of engineering practice.",
+        instructor: "Prof. Emily Wang",
+        credits: 3,
+        syllabusUrl: "https://drive.google.com/file/d/1ZWBKUJSYzV7r7QIOlOpJJ4-4nlvt5Ffn/view?usp=sharing",
+        driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PROGRAMMING_FOLDER_ID#list",
+        chapters: [
+          {
+            id: 1,
+            title: 'Unit 1: Introduction to POE',
+            description: 'Explores the principles, purpose, and ethical dimensions that guide the practice of engineering in society',
+            driveEmbedUrl: "https://drive.google.com/file/d/1X60YLov7AHejKbbrvbyRdAxdMsj8Tzuk/view?usp=sharing"
+          },
+          {
+            id: 2,
+            title: 'Unit 2: Ontology Of Engineering',
+            description: 'Examines the nature, concepts, and categories that define engineering as a discipline and profession.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1Es8WYrEVlEh6XjzzDXzBoN8T2qL6bXys/view?usp=sharing"
+          },
+          {
+            id: 3,
+            title: 'Unit 3: Epistemology Of Engineering',
+            description: 'Explores the nature and scope of engineering knowledge, including how it is acquired, validated, and applied in practice.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1ZrtufKm2f0M62YHo7u7w692ADwigIQs-/view?usp=sharing"
+          },
+          {
+            id: 4,
+            title: 'Unit 4: Methodology Of Engineering',
+            description: 'Analyzes the systematic approaches, strategies, and processes used in engineering problem-solving and design.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1WnqGl1AA6hi30Zo1lmQ_6JBpYC5wrSvg/view?usp=sharing"
+          },
+          {
+            id: 5,
+            title: 'Unit 5: Axiology Of Engineering',
+            description: 'Discusses the values, ethics, and aesthetics that influence engineering decisions and professional responsibilities.',
+            driveEmbedUrl: "https://drive.google.com/file/d/1cfyi3xnetWMm4-CcGm7DqYOqSCkEolXM/view?usp=sharing"
+          }
+        ],
+        previousYearQuestions: [
+          {
+            id: 1,
+            year: 'May-2024',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1zft-bre1H1nmslfzR1jBhbAKwvjWKdIg/view?usp=sharing'
+          },
+          {
+            id: 2,
+            year: 'Jan-2024',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1Z3o3TUzcFKEvNMDrqOFSM2wSLOYGPa_8/view?usp=sharing'
+          },
+          {
+            id: 3,
+            year: 'Jan-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1eiXAEKVHVtsD_jXGWHt9Nq1lJPeJcOg8/view?usp=sharing'
+          },
+          {
+            id: 4,
+            year: 'May-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1swlPO5epgicpgqnJ-Pi_evYAku5zrOey/view?usp=sharing'
+          },
+          {
+            id: 5,
+            year: 'Dec-2023',
+            semester: 'End-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/file/d/1k9VzgfPEH3pa7qsLwixEk2f8xvQEE5hm/view?usp=sharing'
+          },
+          {
+            id: 6,
+            year: 'July-2023',
+            semester: 'End-sem',
+            type: 'all CTs',
+            fileUrl: 'https://drive.google.com/file/d/1oS0AzgKLfH5XdRvlSp8V7yGldpoaIXQL/view?usp=sharing'
+          },
+          {
+            id: 7,
+            year: '2022-2024',
+            semester: 'Mid-sem',
+            type: 'all MCQs and Questions',
+            fileUrl: 'https://drive.google.com/drive/folders/1um6ctu9sT624qLw5U1SD0PL1OETqmSCM'
+          },
         ]
       }
     },
