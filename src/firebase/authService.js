@@ -5,7 +5,7 @@ import {
     signOut, 
     onAuthStateChanged 
   } from 'firebase/auth';
- import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+  import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
   import { auth, db } from './config';
   
   // Collection name for users
@@ -111,7 +111,7 @@ const checkUserProfile = async (user) => {
           const userData = userSnap.data();
   
           // Check if user should be admin based on email
-          const shouldBeAdmin = ['discordakshat04@gmail.com', 'aryanawasthi1974@gmail.com', 'your.other.admin@email.com'].includes(user.email);
+          const shouldBeAdmin = ['discordakshat04@gmail.com', 'akshatvaidik@gmail.com', 'aryanawasthi1974@gmail.com', 'your.other.admin@email.com'].includes(user.email);
   
           // If admin status doesn't match expected status, update it
           if (shouldBeAdmin !== userData.isAdmin) {
