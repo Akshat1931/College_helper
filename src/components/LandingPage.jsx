@@ -2,14 +2,17 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import ProfileNotification from './ProfileNotification';
+import Footer from './Footer';
 import './LandingPage.css';
 
 function LandingPage() {
   const location = useLocation();
+  const [activeFaqId, setActiveFaqId] = useState(null);
   const [isVisible, setIsVisible] = useState({
     features: false,
     semesters: false,
     testimonials: false,
+    faq: false,
   });
 
   useEffect(() => {
@@ -20,13 +23,13 @@ function LandingPage() {
         section.scrollIntoView({ behavior: 'smooth' });
       }
     };
-
+  
     // Check if there's a hash in the URL
     if (location.hash) {
       const sectionId = location.hash.substring(1); // Remove the '#'
       scrollToSection(sectionId);
     }
-
+    
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -40,18 +43,45 @@ function LandingPage() {
       },
       { threshold: 0.1 }
     );
-
+  
     const sections = document.querySelectorAll('.observe-section');
     sections.forEach((section) => {
       observer.observe(section);
     });
-
+  
+    // FAQ toggle functionality
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      
+      question.addEventListener('click', () => {
+        // Close all other items
+        faqItems.forEach(otherItem => {
+          if (otherItem !== item) {
+            otherItem.classList.remove('active');
+          }
+        });
+        
+        // Toggle the clicked item
+        item.classList.toggle('active');
+      });
+    });
+  
+    // Single return statement for cleanup
     return () => {
+      // Clean up the intersection observer
       sections.forEach((section) => {
         observer.unobserve(section);
       });
+      
+      // Clean up FAQ event listeners
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        question?.removeEventListener('click', () => {});
+      });
     };
-  }, [location.hash]);
+  }, [location.hash]); // Only dependency is location.hash
 
   const semesters = [
     { id: 1, name: 'Semester 1', description: 'Foundation courses and introduction to core concepts' },
@@ -242,16 +272,22 @@ function LandingPage() {
         </div>
       </section>
       
-      <section className="cta-section">
+      <section id="about" className="about-section">
         <div className="container">
-          <div className="cta-content">
-            <h2>Ready to Transform Your Learning Experience?</h2>
-            <p>Join thousands of students who've already simplified their college journey</p>
-            <button className="cta-button">Get Started Today</button>
+          <div className="section-header">
+            <h2>About College Helper</h2>
+            <p>Your companion through the academic journey</p>
           </div>
-          <div className="cta-graphics"></div>
+          <div className="about-content">
+            <div className="about-text">
+              <p>College Helper was created by students, for students. We understand the challenges of academic life and have built a platform that addresses the needs of students across all semesters.</p>
+              <p>Our mission is to make college education more accessible, organized, and effective through cutting-edge technology and comprehensive resources.</p>
+            </div>
+          </div>
         </div>
       </section>
+      
+      
 
       <div className="shapes">
         <div className="shape shape-1"></div>
@@ -259,9 +295,61 @@ function LandingPage() {
         <div className="shape shape-3"></div>
         <div className="shape shape-4"></div>
       </div>
-      
+
+      <section id="faq" className={`faq-section observe-section ${isVisible.faq ? 'visible' : ''}`}>
+  <div className="container">
+    <div className="section-header">
+      <h2>Frequently Asked Questions</h2>
+      <p>Find answers to common questions about College Helper</p>
+    </div>
+    <div className="faq-container">
+      {[
+        {
+          id: 1,
+          question: "How do I access study materials for my semester?",
+          answer: "You can access all study materials by navigating to your specific semester page and selecting the subject you're interested in. All resources are organized by topic for easy access."
+        },
+        {
+          id: 2,
+          question: "Is the AI learning assistant available 24/7?",
+          answer: "Yes! Our AI learning assistant is available round the clock to help you with difficult concepts, answer questions, and provide guidance whenever you need it."
+        },
+        {
+          id: 3,
+          question: "Can I download resources for offline use?",
+          answer: "Absolutely. All PDF resources, notes, and study guides can be downloaded to your device for offline access when you don't have an internet connection."
+        },
+        {
+          id: 4,
+          question: "How often are the resources updated?",
+          answer: "We update our resources regularly to ensure they align with the latest curriculum changes. Major updates happen before each semester starts, with minor updates throughout the academic year."
+        },
+        {
+          id: 5,
+          question: "Can I contribute my notes to the platform?",
+          answer: "Yes! We encourage students to share their knowledge. You can submit your notes through the \"Contribute\" section, and after review, they'll be added to help other students."
+        }
+      ].map(faq => (
+        <div key={faq.id} className={`faq-item ${activeFaqId === faq.id ? 'active' : ''}`}>
+          <div 
+            className="faq-question"
+            onClick={() => setActiveFaqId(activeFaqId === faq.id ? null : faq.id)}
+          >
+            <h3>{faq.question}</h3>
+            <span className="faq-toggle">{activeFaqId === faq.id ? '-' : '+'}</span>
+          </div>
+          <div className="faq-answer">
+            <p>{faq.answer}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
       {/* Add the profile notification component */}
       <ProfileNotification />
+     
+     
     </div>
   );
 }
