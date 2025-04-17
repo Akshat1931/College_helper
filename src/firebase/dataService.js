@@ -122,6 +122,32 @@ import {
       return getHardCodedSubjects(parseInt(semesterId));
     }
   };
+  // Add this to your dataService.js or create a new admin function
+export const setUserAsAdmin = async (email) => {
+  try {
+    // Query to find the user with this email
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      console.error(`No user found with email: ${email}`);
+      return false;
+    }
+    
+    // Update the first matching user (should be only one)
+    const userDoc = querySnapshot.docs[0];
+    await updateDoc(doc(db, 'users', userDoc.id), {
+      isAdmin: true,
+      updatedAt: new Date()
+    });
+    
+    return true;
+  } catch (error) {
+    console.error("Error setting admin status:", error);
+    return false;
+  }
+};
   
   // Get a specific subject by ID
   export const getSubjectById = async (subjectId) => {
@@ -628,6 +654,7 @@ export const addAssignment = async (subjectId, assignmentData) => {
   export default {
     initializeSemesters,
     getAllSubjects,
+    setUserAsAdmin,
     getSubjectsBySemester,
     getSubjectById,
     addSubject,
