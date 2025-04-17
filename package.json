@@ -17,6 +17,8 @@
     "axios": "^1.8.4",
     "disqus-react": "^1.1.6",
     "dotenv": "^16.5.0",
+    "firebase": "^11.6.0",
+    "firebase-tools": "^14.2.0",
     "google-auth-library": "^9.15.1",
     "googleapis": "^148.0.0",
     "helper": "file:",

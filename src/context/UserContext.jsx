@@ -1,5 +1,11 @@
-// src/context/UserContext.jsx - Add admin functionality
+// src/context/UserContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import { 
+  signInWithGoogle, 
+  logoutUser, 
+  updateUserProfile as updateFirebaseUserProfile,
+  subscribeToAuthChanges 
+} from '../firebase/authService';
 
 // Create a context for user data
 const UserContext = createContext(null);
@@ -8,129 +14,79 @@ export function UserProvider({ children }) {
   const [userProfile, setUserProfile] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [needsProfileCompletion, setNeedsProfileCompletion] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false); // New admin state
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true); // Add loading state
   
-  // List of admin emails - you would update this with your own email
-  const adminEmails = ['your.email@example.com', 'discordakshat04@gmail.com'];
-
-  // Load user data from localStorage on mount
+  // Set up auth state listener on mount
   useEffect(() => {
-    const storedProfile = localStorage.getItem('userProfile');
-    if (storedProfile) {
-      const profile = JSON.parse(storedProfile);
-      setUserProfile(profile);
-      setIsLoggedIn(true);
-      
-      // Check if user is an admin
-      if (profile.email && adminEmails.includes(profile.email)) {
-        setIsAdmin(true);
-      }
-    }
+    const unsubscribe = subscribeToAuthChanges((authState) => {
+      setUserProfile(authState.userProfile);
+      setIsLoggedIn(authState.isLoggedIn);
+      setNeedsProfileCompletion(authState.needsProfileCompletion);
+      setIsAdmin(authState.isAdmin);
+      setLoading(false); // No longer loading once we have the initial state
+    });
     
-    // Check if user needs to complete profile
-    const needsProfile = localStorage.getItem('needsProfile') === 'true';
-    setNeedsProfileCompletion(needsProfile);
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, []);
 
-  // Function to check if a user exists in our saved profiles
-  const checkExistingUser = (googleId) => {
-    const savedProfiles = localStorage.getItem('savedUserProfiles');
-    if (!savedProfiles) return null;
-    
-    const profiles = JSON.parse(savedProfiles);
-    return profiles[googleId] || null;
-  };
-
   // Function to update user profile data
-  const updateUserProfile = (newProfileData) => {
+  const updateUserProfile = async (newProfileData) => {
     if (!userProfile) return;
     
-    const updatedProfile = { ...userProfile, ...newProfileData, isNewUser: false };
-    setUserProfile(updatedProfile);
-    localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
-    
-    // Also save to our "database" of saved profiles
-    const existingUserData = localStorage.getItem('savedUserProfiles');
-    const savedProfiles = existingUserData ? JSON.parse(existingUserData) : {};
-    
-    // Store under the user's Google ID
-    savedProfiles[userProfile.id] = updatedProfile;
-    localStorage.setItem('savedUserProfiles', JSON.stringify(savedProfiles));
-    
-    // Clear the needsProfile flag
-    localStorage.removeItem('needsProfile');
-    setNeedsProfileCompletion(false);
-    
-    console.log('Profile saved to persistent storage', updatedProfile);
-    
-    // Check if user is an admin
-    if (updatedProfile.email && adminEmails.includes(updatedProfile.email)) {
-      setIsAdmin(true);
-    } else {
-      setIsAdmin(false);
+    try {
+      // Update profile in Firebase
+      const updatedProfile = await updateFirebaseUserProfile(
+        userProfile.id,
+        newProfileData
+      );
+      
+      // Update local state
+      setUserProfile(updatedProfile);
+      setNeedsProfileCompletion(false);
+      
+      return updatedProfile;
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      throw error;
     }
   };
 
-  // Function to handle login
-  const login = (userData) => {
-    // Check if this user has already created a profile before
-    const existingUser = checkExistingUser(userData.id);
-    
-    if (existingUser) {
-      console.log('Found existing user profile', existingUser);
-      // Use the existing profile data but update with fresh data from Google
-      const updatedUser = {
-        ...existingUser,
-        picture: userData.picture || existingUser.picture,
-        email: userData.email || existingUser.email
-      };
-      setUserProfile(updatedUser);
-      localStorage.setItem('userProfile', JSON.stringify(updatedUser));
-      // Since we found an existing user, they don't need to complete profile again
-      localStorage.removeItem('needsProfile');
-      setNeedsProfileCompletion(false);
+  // Function to handle login with Google
+  const login = async () => {
+    try {
+      const { user, error } = await signInWithGoogle();
       
-      // Check if user is an admin
-      if (updatedUser.email && adminEmails.includes(updatedUser.email)) {
-        setIsAdmin(true);
-      } else {
-        setIsAdmin(false);
+      if (error) {
+        console.error("Login failed:", error);
+        return { success: false, error };
       }
-    } else {
-      console.log('Creating new user profile', userData);
-      // This is a new user, save their initial data
-      setUserProfile(userData);
-      localStorage.setItem('userProfile', JSON.stringify(userData));
-      // Mark that they need to complete their profile, but don't force a redirect
-      localStorage.setItem('needsProfile', 'true');
-      setNeedsProfileCompletion(true);
       
-      // Check if new user is an admin
-      if (userData.email && adminEmails.includes(userData.email)) {
-        setIsAdmin(true);
-      } else {
-        setIsAdmin(false);
-      }
+      return { success: true, user };
+    } catch (error) {
+      console.error("Login error:", error);
+      return { success: false, error };
     }
-    
-    setIsLoggedIn(true);
   };
 
   // Function to handle logout
-  const logout = () => {
-    setUserProfile(null);
-    setIsLoggedIn(false);
-    setNeedsProfileCompletion(false);
-    setIsAdmin(false);
-    localStorage.removeItem('userProfile');
-    localStorage.removeItem('needsProfile');
+  const logout = async () => {
+    try {
+      await logoutUser();
+      return { success: true };
+    } catch (error) {
+      console.error("Logout error:", error);
+      return { success: false, error };
+    }
   };
 
   const contextValue = {
     userProfile,
     isLoggedIn,
     needsProfileCompletion,
-    isAdmin, // Add isAdmin to context value
+    isAdmin,
+    loading,
     updateUserProfile,
     login,
     logout

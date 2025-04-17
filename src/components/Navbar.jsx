@@ -1,7 +1,7 @@
 // src/components/Navbar.jsx - Add admin link to navbar
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+
 import { useUser } from '../context/UserContext';
 import CustomGoogleButton from './CustomGoogleButton';
 import './Navbar.css';
@@ -10,7 +10,7 @@ function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { userProfile, isLoggedIn, isAdmin, login, logout } = useUser(); // Add isAdmin
+  const { userProfile, isLoggedIn, isAdmin, logout } = useUser(); // Add isAdmin
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -41,42 +41,8 @@ function Navbar() {
     };
   }, [mobileMenuOpen]);
 
-  const generateGuestName = () => {
-    const adjectives = ['Clever', 'Bright', 'Sharp', 'Quick', 'Eager'];
-    const nouns = ['Student', 'Learner', 'Scholar', 'Researcher', 'Innovator'];
-    const randomNumber = Math.floor(1000 + Math.random() * 9000);
-    
-    const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-    const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
-    
-    return `Guest${randomAdjective}${randomNoun}${randomNumber}`;
-  };
-
-  const onGoogleLoginSuccess = (credentialResponse) => {
-    const decoded = jwtDecode(credentialResponse.credential);
-    
-    // Create user data object from Google response
-    const userData = {
-      id: decoded.sub,  // Google's unique user ID - essential for profile persistence
-      name: decoded.name || generateGuestName(),
-      email: decoded.email,
-      picture: decoded.picture || '/default-avatar.png',
-      originalName: decoded.name
-    };
-    
-    // The login function will check if this user exists already
-    login(userData);
-    
-    // Add a notification for new users instead of automatic redirect
-    if (localStorage.getItem('needsProfile') === 'true') {
-      // You could show a toast notification here or handle this differently
-      console.log('New user - profile completion recommended');
-    }
-  };
-
-  const onGoogleLoginFailure = (error) => {
-    console.log('Login Failed:', error);
-  };
+ 
+ // Find this section
 
   const handleLogout = () => {
     logout(); // Use the context logout function
@@ -148,11 +114,7 @@ function Navbar() {
         
         {!isLoggedIn ? (
           <div className="auth-buttons">
-            <CustomGoogleButton 
-              onSuccess={onGoogleLoginSuccess}
-              onError={onGoogleLoginFailure}
-              isMobile={isMobile} // Pass isMobile state to the button
-            />
+            <CustomGoogleButton isMobile={isMobile} />
           </div>
         ) : (
           <div className="user-profile">

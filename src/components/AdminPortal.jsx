@@ -1,17 +1,27 @@
+// src/components/AdminPortal.jsx - Updated to use Firebase
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import './AdminPortal.css';
 
+// Import Firebase services
+import {
+  getAllSubjects,
+  getAllSemesters,
+  addSubject,
+  deleteSubject,
+  addChapter,
+  addVideoLecture,
+  addPreviousYearQuestion,
+  addAssignment,
+  deleteResourceFromSubject
+} from '../firebase/dataService';
+
 const AdminPortal = () => {
-  const { userProfile, isLoggedIn } = useUser();
+  const { userProfile, isLoggedIn, isAdmin, loading } = useUser();
   const [activeTab, setActiveTab] = useState('subjects');
   const [subjects, setSubjects] = useState([]);
   const [semesters, setSemesters] = useState([]);
-  const [loading, setLoading] = useState(true);
-  
-  // Update this with your actual Google login email
-  const adminUsers = ['admin@example.com', 'discordakshat04@gmail.com', 'akshat.baranwal@srmist.edu.in'];
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Form states
   const [newSubject, setNewSubject] = useState({
@@ -41,90 +51,67 @@ const AdminPortal = () => {
     semesterId: 1
   });
 
-  // Check if current user is admin - modified to be less strict
+  // Load data
   useEffect(() => {
-    if (isLoggedIn && userProfile && userProfile.email) {
-      // Debug logs - useful for troubleshooting
-      console.log("Current user:", userProfile);
-      console.log("User email:", userProfile.email);
-      console.log("Admin emails:", adminUsers);
-      
-      // Case-insensitive check
-      const userEmail = userProfile.email.toLowerCase();
-      const isUserAdmin = adminUsers.some(email => email.toLowerCase() === userEmail);
-      console.log("Is admin check result:", isUserAdmin);
-      
-      setIsAdmin(isUserAdmin);
-    } else {
-      setIsAdmin(false);
-    }
-  }, [userProfile, isLoggedIn, adminUsers]);
-
-  // Force admin access for testing if needed
-  // Uncomment this block if you still have issues
-  /*
-  useEffect(() => {
-    setIsAdmin(true);
-    console.log("Forcing admin access for testing");
-  }, []);
-  */
-
-  // Fetch data (In a real app, this would be from your backend)
-  useEffect(() => {
-    // Simulate API call to get subjects and semesters
-    setTimeout(() => {
-      // For demo, we'll use local storage
-      const storedSubjects = localStorage.getItem('adminSubjects');
-      if (storedSubjects) {
-        setSubjects(JSON.parse(storedSubjects));
+    // Wait for auth to be ready
+    if (loading) return;
+    
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Load semesters
+        const semesterList = await getAllSemesters();
+        setSemesters(semesterList);
+        
+        // Load subjects
+        const allSubjects = await getAllSubjects();
+        setSubjects(allSubjects);
+        
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error loading admin data:", error);
+        setIsLoading(false);
       }
-      
-      // Create semester structure if not exists
-      const semesterList = [];
-      for (let i = 1; i <= 8; i++) {
-        semesterList.push({
-          id: i,
-          name: `Semester ${i}`,
-          description: `Resources for Semester ${i}`
-        });
-      }
-      setSemesters(semesterList);
-      setLoading(false);
-    }, 1000);
-  }, []);
-
-  // Save data
-  useEffect(() => {
-    if (subjects.length > 0) {
-      localStorage.setItem('adminSubjects', JSON.stringify(subjects));
-    }
-  }, [subjects]);
-
-  const handleSubjectSubmit = (e) => {
-    e.preventDefault();
-    const subjectId = Date.now().toString();
-    const newSubjectData = {
-      ...newSubject,
-      id: subjectId,
-      chapters: [],
-      previousYearQuestions: [],
-      assignments: [],
-      videoLectures: []
     };
     
-    setSubjects([...subjects, newSubjectData]);
-    setNewSubject({
-      name: '',
-      code: '',
-      description: '',
-      instructor: '',
-      credits: 4,
-      semesterId: 1,
-      syllabusUrl: ''
-    });
+    loadData();
+  }, [loading]);
+  
+  // Handle subject submission
+  const handleSubjectSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      setIsLoading(true);
+      
+      // Add the new subject to Firebase
+      const newSubjectData = await addSubject(newSubject);
+      
+      // Update local state
+      setSubjects([...subjects, newSubjectData]);
+      
+      // Reset form
+      setNewSubject({
+        name: '',
+        code: '',
+        description: '',
+        instructor: '',
+        credits: 4,
+        semesterId: 1,
+        syllabusUrl: ''
+      });
+      
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error adding subject:", error);
+      alert("Failed to add subject. Please try again.");
+      setIsLoading(false);
+    }
   };
 
-  const handleChapterSubmit = (e) => {
+  // Handle chapter submission
+  const handleChapterSubmit = async (e) => {
     e.preventDefault();
     
     if (!newChapter.subjectId) {
@@ -132,32 +119,116 @@ const AdminPortal = () => {
       return;
     }
     
-    const updatedSubjects = subjects.map(subject => {
-      if (subject.id === newChapter.subjectId) {
-        const chapterId = Date.now().toString();
-        return {
-          ...subject,
-          chapters: [...(subject.chapters || []), {
-            id: chapterId,
-            title: newChapter.title,
-            description: newChapter.description,
-            driveEmbedUrl: newChapter.driveEmbedUrl
-          }]
-        };
-      }
-      return subject;
-    });
-    
-    setSubjects(updatedSubjects);
-    setNewChapter({
-      title: '',
-      description: '',
-      driveEmbedUrl: '',
-      subjectId: newChapter.subjectId,
-      semesterId: newChapter.semesterId
-    });
+    try {
+      setIsLoading(true);
+      
+      // Add the chapter to the subject in Firebase
+      const updatedSubject = await addChapter(newChapter.subjectId, {
+        title: newChapter.title,
+        description: newChapter.description,
+        driveEmbedUrl: newChapter.driveEmbedUrl
+      });
+      
+      // Update the subjects array with the updated subject
+      const updatedSubjects = subjects.map(subject => 
+        subject.id === newChapter.subjectId ? updatedSubject : subject
+      );
+      
+      setSubjects(updatedSubjects);
+      
+      // Reset form but keep the selected subject and semester
+      setNewChapter({
+        title: '',
+        description: '',
+        driveEmbedUrl: '',
+        subjectId: newChapter.subjectId,
+        semesterId: newChapter.semesterId
+      });
+      
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error adding chapter:", error);
+      alert("Failed to add chapter. Please try again.");
+      setIsLoading(false);
+    }
   };
-  const deleteSubject = (subjectId) => {
+  
+  // Handle resource submission (videos, pyqs, assignments)
+  const handleResourceSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!newResource.subjectId) {
+      alert('Please select a subject');
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      
+      let updatedSubject;
+      
+      // Add different resource types
+      switch(newResource.type) {
+        case 'video':
+          updatedSubject = await addVideoLecture(newResource.subjectId, {
+            title: newResource.title,
+            description: newResource.description,
+            url: newResource.url,
+            iframe: `<iframe width="1057" height="595" src="${newResource.url}" title="${newResource.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`
+          });
+          break;
+          
+        case 'pyq':
+          updatedSubject = await addPreviousYearQuestion(newResource.subjectId, {
+            title: newResource.title,
+            description: newResource.description,
+            fileUrl: newResource.url,
+            year: newResource.title.split(' ')[0] || 'Unknown',
+            semester: 'End-sem',
+            type: 'all units'
+          });
+          break;
+          
+        case 'assignment':
+          updatedSubject = await addAssignment(newResource.subjectId, {
+            title: newResource.title,
+            description: newResource.description,
+            fileUrl: newResource.url,
+            deadline: 'TBD'
+          });
+          break;
+          
+        default:
+          throw new Error(`Invalid resource type: ${newResource.type}`);
+      }
+      
+      // Update the subjects array with the updated subject
+      const updatedSubjects = subjects.map(subject => 
+        subject.id === newResource.subjectId ? updatedSubject : subject
+      );
+      
+      setSubjects(updatedSubjects);
+      
+      // Reset form but keep the selected subject and semester
+      setNewResource({
+        title: '',
+        type: newResource.type,
+        url: '',
+        description: '',
+        subjectId: newResource.subjectId,
+        semesterId: newResource.semesterId
+      });
+      
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error adding resource:", error);
+      alert("Failed to add resource. Please try again.");
+      setIsLoading(false);
+    }
+  };
+
+  // Delete subject
+  const deleteSubjectHandler = async (subjectId) => {
     const confirmDelete = window.confirm(
       "Are you absolutely sure you want to delete this subject?\n\n" +
       "This action will permanently remove the subject and all its associated resources:\n" +
@@ -169,171 +240,69 @@ const AdminPortal = () => {
     );
   
     if (confirmDelete) {
-      const updatedSubjects = subjects.filter(subject => subject.id !== subjectId);
-      setSubjects(updatedSubjects);
-      alert('Subject has been deleted successfully.');
+      try {
+        setIsLoading(true);
+        
+        // Delete from Firebase
+        await deleteSubject(subjectId);
+        
+        // Update local state
+        const updatedSubjects = subjects.filter(subject => subject.id !== subjectId);
+        setSubjects(updatedSubjects);
+        
+        setIsLoading(false);
+        alert('Subject has been deleted successfully.');
+      } catch (error) {
+        console.error("Error deleting subject:", error);
+        alert("Failed to delete subject. Please try again.");
+        setIsLoading(false);
+      }
     }
   };
-  // Method to delete a chapter
-const deleteChapter = (subjectId, chapterId) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this chapter?\n\n" +
-    "This action cannot be undone."
-  );
-
-  if (confirmDelete) {
-    const updatedSubjects = subjects.map(subject => {
-      if (subject.id === subjectId) {
-        return {
-          ...subject,
-          chapters: subject.chapters.filter(chapter => chapter.id !== chapterId)
-        };
-      }
-      return subject;
-    });
-
-    setSubjects(updatedSubjects);
-    alert('Chapter deleted successfully.');
-  }
-};
-
-// Method to delete a video lecture
-const deleteVideoLecture = (subjectId, videoId) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this video lecture?\n\n" +
-    "This action cannot be undone."
-  );
-
-  if (confirmDelete) {
-    const updatedSubjects = subjects.map(subject => {
-      if (subject.id === subjectId) {
-        return {
-          ...subject,
-          videoLectures: subject.videoLectures.filter(video => video.id !== videoId)
-        };
-      }
-      return subject;
-    });
-
-    setSubjects(updatedSubjects);
-    alert('Video lecture deleted successfully.');
-  }
-};
-
-// Method to delete an assignment
-const deleteAssignment = (subjectId, assignmentId) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this assignment?\n\n" +
-    "This action cannot be undone."
-  );
-
-  if (confirmDelete) {
-    const updatedSubjects = subjects.map(subject => {
-      if (subject.id === subjectId) {
-        return {
-          ...subject,
-          assignments: subject.assignments.filter(assignment => assignment.id !== assignmentId)
-        };
-      }
-      return subject;
-    });
-
-    setSubjects(updatedSubjects);
-    alert('Assignment deleted successfully.');
-  }
-};
-
-// Method to delete a previous year question
-const deletePreviousYearQuestion = (subjectId, pyqId) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this previous year question?\n\n" +
-    "This action cannot be undone."
-  );
-
-  if (confirmDelete) {
-    const updatedSubjects = subjects.map(subject => {
-      if (subject.id === subjectId) {
-        return {
-          ...subject,
-          previousYearQuestions: subject.previousYearQuestions.filter(pyq => pyq.id !== pyqId)
-        };
-      }
-      return subject;
-    });
-
-    setSubjects(updatedSubjects);
-    alert('Previous year question deleted successfully.');
-  }
-};
-
-  const handleResourceSubmit = (e) => {
-    e.preventDefault();
+  
+  // Delete a resource (chapter, video, assignment, pyq)
+  const deleteResourceHandler = async (subjectId, resourceType, resourceId) => {
+    const resourceTypeName = 
+      resourceType === 'chapter' ? 'chapter' :
+      resourceType === 'video' ? 'video lecture' :
+      resourceType === 'pyq' ? 'previous year question' :
+      'assignment';
     
-    if (!newResource.subjectId) {
-      alert('Please select a subject');
-      return;
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete this ${resourceTypeName}?\n\n` +
+      "This action cannot be undone."
+    );
+  
+    if (confirmDelete) {
+      try {
+        setIsLoading(true);
+        
+        // Delete from Firebase
+        const updatedSubject = await deleteResourceFromSubject(subjectId, resourceType, resourceId);
+        
+        // Update local state
+        const updatedSubjects = subjects.map(subject => 
+          subject.id === subjectId ? updatedSubject : subject
+        );
+        
+        setSubjects(updatedSubjects);
+        
+        setIsLoading(false);
+        alert(`${resourceTypeName.charAt(0).toUpperCase() + resourceTypeName.slice(1)} deleted successfully.`);
+      } catch (error) {
+        console.error(`Error deleting ${resourceTypeName}:`, error);
+        alert(`Failed to delete ${resourceTypeName}. Please try again.`);
+        setIsLoading(false);
+      }
     }
-    
-    const resourceId = Date.now().toString();
-    const resourceItem = {
-      id: resourceId,
-      title: newResource.title,
-      description: newResource.description,
-      url: newResource.url
-    };
-    
-    const updatedSubjects = subjects.map(subject => {
-      if (subject.id === newResource.subjectId) {
-        if (newResource.type === 'video') {
-          return {
-            ...subject,
-            videoLectures: [...(subject.videoLectures || []), {
-              ...resourceItem,
-              iframe: `<iframe width="1057" height="595" src="${newResource.url}" title="${newResource.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`
-            }]
-          };
-        } else if (newResource.type === 'pyq') {
-          return {
-            ...subject,
-            previousYearQuestions: [...(subject.previousYearQuestions || []), {
-              ...resourceItem,
-              year: newResource.title.split(' ')[0] || 'Unknown',
-              semester: 'End-sem',
-              type: 'all units',
-              fileUrl: newResource.url
-            }]
-          };
-        } else if (newResource.type === 'assignment') {
-          return {
-            ...subject,
-            assignments: [...(subject.assignments || []), {
-              ...resourceItem,
-              deadline: 'TBD',
-              fileUrl: newResource.url
-            }]
-          };
-        }
-      }
-      return subject;
-    });
-    
-    setSubjects(updatedSubjects);
-    setNewResource({
-      title: '',
-      type: 'video',
-      url: '',
-      description: '',
-      subjectId: newResource.subjectId,
-      semesterId: newResource.semesterId
-    });
   };
-
+  
   // Filter subjects by semester
   const getSubjectsBySemester = (semId) => {
     return subjects.filter(subject => subject.semesterId === semId);
   };
 
-  if (loading) {
+  if (loading || isLoading) {
     return (
       <div className="admin-loading">
         <div className="admin-loading-spinner"></div>
@@ -655,94 +624,114 @@ const deletePreviousYearQuestion = (subjectId, pyqId) => {
           )}
           
           {activeTab === 'view' && (
-  <div className="admin-section">
-    <h2>View Subjects Data</h2>
-    <div className="admin-data-view">
-      {semesters.map(semester => (
-        <div key={semester.id} id={`semester-${semester.id}`} className="semester-data">
-          <h3>{semester.name}</h3>
-          {getSubjectsBySemester(semester.id).map(subject => (
-            <div key={subject.id} className="subject-item">
-              <div className="subject-item-header">
-                <h4>{subject.name} ({subject.code})</h4>
-                <button 
-                  className="delete-btn" 
-                  onClick={() => deleteSubject(subject.id)}
-                >
-                  Delete Subject
-                </button>
-              </div>
-              
-              {/* Chapters Section */}
-              <div className="subject-chapters">
-                <h5>Chapters</h5>
-                {subject.chapters && subject.chapters.map(chapter => (
-                  <div key={chapter.id} className="chapter-item">
-                    <span>{chapter.title}</span>
-                    <button 
-                      className="delete-btn" 
-                      onClick={() => deleteChapter(subject.id, chapter.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                ))}
-              </div>
-              
-              {/* Video Lectures Section */}
-              <div className="subject-videos">
-                <h5>Video Lectures</h5>
-                {subject.videoLectures && subject.videoLectures.map(video => (
-                  <div key={video.id} className="video-item">
-                    <span>{video.title}</span>
-                    <button 
-                      className="delete-btn" 
-                      onClick={() => deleteVideoLecture(subject.id, video.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                ))}
-              </div>
-              
-              {/* Assignments Section */}
-              <div className="subject-assignments">
-                <h5>Assignments</h5>
-                {subject.assignments && subject.assignments.map(assignment => (
-                  <div key={assignment.id} className="assignment-item">
-                    <span>{assignment.title}</span>
-                    <button 
-                      className="delete-btn" 
-                      onClick={() => deleteAssignment(subject.id, assignment.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                ))}
-              </div>
-              
-              {/* Previous Year Questions Section */}
-              <div className="subject-pyq">
-                <h5>Previous Year Questions</h5>
-                {subject.previousYearQuestions && subject.previousYearQuestions.map(pyq => (
-                  <div key={pyq.id} className="pyq-item">
-                    <span>{pyq.year} {pyq.semester}</span>
-                    <button 
-                      className="delete-btn" 
-                      onClick={() => deletePreviousYearQuestion(subject.id, pyq.id)}
-                    >
-                      Delete
-                    </button>
+            <div className="admin-section">
+              <h2>View Subjects Data</h2>
+              <div className="admin-data-view">
+                {semesters.map(semester => (
+                  <div key={semester.id} id={`semester-${semester.id}`} className="semester-data">
+                    <h3>{semester.name}</h3>
+                    {getSubjectsBySemester(semester.id).length > 0 ? (
+                      getSubjectsBySemester(semester.id).map(subject => (
+                        <div key={subject.id} className="subject-item">
+                          <div className="subject-item-header">
+                            <h4>{subject.name} ({subject.code})</h4>
+                            <button 
+                              className="delete-btn" 
+                              onClick={() => deleteSubjectHandler(subject.id)}
+                            >
+                              Delete Subject
+                            </button>
+                          </div>
+                          
+                          {/* Chapters Section */}
+                          <div className="subject-chapters">
+                            <h5>Chapters</h5>
+                            {subject.chapters && subject.chapters.length > 0 ? (
+                              subject.chapters.map(chapter => (
+                                <div key={chapter.id} className="chapter-item">
+                                  <span>{chapter.title}</span>
+                                  <button 
+                                    className="delete-btn" 
+                                    onClick={() => deleteResourceHandler(subject.id, 'chapter', chapter.id)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              ))
+                            ) : (
+                              <p>No chapters added yet</p>
+                            )}
+                          </div>
+                          
+                          {/* Video Lectures Section */}
+                          <div className="subject-videos">
+                            <h5>Video Lectures</h5>
+                            {subject.videoLectures && subject.videoLectures.length > 0 ? (
+                              subject.videoLectures.map(video => (
+                                <div key={video.id} className="video-item">
+                                  <span>{video.title}</span>
+                                  <button 
+                                    className="delete-btn" 
+                                    onClick={() => deleteResourceHandler(subject.id, 'video', video.id)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              ))
+                            ) : (
+                              <p>No video lectures added yet</p>
+                            )}
+                          </div>
+                          
+                          {/* Assignments Section */}
+                          <div className="subject-assignments">
+                            <h5>Assignments</h5>
+                            {subject.assignments && subject.assignments.length > 0 ? (
+                              subject.assignments.map(assignment => (
+                                <div key={assignment.id} className="assignment-item">
+                                  <span>{assignment.title}</span>
+                                  <button 
+                                    className="delete-btn" 
+                                    onClick={() => deleteResourceHandler(subject.id, 'assignment', assignment.id)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              ))
+                            ) : (
+                              <p>No assignments added yet</p>
+                            )}
+                          </div>
+                          
+                          {/* Previous Year Questions Section */}
+                          <div className="subject-pyq">
+                            <h5>Previous Year Questions</h5>
+                            {subject.previousYearQuestions && subject.previousYearQuestions.length > 0 ? (
+                              subject.previousYearQuestions.map(pyq => (
+                                <div key={pyq.id} className="pyq-item">
+                                  <span>{pyq.title || `${pyq.year} ${pyq.semester}`}</span>
+                                  <button 
+                                    className="delete-btn" 
+                                    onClick={() => deleteResourceHandler(subject.id, 'pyq', pyq.id)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              ))
+                            ) : (
+                              <p>No previous year questions added yet</p>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No subjects added for this semester yet</p>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+          )}
         </div>
       </div>
     </div>
