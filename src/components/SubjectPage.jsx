@@ -1723,24 +1723,29 @@ return (
             ← Back to Semester {semId}
           </Link>
           <div className="subject-headline">
-            <h1>{currentSubject?.name}</h1>
-            <div className="subject-meta">
-              <span className="subject-code">{currentSubject?.code || 'No Code'}</span>
-              <span className="subject-instructor">Instructor: {currentSubject?.instructor || 'Not assigned'}</span>
-              <span className="subject-credits">{currentSubject?.credits || 0} Credits</span>
-              {currentSubject?.syllabusUrl && (
-                <a 
-                  href={currentSubject.syllabusUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="syllabus-btn"
-                >
-                  <span className="syllabus-icon"></span>
-                  View Syllabus
-                </a>
-              )}
-            </div>
-          </div>
+  <div style={{ display: 'flex', alignItems: 'center' }}>
+    <div className="subject-icon-display">
+      {currentSubject?.icon || '📚'}
+    </div>
+    <h1>{currentSubject?.name}</h1>
+  </div>
+  <div className="subject-meta">
+    <span className="subject-code">{currentSubject?.code || 'No Code'}</span>
+    <span className="subject-instructor">Instructor: {currentSubject?.instructor || 'Not assigned'}</span>
+    <span className="subject-credits">{currentSubject?.credits || 0} Credits</span>
+    {currentSubject?.syllabusUrl && (
+      <a 
+        href={currentSubject.syllabusUrl} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="syllabus-btn"
+      >
+        <span className="syllabus-icon"></span>
+        View Syllabus
+      </a>
+    )}
+  </div>
+</div>
           <p className="subject-description">{currentSubject?.description || 'No description available'}</p>
         </div>
       </div>
