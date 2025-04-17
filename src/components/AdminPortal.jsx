@@ -154,27 +154,74 @@ const AdminPortal = () => {
   };
   
   // Handle resource submission (videos, pyqs, assignments)
+  // Enhanced resource submission handlers with detailed error logging
   const handleResourceSubmit = async (e) => {
     e.preventDefault();
     
+    // Early validation checks
     if (!newResource.subjectId) {
       alert('Please select a subject');
       return;
+    }
+  
+    // Validate all required fields
+    const requiredFields = ['title', 'url', 'description', 'type'];
+    for (let field of requiredFields) {
+      if (!newResource[field] || newResource[field].trim() === '') {
+        alert(`Please fill in the ${field} field`);
+        return;
+      }
     }
     
     try {
       setIsLoading(true);
       
-      let updatedSubject;
+      // Comprehensive logging for debugging
+      console.group('🔍 Resource Submission Diagnostics');
+      console.log('Admin Status:', { 
+        isLoggedIn: isLoggedIn, 
+        isAdmin: isAdmin,
+        userEmail: userProfile?.email 
+      });
+      console.log('Resource Details:', { 
+        type: newResource.type,
+        subjectId: newResource.subjectId,
+        title: newResource.title, 
+        description: newResource.description, 
+        url: newResource.url 
+      });
       
-      // Add different resource types
+      // Enhanced URL validation
+      const validateUrl = (url, type) => {
+        if (!url) {
+          throw new Error(`${type} URL is required`);
+        }
+        
+        // Specific URL validation rules
+        const validationRules = {
+          'video': /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/,
+          'pyq': /^(https?:\/\/)?(drive\.google\.com)\/.+$/,
+          'assignment': /^(https?:\/\/)?(drive\.google\.com)\/.+$/
+        };
+        
+        const regex = validationRules[type];
+        if (regex && !regex.test(url)) {
+          throw new Error(`Invalid ${type} URL format`);
+        }
+      };
+      
+      // Validate URL 
+      validateUrl(newResource.url, newResource.type);
+      
+      // Resource addition logic
+      let updatedSubject;
       switch(newResource.type) {
         case 'video':
           updatedSubject = await addVideoLecture(newResource.subjectId, {
             title: newResource.title,
             description: newResource.description,
             url: newResource.url,
-            iframe: `<iframe width="1057" height="595" src="${newResource.url}" title="${newResource.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`
+            iframe: `<iframe width="1057" height="595" src="${newResource.url}" title="${newResource.title}" frameborder="0" allowfullscreen></iframe>`
           });
           break;
           
@@ -202,14 +249,17 @@ const AdminPortal = () => {
           throw new Error(`Invalid resource type: ${newResource.type}`);
       }
       
-      // Update the subjects array with the updated subject
+      console.log('Updated Subject:', updatedSubject);
+      console.groupEnd();
+      
+      // Update subjects state
       const updatedSubjects = subjects.map(subject => 
         subject.id === newResource.subjectId ? updatedSubject : subject
       );
       
       setSubjects(updatedSubjects);
       
-      // Reset form but keep the selected subject and semester
+      // Reset form, maintaining context
       setNewResource({
         title: '',
         type: newResource.type,
@@ -220,9 +270,20 @@ const AdminPortal = () => {
       });
       
       setIsLoading(false);
+      alert('🎉 Resource added successfully!');
     } catch (error) {
-      console.error("Error adding resource:", error);
-      alert("Failed to add resource. Please try again.");
+      console.error('❌ Resource Addition Error:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+      
+      // Detailed error handling
+      const errorMessage = error.message.includes('URL') 
+        ? `URL Error: ${error.message}` 
+        : 'Failed to add resource. Please check your inputs and try again.';
+      
+      alert(errorMessage);
       setIsLoading(false);
     }
   };

@@ -211,73 +211,80 @@ import {
   };
   
   // Add chapter to subject
-  export const addChapter = async (subjectId, chapterData) => {
+  // Add chapter to subject
+export const addChapter = async (subjectId, chapterData) => {
     try {
       const subjectRef = doc(db, SUBJECTS_COLLECTION, subjectId);
       const subjectDoc = await getDoc(subjectRef);
-      
+  
       if (!subjectDoc.exists()) {
         throw new Error(`Subject with ID ${subjectId} not found`);
       }
-      
-      // Generate unique ID for the chapter
-      const chapterId = new Date().getTime().toString();
-      const newChapter = {
-        ...chapterData,
-        id: chapterId,
-        createdAt: serverTimestamp()
-      };
-      
-      // Get current chapters array or empty array if it doesn't exist
+  
+      // Ensure chapters array exists
       const subject = subjectDoc.data();
       const chapters = subject.chapters || [];
-      
-      // Update the subject with the new chapter
+  
+      // Prepare new chapter - REMOVE serverTimestamp() from individual chapter
+      const newChapter = {
+        ...chapterData,
+        id: new Date().getTime().toString() // Removed createdAt: serverTimestamp()
+      };
+  
+      // Update document, ensuring all fields exist
       await updateDoc(subjectRef, {
         chapters: [...chapters, newChapter],
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp()  // Keep this at the document level
       });
-      
-      // Get the updated subject
+  
+      // Fetch updated document
       const updatedDoc = await getDoc(subjectRef);
       return {
         ...updatedDoc.data(),
         id: updatedDoc.id
       };
     } catch (error) {
-      console.error(`Error adding chapter to subject ${subjectId}:`, error);
+      console.error('Detailed Chapter Addition Error:', {
+        subjectId,
+        chapterData,
+        errorMessage: error.message,
+        errorStack: error.stack
+      });
       throw error;
     }
   };
   
   // Add video lecture to subject
-  export const addVideoLecture = async (subjectId, videoData) => {
+  // Add video lecture to subject
+export const addVideoLecture = async (subjectId, videoData) => {
     try {
       const subjectRef = doc(db, SUBJECTS_COLLECTION, subjectId);
       const subjectDoc = await getDoc(subjectRef);
-      
+  
       if (!subjectDoc.exists()) {
         throw new Error(`Subject with ID ${subjectId} not found`);
       }
-      
+  
       // Generate unique ID for the video
       const videoId = new Date().getTime().toString();
+  
+      // Remove serverTimestamp from individual video
       const newVideo = {
         ...videoData,
-        id: videoId,
-        createdAt: serverTimestamp()
+        id: videoId
+        // Removed createdAt: serverTimestamp()
       };
-      
-      // Get current videos array or empty array if it doesn't exist
+  
+      // Get current video lectures array or empty array if it doesn't exist
       const subject = subjectDoc.data();
       const videos = subject.videoLectures || [];
-      
+  
       // Update the subject with the new video
       await updateDoc(subjectRef, {
-        videoLectures: [...videos, newVideo],
-        updatedAt: serverTimestamp()
+        videoLectures: [...videos, newVideo], // Add the new video to the array
+        updatedAt: serverTimestamp()  // Keep this at the document level
       });
-      
+  
       // Get the updated subject
       const updatedDoc = await getDoc(subjectRef);
       return {
@@ -290,34 +297,38 @@ import {
     }
   };
   
+  
   // Add previous year question to subject
-  export const addPreviousYearQuestion = async (subjectId, pyqData) => {
+  // Add previous year question to subject
+export const addPreviousYearQuestion = async (subjectId, pyqData) => {
     try {
       const subjectRef = doc(db, SUBJECTS_COLLECTION, subjectId);
       const subjectDoc = await getDoc(subjectRef);
-      
+  
       if (!subjectDoc.exists()) {
         throw new Error(`Subject with ID ${subjectId} not found`);
       }
-      
+  
       // Generate unique ID for the PYQ
       const pyqId = new Date().getTime().toString();
+  
+      // Remove serverTimestamp from individual PYQ
       const newPYQ = {
         ...pyqData,
-        id: pyqId,
-        createdAt: serverTimestamp()
+        id: pyqId
+        // Removed createdAt: serverTimestamp()
       };
-      
+  
       // Get current PYQs array or empty array if it doesn't exist
       const subject = subjectDoc.data();
       const pyqs = subject.previousYearQuestions || [];
-      
+  
       // Update the subject with the new PYQ
       await updateDoc(subjectRef, {
-        previousYearQuestions: [...pyqs, newPYQ],
-        updatedAt: serverTimestamp()
+        previousYearQuestions: [...pyqs, newPYQ], // Add the new PYQ to the array
+        updatedAt: serverTimestamp()  // Keep this at the document level
       });
-      
+  
       // Get the updated subject
       const updatedDoc = await getDoc(subjectRef);
       return {
@@ -331,33 +342,36 @@ import {
   };
   
   // Add assignment to subject
-  export const addAssignment = async (subjectId, assignmentData) => {
+  // Add assignment to subject
+export const addAssignment = async (subjectId, assignmentData) => {
     try {
       const subjectRef = doc(db, SUBJECTS_COLLECTION, subjectId);
       const subjectDoc = await getDoc(subjectRef);
-      
+  
       if (!subjectDoc.exists()) {
         throw new Error(`Subject with ID ${subjectId} not found`);
       }
-      
+  
       // Generate unique ID for the assignment
       const assignmentId = new Date().getTime().toString();
+  
+      // Remove serverTimestamp from individual assignment
       const newAssignment = {
         ...assignmentData,
-        id: assignmentId,
-        createdAt: serverTimestamp()
+        id: assignmentId
+        // Removed createdAt: serverTimestamp()
       };
-      
+  
       // Get current assignments array or empty array if it doesn't exist
       const subject = subjectDoc.data();
       const assignments = subject.assignments || [];
-      
+  
       // Update the subject with the new assignment
       await updateDoc(subjectRef, {
-        assignments: [...assignments, newAssignment],
-        updatedAt: serverTimestamp()
+        assignments: [...assignments, newAssignment], // Add the new assignment to the array
+        updatedAt: serverTimestamp()  // Keep this at the document level
       });
-      
+  
       // Get the updated subject
       const updatedDoc = await getDoc(subjectRef);
       return {
@@ -534,6 +548,80 @@ import {
     }
     
     console.log("Example data initialized successfully");
+  };
+  export const debugResourceAddition = async (subjectId, resourceType, resourceData) => {
+    console.group('🔍 Resource Addition Diagnostics');
+    console.log('Input Parameters:', { 
+      subjectId, 
+      resourceType, 
+      resourceData 
+    });
+  
+    try {
+      // Validate critical inputs
+      if (!subjectId) {
+        console.error('❌ No Subject ID provided');
+        throw new Error('Subject ID is required');
+      }
+  
+      if (!resourceType) {
+        console.error('❌ No Resource Type provided');
+        throw new Error('Resource type is required');
+      }
+  
+      if (!resourceData) {
+        console.error('❌ No Resource Data provided');
+        throw new Error('Resource data is required');
+      }
+  
+      // Reference to the subject document
+      const subjectRef = doc(db, SUBJECTS_COLLECTION, subjectId);
+      
+      // Fetch the current subject document
+      const subjectDoc = await getDoc(subjectRef);
+  
+      // Check if subject exists
+      if (!subjectDoc.exists()) {
+        console.error(`❌ Subject with ID ${subjectId} not found`);
+        throw new Error(`Subject with ID ${subjectId} not found`);
+      }
+  
+      // Get current subject data
+      const currentSubjectData = subjectDoc.data();
+      console.log('Current Subject Data:', currentSubjectData);
+  
+      // Validate resource type and field
+      const resourceTypeMap = {
+        'chapter': 'chapters',
+        'video': 'videoLectures',
+        'assignment': 'assignments',
+        'pyq': 'previousYearQuestions'
+      };
+  
+      const updateField = resourceTypeMap[resourceType];
+  
+      if (!updateField) {
+        console.error(`❌ Invalid Resource Type: ${resourceType}`);
+        throw new Error(`Invalid resource type: ${resourceType}`);
+      }
+  
+      // Log current resources
+      const currentResources = currentSubjectData[updateField] || [];
+      console.log(`Current ${updateField}:`, currentResources);
+  
+      console.groupEnd();
+      
+      // If you want to actually add the resource, you would uncomment and adapt:
+      // return addResourceToSubject(subjectId, resourceType, resourceData);
+  
+    } catch (error) {
+      console.error('❌ Resource Addition Diagnostic Error:', {
+        message: error.message,
+        stack: error.stack
+      });
+      console.groupEnd();
+      throw error;
+    }
   };
   
   // Export all methods
