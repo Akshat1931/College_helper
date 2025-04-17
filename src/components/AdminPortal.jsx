@@ -11,6 +11,7 @@ import {
   deleteSubject,
   addChapter,
   addVideoLecture,
+  updateSubjectsOrder,
   addPreviousYearQuestion,
   addAssignment,
   getAllAdmins,
@@ -183,6 +184,49 @@ const handleRemoveAdmin = async (userId) => {
       setIsLoading(false);
     }
   };
+
+  // Add this function to your AdminPortal.jsx component
+
+// NEW: Handle reordering of subjects
+const handleSubjectReorder = async (semesterId, subjectId, direction) => {
+  try {
+    // Get all subjects for this semester
+    const semesterSubjects = getSubjectsBySemester(semesterId);
+    
+    // Find the current index of the subject
+    const currentIndex = semesterSubjects.findIndex(subject => subject.id === subjectId);
+    if (currentIndex === -1) return;
+    
+    // Determine new index based on direction
+    const newIndex = direction === 'up' 
+      ? Math.max(0, currentIndex - 1) 
+      : Math.min(semesterSubjects.length - 1, currentIndex + 1);
+    
+    // If the index didn't change, do nothing
+    if (newIndex === currentIndex) return;
+    
+    // Create a new array with the reordered items
+    const newArray = [...semesterSubjects];
+    const [movedItem] = newArray.splice(currentIndex, 1);
+    newArray.splice(newIndex, 0, movedItem);
+    
+    // Show loading state
+    setIsLoading(true);
+    
+    // Update in Firebase - implement updateSubjectsOrder in dataService.js
+    await updateSubjectsOrder(semesterId, newArray);
+    
+    // Refresh all subjects after reordering
+    const allSubjects = await getAllSubjects();
+    setSubjects(allSubjects);
+    
+    setIsLoading(false);
+  } catch (error) {
+    console.error('Error reordering subject:', error);
+    alert('Failed to reorder subject. Please try again.');
+    setIsLoading(false);
+  }
+};
 
   // Handle chapter submission
   const handleChapterSubmit = async (e) => {
@@ -1159,7 +1203,7 @@ const EditResourceModal = () => {
           
           
 
-{activeTab === 'view' && (
+          {activeTab === 'view' && (
   <div className="admin-section">
     <h2>View Subjects Data</h2>
     <div className="admin-data-view">
@@ -1167,10 +1211,31 @@ const EditResourceModal = () => {
         <div key={semester.id} id={`semester-${semester.id}`} className="semester-data">
           <h3>{semester.name}</h3>
           {getSubjectsBySemester(semester.id).length > 0 ? (
-            getSubjectsBySemester(semester.id).map(subject => (
+            getSubjectsBySemester(semester.id).map((subject, index) => (
               <div key={subject.id} className="subject-item">
-                <div className="subject-item-header">
-                  <h4>{subject.name} ({subject.code})</h4>
+                <div className="item-content">
+                  <span className="item-title">{subject.name} ({subject.code})</span>
+                </div>
+                <div className="item-actions">
+                  {/* Reorder buttons - similar to other resources */}
+                  <div className="reorder-buttons">
+                    <button 
+                      className="reorder-btn up"
+                      onClick={() => handleSubjectReorder(semester.id, subject.id, 'up')}
+                      disabled={index === 0}
+                      title="Move Up"
+                    >
+                      ↑
+                    </button>
+                    <button 
+                      className="reorder-btn down"
+                      onClick={() => handleSubjectReorder(semester.id, subject.id, 'down')}
+                      disabled={index === (getSubjectsBySemester(semester.id).length - 1)}
+                      title="Move Down"
+                    >
+                      ↓
+                    </button>
+                  </div>
                   <button 
                     className="delete-btn" 
                     onClick={() => deleteSubjectHandler(subject.id)}

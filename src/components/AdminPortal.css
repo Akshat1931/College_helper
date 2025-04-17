@@ -386,6 +386,110 @@
   padding: 2rem;
   box-shadow: var(--shadow-sm);
 }
+/* Add these styles to your AdminPortal.css file */
+
+/* Subject item styles */
+.subject-item {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.subject-item:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.subject-item .item-content {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.subject-item .item-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.subject-item .item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+/* Enhanced style for existing reorder buttons to ensure they match subject reordering */
+.reorder-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-right: 0.5rem;
+}
+
+.reorder-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(74, 108, 247, 0.1);
+  color: var(--primary, #4a6cf7);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.reorder-btn:hover:not(:disabled) {
+  background-color: rgba(74, 108, 247, 0.2);
+  transform: scale(1.1);
+}
+
+.reorder-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Updated spacing for subject sections */
+.subject-chapters,
+.subject-videos,
+.subject-assignments,
+.subject-pyq {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: var(--radius-md);
+}
+
+.subject-chapters h5,
+.subject-videos h5,
+.subject-assignments h5,
+.subject-pyq h5 {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  color: var(--text-dark);
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .subject-item .item-actions {
+    flex-wrap: wrap;
+  }
+  
+  .reorder-buttons {
+    flex-direction: row;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+}
 
 .add-admin-section h3,
 .current-admins-section h3 {
