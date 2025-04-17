@@ -427,96 +427,108 @@ const AdminPortal = () => {
         </div>
         
         <div className="admin-content">
-          {activeTab === 'subjects' && (
-            <div className="admin-section">
-              <h2>Add New Subject</h2>
-              <form onSubmit={handleSubjectSubmit} className="admin-form">
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Subject Name</label>
-                    <input 
-                      type="text" 
-                      value={newSubject.name}
-                      onChange={e => setNewSubject({...newSubject, name: e.target.value})}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label>Subject Code</label>
-                    <input 
-                      type="text" 
-                      value={newSubject.code}
-                      onChange={e => setNewSubject({...newSubject, code: e.target.value})}
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div className="form-group">
-                  <label>Description</label>
-                  <textarea 
-                    value={newSubject.description}
-                    onChange={e => setNewSubject({...newSubject, description: e.target.value})}
-                    required
-                  />
-                </div>
-                
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Instructor</label>
-                    <input 
-                      type="text" 
-                      value={newSubject.instructor}
-                      onChange={e => setNewSubject({...newSubject, instructor: e.target.value})}
-                      required
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label>Credits</label>
-                    <input 
-                      type="number" 
-                      value={newSubject.credits}
-                      onChange={e => setNewSubject({...newSubject, credits: parseInt(e.target.value)})}
-                      min="1"
-                      max="6"
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Semester</label>
-                    <select 
-                      value={newSubject.semesterId}
-                      onChange={e => setNewSubject({...newSubject, semesterId: parseInt(e.target.value)})}
-                      required
-                    >
-                      {semesters.map(sem => (
-                        <option key={sem.id} value={sem.id}>
-                          {sem.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label>Syllabus URL (Google Drive)</label>
-                    <input 
-                      type="url" 
-                      value={newSubject.syllabusUrl}
-                      onChange={e => setNewSubject({...newSubject, syllabusUrl: e.target.value})}
-                      placeholder="https://drive.google.com/file/d/..."
-                    />
-                  </div>
-                </div>
-                
-                <button type="submit" className="admin-submit-btn">Add Subject</button>
-              </form>
-            </div>
-          )}
+  {activeTab === 'subjects' && (
+    <div className="admin-section">
+      <h2>Add New Subject</h2>
+      <form onSubmit={handleSubjectSubmit} className="admin-form">
+        <div className="form-row">
+          <div className="form-group">
+            <label>Subject Name</label>
+            <input 
+              type="text" 
+              value={newSubject.name}
+              onChange={e => setNewSubject({...newSubject, name: e.target.value})}
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label>Subject Code</label>
+            <input 
+              type="text" 
+              value={newSubject.code}
+              onChange={e => setNewSubject({...newSubject, code: e.target.value})}
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label>Subject Icon (Emoji)</label>
+            <input 
+              type="text" 
+              value={newSubject.icon}
+              onChange={e => setNewSubject({...newSubject, icon: e.target.value})}
+              placeholder="📚 📝 🧮 ⚛️ 🔬"
+              maxLength="2"
+            />
+            <small className="form-hint">Enter a single emoji as the subject icon</small>
+          </div>
+        </div>
+        
+        <div className="form-group">
+          <label>Description</label>
+          <textarea 
+            value={newSubject.description}
+            onChange={e => setNewSubject({...newSubject, description: e.target.value})}
+            required
+          />
+        </div>
+        
+        <div className="form-row">
+          <div className="form-group">
+            <label>Instructor</label>
+            <input 
+              type="text" 
+              value={newSubject.instructor}
+              onChange={e => setNewSubject({...newSubject, instructor: e.target.value})}
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label>Credits</label>
+            <input 
+              type="number" 
+              value={newSubject.credits}
+              onChange={e => setNewSubject({...newSubject, credits: parseInt(e.target.value)})}
+              min="1"
+              max="6"
+              required
+            />
+          </div>
+        </div>
+        
+        <div className="form-row">
+          <div className="form-group">
+            <label>Semester</label>
+            <select 
+              value={newSubject.semesterId}
+              onChange={e => setNewSubject({...newSubject, semesterId: parseInt(e.target.value)})}
+              required
+            >
+              {semesters.map(sem => (
+                <option key={sem.id} value={sem.id}>
+                  {sem.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="form-group">
+            <label>Syllabus URL (Google Drive)</label>
+            <input 
+              type="url" 
+              value={newSubject.syllabusUrl}
+              onChange={e => setNewSubject({...newSubject, syllabusUrl: e.target.value})}
+              placeholder="https://drive.google.com/file/d/..."
+            />
+          </div>
+        </div>
+        
+        <button type="submit" className="admin-submit-btn">Add Subject</button>
+      </form>
+    </div>
+  )}
           
           {activeTab === 'chapters' && (
             <div className="admin-section">
