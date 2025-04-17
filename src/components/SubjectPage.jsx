@@ -27,7 +27,7 @@ function SubjectPage() {
         name: "Calculus and Linear Algebra",
         code: "18MAB101T",
         description: "This course covers calculus, linear algebra, and analytical geometry. Students will learn fundamental mathematical concepts and problem-solving techniques.",
-        instructor: "Dr. Sarah Johnson",
+        instructor: "N/A",
         credits: 4,
         syllabusUrl: "https://drive.google.com/file/d/1ZyuDGExbr648v6CJBlYt0ccdUA2G39TP/view?usp=sharing",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_MATH1_FOLDER_ID#list",
@@ -164,7 +164,7 @@ function SubjectPage() {
         name: "Chemistry",
         code: "21CYB101J",
         description: "Covers atomic structure, chemical bonding, thermodynamics, and organic reactions essential to material and biological sciences.",
-        instructor: "Dr. Robert Chen",
+        instructor: "N/A",
         credits: 4,
         syllabusUrl: "https://drive.google.com/file/d/1ZPgiiktby6g_ds9qfPP3lUVXp9c-9d6r/view?usp=sharing",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PHYSICS1_FOLDER_ID#list",
@@ -293,7 +293,7 @@ function SubjectPage() {
         name: "Philosophy Of Engineering",
         code: "21GNH101J",
         description: "Explores the ethical, social, and philosophical dimensions of engineering practice.",
-        instructor: "Prof. Emily Wang",
+        instructor: "N/A",
         credits: 2,
         syllabusUrl: "https://drive.google.com/file/d/1ZWBKUJSYzV7r7QIOlOpJJ4-4nlvt5Ffn/view?usp=sharing",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PROGRAMMING_FOLDER_ID#list",
@@ -385,7 +385,7 @@ function SubjectPage() {
         name: "Introduction To Computational Biology",
         code: "21GNH101J",
         description: "An introduction to the fundamentals of computational biology, focusing on data analysis, algorithms, and their applications in biological research.",
-        instructor: "Prof. Emily Wang",
+        instructor: "N/A",
         credits: 3,
         syllabusUrl: "https://drive.google.com/file/d/1ZWBKUJSYzV7r7QIOlOpJJ4-4nlvt5Ffn/view?usp=sharing",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PROGRAMMING_FOLDER_ID#list",
@@ -477,7 +477,7 @@ function SubjectPage() {
         name: "Programming For Problem Solving",
         code: "21CSS101J",
         description: "Introduces fundamental programming concepts and problem-solving techniques using structured and procedural programming.",
-        instructor: "Prof. Emily Wang",
+        instructor: "N/A",
         credits: 4,
         syllabusUrl: "https://drive.google.com/file/d/1oQ0a7mjBp1NVhihOBwv8mDTtHOsOuVKx/view",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PROGRAMMING_FOLDER_ID#list",
@@ -570,6 +570,63 @@ function SubjectPage() {
             type: 'all MCQs',
             fileUrl: 'https://drive.google.com/file/d/1D2Bl2164GlxUKKaoaoQBreWasAJc6UOq/view'
           },                  
+        ]
+      },
+      "6": {
+        name: "Foreign Languages",
+        code: "Varies",
+        description: "Basics of spoken and written communication in selected international languages.",
+        instructor: "N/A",
+        credits: 3,
+        syllabusUrl: "https://drive.google.com/file/d/1oQ0a7mjBp1NVhihOBwv8mDTtHOsOuVKx/view",
+        driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_PROGRAMMING_FOLDER_ID#list",
+        chapters: [
+          {
+            id: 1,
+            title: 'French book',
+            description: 'Covers the basics of Language - French',
+            driveEmbedUrl: "https://drive.google.com/file/d/1u_v_MLCXnprT6Ua9FyCxbXJocjaup4RF/view"
+          },
+          {
+            id: 2,
+            title: 'German book',
+            description: 'Covers the basics of Language - German',
+            driveEmbedUrl: "https://drive.google.com/file/d/1r80qwekqlGVivHod9kOVWuxqc9pok3te/view"
+          },
+          {
+            id: 3,
+            title: 'Spanish book',
+            description: 'Covers the basics of Language - Spanish',
+            driveEmbedUrl: "https://drive.google.com/file/d/1nna5QvcJkOzU25vunMYaSpPWR9NM83-a/view"
+          },
+          {
+            id: 4,
+            ttitle: 'Korean book',
+            description: 'Covers the basics of Language - Korean',
+            driveEmbedUrl: "https://drive.google.com/file/d/12L0aayv54SW2Zq4VerUpgkWkAawOq2fI/view"
+          },
+          {
+            id: 5,
+            title: 'Japanese book',
+            description: 'Covers the basics of Language - Japanese',
+            driveEmbedUrl: "https://drive.google.com/file/d/18eAaIyYDK2CC5NBqNKQTOm6OdcUNS40o/view"
+          },          
+          {
+            id: 6,
+            title: 'Chinese book',
+            description: 'Covers the basics of Language - Chinese',
+            driveEmbedUrl: "https://drive.google.com/drive/folders/1VjsAq9Plli6BgYt9xcn1fbuySJmETJC9?usp=drive_link"
+          }     
+        ],
+        previousYearQuestions: [
+          {
+            id: 1,
+            year: 'All',
+            semester: 'End-sem + Mid-sem',
+            type: 'all units',
+            fileUrl: 'https://drive.google.com/drive/folders/1ubbRRPwu5ycFEXOSFmCr3fWfUn_Xxlpf'
+          },
+             
         ]
       }
     },
@@ -722,31 +779,78 @@ function SubjectPage() {
     // Semester 3 Subjects
     "3": {
       "1": {
-        name: "Object-Oriented Programming",
-        code: "CSE301",
-        description: "Advanced programming techniques using OOP concepts like classes, inheritance, polymorphism, and encapsulation in Java.",
-        instructor: "Dr. Alicia James",
+        name: "Transform and Boundary Value Problem",
+        code: "21MAB201T",
+        description: "Covers mathematical methods like Laplace and Fourier transforms, and techniques to solve boundary value problems in differential equations.",
+        instructor: "N/A",
         credits: 4,
+        syllabusUrl: "https://drive.google.com/file/d/1wupYNBNpFVPNeonkKvTM5RGyoA_MFRXJ/view",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_OOP_FOLDER_ID#list",
         chapters: [
-          {
-            id: 1,
-            title: 'Chapter 1: Classes & Objects',
-            description: 'Creating classes, objects, and understanding encapsulation',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_CLASSES_URL_HERE#list"
-          },
-          {
-            id: 2,
-            title: 'Chapter 2: Inheritance & Polymorphism',
-            description: 'Extending classes and method overriding',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_INHERITANCE_URL_HERE#list"
-          },
-          {
-            id: 3,
-            title: 'Chapter 3: Interfaces & Abstract Classes',
-            description: 'Creating flexible, modular code with interfaces',
-            driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_INTERFACES_URL_HERE#list"
-          }
+          [
+            {
+              id: 1,
+              title: 'Unit 1: Partial Differential Equations',
+              description: 'Introduction to partial differential equations and their formation. Includes methods of solving first-order PDEs.',
+              driveEmbedUrl: "https://drive.google.com/file/d/1O_CkYcsg0D9KvtmfhhesiL7THvGDj97-/view"
+            },
+            {
+              id: 2,
+              title: 'Unit 2: Fourier Series',
+              description: 'Explains periodic functions and expansion in Fourier series for various boundary conditions.',
+              driveEmbedUrl: "https://drive.google.com/file/d/1TRE8VcKrEwk9qGuYmFo67qA_zKPVqszm/view"
+            },
+            {
+              id: 3,
+              title: 'Unit 3: Application of Partial Differential Equations',
+              description: 'Application of PDEs to solve problems like heat and wave equations using separation of variables.',
+              driveEmbedUrl: "https://drive.google.com/file/d/1CMbmUPg0kfEC171Ui9rtHo6R3QaKsXEO/view"
+            },
+            {
+              id: 4,
+              title: 'Unit 4: Fourier Transform',
+              description: 'Covers Fourier transform and inverse transform, including properties and applications.',
+              driveEmbedUrl: "https://drive.google.com/file/d/1FyWw2A7JFgdyWlsVM6dlLnd8BGGycd4M/view"
+            },
+            {
+              id: 5,
+              title: 'Unit 5: Transform',
+              description: 'Study of Laplace and Z-transforms, their properties and uses in solving differential equations.',
+              driveEmbedUrl: "https://drive.google.com/file/d/107hZjqX8GlkBgx_r1y7sTRfXvfqJdMTO/view"
+            },
+            {
+              id: 6,
+              title: 'Unit 1: Partial Differential Equations (Handwritten)',
+              description: 'Introduction to partial differential equations and their formation. Includes methods of solving first-order PDEs.',
+              driveEmbedUrl: "https://drive.google.com/file/d/12TgC10kcrZSn1FFLOBb5geciNWWsUGoO/view"
+            },
+            {
+              id: 7,
+              title: 'Unit 2: Fourier Series (Handwritten)',
+              description: 'Explains periodic functions and expansion in Fourier series for various boundary conditions.',
+              driveEmbedUrl: "https://drive.google.com/file/d/1Fi5pt0KYOoqgCaKv0lHIjAFXtIpDP7fs/view"
+            },
+            {
+              id: 8,
+              title: 'Unit 3: Application of Partial Differential Equations (Handwritten)',
+              description: 'Application of PDEs to solve problems like heat and wave equations using separation of variables.',
+              driveEmbedUrl: "https://drive.google.com/file/d/1nvkigy3NLIIqPMqOweFJhkPZqdMt016o/view"
+            },
+            {
+              id: 9,
+              title: 'Unit 4: Fourier Transform (Handwritten)',
+              description: 'Covers Fourier transform and inverse transform, including properties and applications.',
+              driveEmbedUrl: "https://drive.google.com/file/d/1avTrCbxJx72JIQRFKj78z3kdSI29h-jn/view"
+            },
+            {
+              id: 10,
+              title: 'Unit 5: Transform (Handwritten)',
+              description: 'Study of Laplace and Z-transforms, their properties and uses in solving differential equations.',
+              driveEmbedUrl: "https://drive.google.com/file/d/1KnSMLGJSxdfIsFNz3HfQHOZll4TRyyR2/view"
+            }
+          ]
+          
+
         ]
       },
       "2": {
@@ -785,7 +889,7 @@ function SubjectPage() {
         name: "Artifical Intelligence",
         code: "21CSC206T",
         description: "Concepts of operating systems including process management, memory management, file systems, and scheduling algorithms.",
-        instructor: "Dr. Thomas Lee",
+        instructor: "N/A",
         credits: 4,
         syllabusUrl: "https://drive.google.com/file/d/1wupYNBNpFVPNeonkKvTM5RGyoA_MFRXJ/view",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_OS_FOLDER_ID#list",
@@ -848,7 +952,7 @@ function SubjectPage() {
         name: "Database Management System",
         code: "21CSC205P",
         description: 'Introduction to database concepts, design, SQL, and efficient data management techniques.',
-        instructor: "Prof. Maria Garcia",
+        instructor: "N/A",
         credits: 4,
         syllabusUrl: "https://drive.google.com/file/d/1k2atwtw5sX0MuOyZl7sXIs3gQBM52ZKw/view",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
@@ -889,7 +993,7 @@ function SubjectPage() {
         name: "Design and Analysis of Algorithm",
         code: "21CSC204J",
         description: "Covers advanced algorithmic strategies such as divide and conquer, dynamic programming, and greedy methods to design efficient and optimal solutions for computational problems.",
-        instructor: "Prof. Maria Garcia",
+        instructor: "N/A",
         credits: 4,
         syllabusUrl: "https://drive.google.com/file/d/1ob48DPdNU5P4ZRjZLoHVqAeojuE8c2Vs/view",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
@@ -992,7 +1096,7 @@ function SubjectPage() {
         name: "Probability and Queuing Theory",
         code: "21MAB204T",
         description: "Fundamentals of probability theory and queuing models for analyzing systems in operations research and performance optimization.",
-        instructor: "Prof. Maria Garcia",
+        instructor: "N/A",
         credits: 4,
         syllabusUrl: "https://drive.google.com/file/d/1uQyOIFlqvm5SdSdOHVIdrvDRuj9PqX8z/view",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
@@ -1100,7 +1204,7 @@ function SubjectPage() {
         name: "Social Engineering",
         code: "21PDH209T",
         description: 'Study of psychological manipulation techniques used to exploit human behavior and breach security systems.',
-        instructor: "Prof. Maria Garcia",
+        instructor: "N/A",
         credits: 4,
         syllabusUrl: "https://drive.google.com/file/d/1noTe7mnsNB218cu7-RUSnnDSb6LNrh6C/view?usp=sharing",
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
@@ -1126,7 +1230,7 @@ function SubjectPage() {
         name: "Universal Human Values",
         code: "21PDH209T",
         description: 'Focuses on ethics, self-awareness, harmony in relationships, and holistic well-being for personal and societal development.',
-        instructor: "Prof. Maria Garcia",
+        instructor: "N/A",
         credits: 4,
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
         
@@ -1135,7 +1239,7 @@ function SubjectPage() {
         name: "Design and Analysis of Algorithm (Lab)",
         code: "21CSC204J",
         description: 'Focuses on ethics, self-awareness, harmony in relationships, and holistic well-being for personal and societal development.',
-        instructor: "Prof. Maria Garcia",
+        instructor: "N/A",
         credits: 4,
         driveEmbedUrl: "https://drive.google.com/embeddedfolderview?id=YOUR_NETWORKS_FOLDER_ID#list",
         chapters: [
