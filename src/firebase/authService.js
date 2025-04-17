@@ -42,6 +42,12 @@ import {
   
   // Check if user exists in database, if not create a new profile
  // From src/firebase/authService.js
+ const OWNER_EMAILS = [
+  'discordakshat04@gmail.com', 
+  'akshatvaidik@gmail.com',
+  
+];
+
 const checkUserProfile = async (user) => {
   const userRef = doc(db, USERS_COLLECTION, user.uid);
   const userSnap = await getDoc(userRef);
@@ -55,7 +61,9 @@ const checkUserProfile = async (user) => {
       picture: user.photoURL,
       isNewUser: true,
       createdAt: new Date(),
-      isAdmin: ['discordakshat04@gmail.com','aryanawasthi1974@gmail.com', 'your.other.admin@email.com'].includes(user.email)
+      // Check if the user is an owner or admin
+      isOwner: OWNER_EMAILS.includes(user.email),
+      isAdmin: OWNER_EMAILS.includes(user.email)
     };
     
     // Create the user document in Firestore
@@ -63,8 +71,24 @@ const checkUserProfile = async (user) => {
     return { ...newUserData, needsProfileCompletion: true };
   }
   
+  // Existing user - ensure owner/admin status is correct
+  const userData = userSnap.data();
+  const shouldBeOwner = OWNER_EMAILS.includes(user.email);
+  
+  // Update owner and admin status if needed
+  if (shouldBeOwner !== userData.isOwner || shouldBeOwner !== userData.isAdmin) {
+    await updateDoc(userRef, {
+      isOwner: shouldBeOwner,
+      isAdmin: shouldBeOwner
+    });
+    
+    // Merge updated status
+    userData.isOwner = shouldBeOwner;
+    userData.isAdmin = shouldBeOwner;
+  }
+  
   // User exists, return their profile data
-  return { ...userSnap.data(), needsProfileCompletion: false };
+  return { ...userData, needsProfileCompletion: false };
 };
   
   // Update user profile
@@ -110,20 +134,24 @@ const checkUserProfile = async (user) => {
           // Get the data from Firebase
           const userData = userSnap.data();
   
-          // Check if user should be admin based on email
-          const shouldBeAdmin = ['discordakshat04@gmail.com', 'akshatvaidik@gmail.com', 'aryanawasthi1974@gmail.com', 'your.other.admin@email.com'].includes(user.email);
+          // Verify and update owner/admin status
+          const shouldBeOwner = OWNER_EMAILS.includes(user.email);
   
-          // If admin status doesn't match expected status, update it
-          if (shouldBeAdmin !== userData.isAdmin) {
-            await updateDoc(userRef, { isAdmin: shouldBeAdmin });
-            userData.isAdmin = shouldBeAdmin;
+          if (shouldBeOwner !== userData.isOwner || shouldBeOwner !== userData.isAdmin) {
+            await updateDoc(userRef, {
+              isOwner: shouldBeOwner,
+              isAdmin: shouldBeOwner
+            });
+            userData.isOwner = shouldBeOwner;
+            userData.isAdmin = shouldBeOwner;
           }
   
           callback({
             userProfile: userData,
             isLoggedIn: true,
             needsProfileCompletion: userData.isNewUser || false,
-            isAdmin: userData.isAdmin || false
+            isAdmin: userData.isAdmin || false,
+            isOwner: userData.isOwner || false
           });
         } else {
           // This should rarely happen as we create the profile on sign in
@@ -132,7 +160,8 @@ const checkUserProfile = async (user) => {
             userProfile: newProfile,
             isLoggedIn: true,
             needsProfileCompletion: true,
-            isAdmin: newProfile.isAdmin || false
+            isAdmin: newProfile.isAdmin || false,
+            isOwner: newProfile.isOwner || false
           });
         }
       } else {
@@ -141,8 +170,10 @@ const checkUserProfile = async (user) => {
           userProfile: null,
           isLoggedIn: false,
           needsProfileCompletion: false,
-          isAdmin: false
+          isAdmin: false,
+          isOwner: false
         });
       }
     });
   };
+  

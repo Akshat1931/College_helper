@@ -13,9 +13,13 @@ import {
   addVideoLecture,
   addPreviousYearQuestion,
   addAssignment,
+  getAllAdmins,
+  addAdminByEmail,
+  removeAdminStatus,
   deleteResourceFromSubject,
   updateSubject // Add this import
 } from '../firebase/dataService';
+
 
 const AdminPortal = () => {
   const { userProfile, isLoggedIn, isAdmin, loading } = useUser();
@@ -28,6 +32,9 @@ const [editModalOpen, setEditModalOpen] = useState(false);
 const [editItem, setEditItem] = useState(null);
 const [editItemType, setEditItemType] = useState('');
 const [editSubjectId, setEditSubjectId] = useState('');
+
+const [admins, setAdmins] = useState([]);
+const [newAdminEmail, setNewAdminEmail] = useState('');
   
   // Form states
   const [newSubject, setNewSubject] = useState({
@@ -58,10 +65,9 @@ const [editSubjectId, setEditSubjectId] = useState('');
   });
 
   // Load data
-  useEffect(() => {
-    // Wait for auth to be ready
-    if (loading) return;
+ 
     
+  useEffect(() => {
     const loadData = async () => {
       try {
         setIsLoading(true);
@@ -74,6 +80,10 @@ const [editSubjectId, setEditSubjectId] = useState('');
         const allSubjects = await getAllSubjects();
         setSubjects(allSubjects);
         
+        // Fetch admins
+        const adminList = await getAllAdmins();
+        setAdmins(adminList);
+        
         setIsLoading(false);
       } catch (error) {
         console.error("Error loading admin data:", error);
@@ -81,9 +91,67 @@ const [editSubjectId, setEditSubjectId] = useState('');
       }
     };
     
-    loadData();
+    // Only run when loading state changes
+    if (!loading) {
+      loadData();
+    }
   }, [loading]);
   
+  // Separate function to fetch admins
+// Modify handleAddAdmin to refresh the admin list after adding
+const handleAddAdmin = async (e) => {
+  e.preventDefault();
+  
+  try {
+    setIsLoading(true);
+    const result = await addAdminByEmail(newAdminEmail);
+    
+    if (result.success) {
+      // Immediately refetch the admin list to ensure latest data
+      const updatedAdminList = await getAllAdmins();
+      setAdmins(updatedAdminList);
+      
+      setNewAdminEmail('');
+      alert('Admin added successfully!');
+    } else {
+      alert(result.message);
+    }
+  } catch (error) {
+    console.error("Error adding admin:", error);
+    alert("Failed to add admin. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+// Similar modification for handleRemoveAdmin
+const handleRemoveAdmin = async (userId) => {
+  const confirmRemove = window.confirm(
+    "Are you sure you want to remove this admin's status?"
+  );
+  
+  if (confirmRemove) {
+    try {
+      setIsLoading(true);
+      const success = await removeAdminStatus(userId);
+      
+      if (success) {
+        // Immediately refetch the admin list
+        const updatedAdminList = await getAllAdmins();
+        setAdmins(updatedAdminList);
+        
+        alert('Admin status removed successfully!');
+      } else {
+        alert('Failed to remove admin status.');
+      }
+    } catch (error) {
+      console.error("Error removing admin:", error);
+      alert("Failed to remove admin. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+};
   // Handle subject submission
   const handleSubjectSubmit = async (e) => {
     e.preventDefault();
@@ -751,9 +819,75 @@ const EditResourceModal = () => {
           >
             View Data
           </button>
+          <button 
+  className={`admin-tab ${activeTab === 'admin-management' ? 'active' : ''}`}
+  onClick={() => setActiveTab('admin-management')}
+>
+  Admin Management
+</button>
         </div>
         
 <div className="admin-content">
+  {activeTab === 'admin-management' && (
+  <div className="admin-section admin-management">
+    <h2>Admin Management</h2>
+    
+    {/* Add New Admin Form */}
+    <div className="add-admin-section">
+      <h3>Add New Admin</h3>
+      <form onSubmit={handleAddAdmin} className="admin-form">
+        <div className="form-group">
+          <label>Email Address</label>
+          <input 
+            type="email" 
+            value={newAdminEmail}
+            onChange={(e) => setNewAdminEmail(e.target.value)}
+            placeholder="Enter user's email"
+            required
+          />
+        </div>
+        <button type="submit" className="admin-submit-btn" disabled={isLoading}>
+          {isLoading ? 'Adding...' : 'Add Admin'}
+        </button>
+      </form>
+    </div>
+    
+    {/* Current Admins List */}
+    <div className="current-admins-section">
+      <h3>Current Admins</h3>
+      {admins.length > 0 ? (
+        <div className="admin-list">
+          {admins.map(admin => (
+            <div key={admin.id} className="admin-item">
+              <div className="admin-info">
+                <img 
+                  src={admin.picture} 
+                  alt={admin.name} 
+                  className="admin-avatar"
+                />
+                <div className="admin-details">
+                  <h4>{admin.name}</h4>
+                  <p>{admin.email}</p>
+                </div>
+              </div>
+              {/* Only allow removing if not the current user */}
+              {admin.id !== userProfile?.id && (
+                <button 
+                  className="remove-admin-btn" 
+                  onClick={() => handleRemoveAdmin(admin.id)}
+                >
+                  Remove Admin
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p>No other admins found.</p>
+      )}
+    </div>
+  </div>
+)}
   {activeTab === 'subjects' && (
     <div className="admin-section">
       <h2>Add New Subject</h2>
@@ -1023,7 +1157,7 @@ const EditResourceModal = () => {
             </div>
           )}
           
-          // Update the view section in your AdminPortal.jsx
+          
 
 {activeTab === 'view' && (
   <div className="admin-section">
