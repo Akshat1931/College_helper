@@ -5,7 +5,7 @@ import {
     signOut, 
     onAuthStateChanged 
   } from 'firebase/auth';
-  import { doc, setDoc, getDoc } from 'firebase/firestore';
+ import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
   import { auth, db } from './config';
   
   // Collection name for users
@@ -41,30 +41,31 @@ import {
   };
   
   // Check if user exists in database, if not create a new profile
-  const checkUserProfile = async (user) => {
-    const userRef = doc(db, USERS_COLLECTION, user.uid);
-    const userSnap = await getDoc(userRef);
+ // From src/firebase/authService.js
+const checkUserProfile = async (user) => {
+  const userRef = doc(db, USERS_COLLECTION, user.uid);
+  const userSnap = await getDoc(userRef);
+  
+  if (!userSnap.exists()) {
+    // New user - create a basic profile
+    const newUserData = {
+      id: user.uid,
+      name: user.displayName || 'New User',
+      email: user.email,
+      picture: user.photoURL,
+      isNewUser: true,
+      createdAt: new Date(),
+      isAdmin: ['discordakshat04@gmail.com','aryanawasthi1974@gmail.com', 'your.other.admin@email.com'].includes(user.email)
+    };
     
-    if (!userSnap.exists()) {
-      // New user - create a basic profile
-      const newUserData = {
-        id: user.uid,
-        name: user.displayName || 'New User',
-        email: user.email,
-        picture: user.photoURL,
-        isNewUser: true,
-        createdAt: new Date(),
-        isAdmin: ['discordakshat04@gmail.com', 'your.other.admin@email.com'].includes(user.email)
-      };
-      
-      // Create the user document in Firestore
-      await setDoc(userRef, newUserData);
-      return { ...newUserData, needsProfileCompletion: true };
-    }
-    
-    // User exists, return their profile data
-    return { ...userSnap.data(), needsProfileCompletion: false };
-  };
+    // Create the user document in Firestore
+    await setDoc(userRef, newUserData);
+    return { ...newUserData, needsProfileCompletion: true };
+  }
+  
+  // User exists, return their profile data
+  return { ...userSnap.data(), needsProfileCompletion: false };
+};
   
   // Update user profile
   export const updateUserProfile = async (userId, profileData) => {
@@ -104,18 +105,28 @@ import {
         // User is signed in
         const userRef = doc(db, USERS_COLLECTION, user.uid);
         const userSnap = await getDoc(userRef);
-        
+  
         if (userSnap.exists()) {
-          // Return user data from our database
+          // Get the data from Firebase
+          const userData = userSnap.data();
+  
+          // Check if user should be admin based on email
+          const shouldBeAdmin = ['discordakshat04@gmail.com', 'aryanawasthi1974@gmail.com', 'your.other.admin@email.com'].includes(user.email);
+  
+          // If admin status doesn't match expected status, update it
+          if (shouldBeAdmin !== userData.isAdmin) {
+            await updateDoc(userRef, { isAdmin: shouldBeAdmin });
+            userData.isAdmin = shouldBeAdmin;
+          }
+  
           callback({
-            userProfile: userSnap.data(),
+            userProfile: userData,
             isLoggedIn: true,
-            needsProfileCompletion: userSnap.data().isNewUser || false,
-            isAdmin: userSnap.data().isAdmin || false
+            needsProfileCompletion: userData.isNewUser || false,
+            isAdmin: userData.isAdmin || false
           });
         } else {
           // This should rarely happen as we create the profile on sign in
-          // But handle it just in case
           const newProfile = await checkUserProfile(user);
           callback({
             userProfile: newProfile,
