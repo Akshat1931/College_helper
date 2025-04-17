@@ -1,21 +1,17 @@
-// src/firebase/config.js
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
-// Your web app's Firebase configuration
-// Replace these values with your own Firebase project config
 const firebaseConfig = {
-    apiKey: "AIzaSyBeEDgxw2d3MIt-Lo91utfixpYgzMi0LVw",
-    authDomain: "akshat-f4a68.firebaseapp.com",
-    projectId: "akshat-f4a68",
-    storageBucket: "akshat-f4a68.firebasestorage.app",
-    messagingSenderId: "1039576021277",
-    appId: "1:1039576021277:web:b1a0f25cfbe69fabec49f4",
-    measurementId: "G-88TKC46ELH"
-  };
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+};
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
