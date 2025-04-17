@@ -13,7 +13,8 @@ import {
   addVideoLecture,
   addPreviousYearQuestion,
   addAssignment,
-  deleteResourceFromSubject
+  deleteResourceFromSubject,
+  updateSubject // Add this import
 } from '../firebase/dataService';
 
 const AdminPortal = () => {
@@ -22,6 +23,11 @@ const AdminPortal = () => {
   const [subjects, setSubjects] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  // Add these new state variables after your existing ones
+const [editModalOpen, setEditModalOpen] = useState(false);
+const [editItem, setEditItem] = useState(null);
+const [editItemType, setEditItemType] = useState('');
+const [editSubjectId, setEditSubjectId] = useState('');
   
   // Form states
   const [newSubject, setNewSubject] = useState({
@@ -288,6 +294,129 @@ const AdminPortal = () => {
     }
   };
 
+  // NEW: Open the edit modal for a resource
+const openEditModal = (subjectId, resourceType, item) => {
+  setEditSubjectId(subjectId);
+  setEditItemType(resourceType);
+  setEditItem({...item});
+  setEditModalOpen(true);
+};
+
+// NEW: Close the edit modal
+const closeEditModal = () => {
+  setEditModalOpen(false);
+  setEditItem(null);
+  setEditItemType('');
+  setEditSubjectId('');
+};
+
+// NEW: Save edits to a resource
+const saveResourceEdit = async () => {
+  if (!editItem || !editSubjectId || !editItemType) {
+    closeEditModal();
+    return;
+  }
+  
+  try {
+    setIsLoading(true);
+    
+    // Find the subject
+    const subject = subjects.find(s => s.id === editSubjectId);
+    if (!subject) {
+      throw new Error('Subject not found');
+    }
+    
+    // Determine which array to update
+    let arrayKey;
+    switch(editItemType) {
+      case 'chapter': arrayKey = 'chapters'; break;
+      case 'video': arrayKey = 'videoLectures'; break;
+      case 'pyq': arrayKey = 'previousYearQuestions'; break;
+      case 'assignment': arrayKey = 'assignments'; break;
+      default:
+        throw new Error(`Invalid resource type: ${editItemType}`);
+    }
+    
+    // Create updated array with edited item
+    const updatedArray = (subject[arrayKey] || []).map(item => 
+      item.id === editItem.id ? editItem : item
+    );
+    
+    // Update in Firebase
+    const updatedSubject = await updateSubject(editSubjectId, {
+      [arrayKey]: updatedArray
+    });
+    
+    // Update local state
+    const updatedSubjects = subjects.map(subject => 
+      subject.id === editSubjectId ? updatedSubject : subject
+    );
+    
+    setSubjects(updatedSubjects);
+    setIsLoading(false);
+    closeEditModal();
+    alert('Resource updated successfully!');
+  } catch (error) {
+    console.error('Error updating resource:', error);
+    alert('Failed to update resource. Please try again.');
+    setIsLoading(false);
+  }
+};
+
+// NEW: Handle reordering of resources
+const handleResourceReorder = async (subjectId, resourceType, resourceId, direction) => {
+  try {
+    // Find the subject
+    const subject = subjects.find(s => s.id === subjectId);
+    if (!subject) return;
+    
+    // Determine which array to update
+    let arrayKey;
+    switch(resourceType) {
+      case 'chapter': arrayKey = 'chapters'; break;
+      case 'video': arrayKey = 'videoLectures'; break;
+      case 'pyq': arrayKey = 'previousYearQuestions'; break;
+      case 'assignment': arrayKey = 'assignments'; break;
+      default: return;
+    }
+    
+    // Get the array
+    const resourceArray = subject[arrayKey] || [];
+    
+    // Find the item index
+    const itemIndex = resourceArray.findIndex(item => item.id === resourceId);
+    if (itemIndex === -1) return;
+    
+    // Determine new index based on direction
+    const newIndex = direction === 'up' 
+      ? Math.max(0, itemIndex - 1) 
+      : Math.min(resourceArray.length - 1, itemIndex + 1);
+    
+    // If the index didn't change, do nothing
+    if (newIndex === itemIndex) return;
+    
+    // Create a new array with the reordered items
+    const newArray = [...resourceArray];
+    const [movedItem] = newArray.splice(itemIndex, 1);
+    newArray.splice(newIndex, 0, movedItem);
+    
+    // Update in Firebase
+    const updatedSubject = await updateSubject(subjectId, {
+      [arrayKey]: newArray
+    });
+    
+    // Update local state
+    const updatedSubjects = subjects.map(subject => 
+      subject.id === subjectId ? updatedSubject : subject
+    );
+    
+    setSubjects(updatedSubjects);
+  } catch (error) {
+    console.error('Error reordering resource:', error);
+    alert('Failed to reorder resource. Please try again.');
+  }
+};
+
   // Delete subject
   const deleteSubjectHandler = async (subjectId) => {
     const confirmDelete = window.confirm(
@@ -357,6 +486,204 @@ const AdminPortal = () => {
       }
     }
   };
+  // NEW: Edit Resource Modal Component
+const EditResourceModal = () => {
+  if (!editModalOpen || !editItem) return null;
+  
+  // Form field change handler
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditItem(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  
+  // Different fields based on resource type
+  const renderFormFields = () => {
+    switch(editItemType) {
+      case 'chapter':
+        return (
+          <>
+            <div className="form-group">
+              <label>Chapter Title</label>
+              <input 
+                type="text" 
+                name="title"
+                value={editItem.title || ''}
+                onChange={handleEditChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Description</label>
+              <textarea 
+                name="description"
+                value={editItem.description || ''}
+                onChange={handleEditChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Google Drive URL</label>
+              <input 
+                type="url" 
+                name="driveEmbedUrl"
+                value={editItem.driveEmbedUrl || ''}
+                onChange={handleEditChange}
+                placeholder="https://drive.google.com/file/d/..."
+              />
+              <small className="form-hint">Use the "Share" link from Google Drive</small>
+            </div>
+          </>
+        );
+        
+      case 'video':
+        return (
+          <>
+            <div className="form-group">
+              <label>Video Title</label>
+              <input 
+                type="text" 
+                name="title"
+                value={editItem.title || ''}
+                onChange={handleEditChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Description</label>
+              <textarea 
+                name="description"
+                value={editItem.description || ''}
+                onChange={handleEditChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>YouTube URL</label>
+              <input 
+                type="url" 
+                name="url"
+                value={editItem.url || ''}
+                onChange={handleEditChange}
+                placeholder="https://www.youtube.com/embed/..."
+              />
+              <small className="form-hint">Use the embed URL from YouTube (click Share &gt; Embed &gt; copy src URL)</small>
+            </div>
+          </>
+        );
+        
+      case 'pyq':
+        return (
+          <>
+            <div className="form-group">
+              <label>Year & Semester</label>
+              <input 
+                type="text" 
+                name="title"
+                value={editItem.title || ''}
+                onChange={handleEditChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Description</label>
+              <textarea 
+                name="description"
+                value={editItem.description || ''}
+                onChange={handleEditChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Google Drive URL</label>
+              <input 
+                type="url" 
+                name="fileUrl"
+                value={editItem.fileUrl || ''}
+                onChange={handleEditChange}
+                placeholder="https://drive.google.com/file/d/..."
+              />
+            </div>
+          </>
+        );
+        
+      case 'assignment':
+        return (
+          <>
+            <div className="form-group">
+              <label>Assignment Title</label>
+              <input 
+                type="text" 
+                name="title"
+                value={editItem.title || ''}
+                onChange={handleEditChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Description</label>
+              <textarea 
+                name="description"
+                value={editItem.description || ''}
+                onChange={handleEditChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Google Drive URL</label>
+              <input 
+                type="url" 
+                name="fileUrl"
+                value={editItem.fileUrl || ''}
+                onChange={handleEditChange}
+                placeholder="https://drive.google.com/file/d/..."
+              />
+            </div>
+            <div className="form-group">
+              <label>Deadline</label>
+              <input 
+                type="text" 
+                name="deadline"
+                value={editItem.deadline || ''}
+                onChange={handleEditChange}
+                placeholder="e.g., May 15, 2025"
+              />
+            </div>
+          </>
+        );
+        
+      default:
+        return <p>Unknown resource type</p>;
+    }
+  };
+  
+  // Modal title based on resource type
+  const getModalTitle = () => {
+    switch(editItemType) {
+      case 'chapter': return 'Edit Chapter';
+      case 'video': return 'Edit Video Lecture';
+      case 'pyq': return 'Edit Previous Year Question';
+      case 'assignment': return 'Edit Assignment';
+      default: return 'Edit Resource';
+    }
+  };
+  
+  return (
+    <div className="modal-overlay">
+      <div className="edit-modal">
+        <div className="edit-modal-header">
+          <h3>{getModalTitle()}</h3>
+          <button className="close-modal-btn" onClick={closeEditModal}>×</button>
+        </div>
+        <div className="edit-modal-body">
+          {renderFormFields()}
+        </div>
+        <div className="edit-modal-footer">
+          <button className="cancel-btn" onClick={closeEditModal}>Cancel</button>
+          <button className="save-btn" onClick={saveResourceEdit}>Save Changes</button>
+        </div>
+      </div>
+    </div>
+  );
+};
   
   // Filter subjects by semester
   const getSubjectsBySemester = (semId) => {
@@ -426,7 +753,7 @@ const AdminPortal = () => {
           </button>
         </div>
         
-        <div className="admin-content">
+<div className="admin-content">
   {activeTab === 'subjects' && (
     <div className="admin-section">
       <h2>Add New Subject</h2>
@@ -696,117 +1023,231 @@ const AdminPortal = () => {
             </div>
           )}
           
-          {activeTab === 'view' && (
-            <div className="admin-section">
-              <h2>View Subjects Data</h2>
-              <div className="admin-data-view">
-                {semesters.map(semester => (
-                  <div key={semester.id} id={`semester-${semester.id}`} className="semester-data">
-                    <h3>{semester.name}</h3>
-                    {getSubjectsBySemester(semester.id).length > 0 ? (
-                      getSubjectsBySemester(semester.id).map(subject => (
-                        <div key={subject.id} className="subject-item">
-                          <div className="subject-item-header">
-                            <h4>{subject.name} ({subject.code})</h4>
+          // Update the view section in your AdminPortal.jsx
+
+{activeTab === 'view' && (
+  <div className="admin-section">
+    <h2>View Subjects Data</h2>
+    <div className="admin-data-view">
+      {semesters.map(semester => (
+        <div key={semester.id} id={`semester-${semester.id}`} className="semester-data">
+          <h3>{semester.name}</h3>
+          {getSubjectsBySemester(semester.id).length > 0 ? (
+            getSubjectsBySemester(semester.id).map(subject => (
+              <div key={subject.id} className="subject-item">
+                <div className="subject-item-header">
+                  <h4>{subject.name} ({subject.code})</h4>
+                  <button 
+                    className="delete-btn" 
+                    onClick={() => deleteSubjectHandler(subject.id)}
+                  >
+                    Delete Subject
+                  </button>
+                </div>
+                
+                {/* Chapters Section */}
+                <div className="subject-chapters">
+                  <h5>Chapters</h5>
+                  {subject.chapters && subject.chapters.length > 0 ? (
+                    subject.chapters.map((chapter, index) => (
+                      <div key={chapter.id} className="chapter-item">
+                        <div className="item-content">
+                          <span className="item-title">{chapter.title}</span>
+                        </div>
+                        <div className="item-actions">
+                          {/* Reorder buttons */}
+                          <div className="reorder-buttons">
                             <button 
-                              className="delete-btn" 
-                              onClick={() => deleteSubjectHandler(subject.id)}
+                              className="reorder-btn up"
+                              onClick={() => handleResourceReorder(subject.id, 'chapter', chapter.id, 'up')}
+                              disabled={index === 0}
+                              title="Move Up"
                             >
-                              Delete Subject
+                              ↑
+                            </button>
+                            <button 
+                              className="reorder-btn down"
+                              onClick={() => handleResourceReorder(subject.id, 'chapter', chapter.id, 'down')}
+                              disabled={index === (subject.chapters.length - 1)}
+                              title="Move Down"
+                            >
+                              ↓
                             </button>
                           </div>
-                          
-                          {/* Chapters Section */}
-                          <div className="subject-chapters">
-                            <h5>Chapters</h5>
-                            {subject.chapters && subject.chapters.length > 0 ? (
-                              subject.chapters.map(chapter => (
-                                <div key={chapter.id} className="chapter-item">
-                                  <span>{chapter.title}</span>
-                                  <button 
-                                    className="delete-btn" 
-                                    onClick={() => deleteResourceHandler(subject.id, 'chapter', chapter.id)}
-                                  >
-                                    Delete
-                                  </button>
-                                </div>
-                              ))
-                            ) : (
-                              <p>No chapters added yet</p>
-                            )}
-                          </div>
-                          
-                          {/* Video Lectures Section */}
-                          <div className="subject-videos">
-                            <h5>Video Lectures</h5>
-                            {subject.videoLectures && subject.videoLectures.length > 0 ? (
-                              subject.videoLectures.map(video => (
-                                <div key={video.id} className="video-item">
-                                  <span>{video.title}</span>
-                                  <button 
-                                    className="delete-btn" 
-                                    onClick={() => deleteResourceHandler(subject.id, 'video', video.id)}
-                                  >
-                                    Delete
-                                  </button>
-                                </div>
-                              ))
-                            ) : (
-                              <p>No video lectures added yet</p>
-                            )}
-                          </div>
-                          
-                          {/* Assignments Section */}
-                          <div className="subject-assignments">
-                            <h5>Assignments</h5>
-                            {subject.assignments && subject.assignments.length > 0 ? (
-                              subject.assignments.map(assignment => (
-                                <div key={assignment.id} className="assignment-item">
-                                  <span>{assignment.title}</span>
-                                  <button 
-                                    className="delete-btn" 
-                                    onClick={() => deleteResourceHandler(subject.id, 'assignment', assignment.id)}
-                                  >
-                                    Delete
-                                  </button>
-                                </div>
-                              ))
-                            ) : (
-                              <p>No assignments added yet</p>
-                            )}
-                          </div>
-                          
-                          {/* Previous Year Questions Section */}
-                          <div className="subject-pyq">
-                            <h5>Previous Year Questions</h5>
-                            {subject.previousYearQuestions && subject.previousYearQuestions.length > 0 ? (
-                              subject.previousYearQuestions.map(pyq => (
-                                <div key={pyq.id} className="pyq-item">
-                                  <span>{pyq.title || `${pyq.year} ${pyq.semester}`}</span>
-                                  <button 
-                                    className="delete-btn" 
-                                    onClick={() => deleteResourceHandler(subject.id, 'pyq', pyq.id)}
-                                  >
-                                    Delete
-                                  </button>
-                                </div>
-                              ))
-                            ) : (
-                              <p>No previous year questions added yet</p>
-                            )}
-                          </div>
+                          <button 
+                            className="edit-btn" 
+                            onClick={() => openEditModal(subject.id, 'chapter', chapter)}
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            className="delete-btn" 
+                            onClick={() => deleteResourceHandler(subject.id, 'chapter', chapter.id)}
+                          >
+                            Delete
+                          </button>
                         </div>
-                      ))
-                    ) : (
-                      <p>No subjects added for this semester yet</p>
-                    )}
-                  </div>
-                ))}
+                      </div>
+                    ))
+                  ) : (
+                    <p>No chapters added yet</p>
+                  )}
+                </div>
+                
+                {/* Video Lectures Section */}
+                <div className="subject-videos">
+                  <h5>Video Lectures</h5>
+                  {subject.videoLectures && subject.videoLectures.length > 0 ? (
+                    subject.videoLectures.map((video, index) => (
+                      <div key={video.id} className="video-item">
+                        <span>{video.title}</span>
+                        <div className="item-actions">
+                          {/* Reorder buttons */}
+                          <div className="reorder-buttons">
+                            <button 
+                              className="reorder-btn up"
+                              onClick={() => handleResourceReorder(subject.id, 'video', video.id, 'up')}
+                              disabled={index === 0}
+                              title="Move Up"
+                            >
+                              ↑
+                            </button>
+                            <button 
+                              className="reorder-btn down"
+                              onClick={() => handleResourceReorder(subject.id, 'video', video.id, 'down')}
+                              disabled={index === (subject.videoLectures.length - 1)}
+                              title="Move Down"
+                            >
+                              ↓
+                            </button>
+                          </div>
+                          <button 
+                            className="edit-btn" 
+                            onClick={() => openEditModal(subject.id, 'video', video)}
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            className="delete-btn" 
+                            onClick={() => deleteResourceHandler(subject.id, 'video', video.id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No video lectures added yet</p>
+                  )}
+                </div>
+                
+                {/* Assignments Section */}
+                <div className="subject-assignments">
+                  <h5>Assignments</h5>
+                  {subject.assignments && subject.assignments.length > 0 ? (
+                    subject.assignments.map((assignment, index) => (
+                      <div key={assignment.id} className="assignment-item">
+                        <span>{assignment.title}</span>
+                        <div className="item-actions">
+                          {/* Reorder buttons */}
+                          <div className="reorder-buttons">
+                            <button 
+                              className="reorder-btn up"
+                              onClick={() => handleResourceReorder(subject.id, 'assignment', assignment.id, 'up')}
+                              disabled={index === 0}
+                              title="Move Up"
+                            >
+                              ↑
+                            </button>
+                            <button 
+                              className="reorder-btn down"
+                              onClick={() => handleResourceReorder(subject.id, 'assignment', assignment.id, 'down')}
+                              disabled={index === (subject.assignments.length - 1)}
+                              title="Move Down"
+                            >
+                              ↓
+                            </button>
+                          </div>
+                          <button 
+                            className="edit-btn" 
+                            onClick={() => openEditModal(subject.id, 'assignment', assignment)}
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            className="delete-btn" 
+                            onClick={() => deleteResourceHandler(subject.id, 'assignment', assignment.id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No assignments added yet</p>
+                  )}
+                </div>
+                
+                {/* Previous Year Questions Section */}
+                <div className="subject-pyq">
+                  <h5>Previous Year Questions</h5>
+                  {subject.previousYearQuestions && subject.previousYearQuestions.length > 0 ? (
+                    subject.previousYearQuestions.map((pyq, index) => (
+                      <div key={pyq.id} className="pyq-item">
+                        <span>{pyq.title || `${pyq.year} ${pyq.semester}`}</span>
+                        <div className="item-actions">
+                          {/* Reorder buttons */}
+                          <div className="reorder-buttons">
+                            <button 
+                              className="reorder-btn up"
+                              onClick={() => handleResourceReorder(subject.id, 'pyq', pyq.id, 'up')}
+                              disabled={index === 0}
+                              title="Move Up"
+                            >
+                              ↑
+                            </button>
+                            <button 
+                              className="reorder-btn down"
+                              onClick={() => handleResourceReorder(subject.id, 'pyq', pyq.id, 'down')}
+                              disabled={index === (subject.previousYearQuestions.length - 1)}
+                              title="Move Down"
+                            >
+                              ↓
+                            </button>
+                          </div>
+                          <button 
+                            className="edit-btn" 
+                            onClick={() => openEditModal(subject.id, 'pyq', pyq)}
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            className="delete-btn" 
+                            onClick={() => deleteResourceHandler(subject.id, 'pyq', pyq.id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No previous year questions added yet</p>
+                  )}
+                </div>
               </div>
-            </div>
+            ))
+          ) : (
+            <p>No subjects added for this semester yet</p>
           )}
         </div>
+      ))}
+    </div>
+  </div>
+)}
+          
+        </div>
       </div>
+      {editModalOpen && <EditResourceModal />}
     </div>
   );
 };
