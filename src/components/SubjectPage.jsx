@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { DiscussionEmbed } from 'disqus-react';
 import ChapterResources from './ChapterResources';
 import ChatbotEmbed from './ChatbotEmbed';
+import { getSubjectById } from '../firebase/dataService';
 import './SubjectPage.css';
 
 function SubjectPage() {
@@ -13,9 +14,11 @@ function SubjectPage() {
   
   // Function to get YouTube ID
   function getYouTubeID(url) {
+    if (!url) return null;
     const regExp = /^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\\&\\?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
+  
   }
   const subjectsDatabase = {
     // Semester 1 Subjects
@@ -1395,216 +1398,235 @@ function SubjectPage() {
 // Right where you load the subject data
 
 useEffect(() => {
-  // Load subject data
-  const loadSubject = () => {
+  // Function to load subject data
+  const loadSubject = async () => {
     setIsLoading(true);
     
-    // First check for admin-added subjects
-    const storedSubjects = localStorage.getItem('adminSubjects');
-    if (storedSubjects) {
-      try {
-        const allSubjects = JSON.parse(storedSubjects);
-        // Find subject by ID
-        const adminSubject = allSubjects.find(subject => subject.id === subjectId);
+    try {
+      // First try to get the subject from Firebase
+      const firestoreSubject = await getSubjectById(subjectId);
+      
+      if (firestoreSubject) {
+        console.log("Found subject in Firestore:", firestoreSubject);
+        setCurrentSubject(firestoreSubject);
+      } else {
+        // If not found in Firestore, check local database
+        console.log("Subject not found in Firestore, checking local database");
+        const foundSubject = subjectsDatabase[semId]?.[subjectId];
         
-        if (adminSubject) {
-          console.log("Found admin-added subject:", adminSubject);
-          setCurrentSubject(adminSubject);
-          setIsLoading(false);
-          return; // Stop here if found
+        if (foundSubject) {
+          setCurrentSubject(foundSubject);
+        } else {
+          // Not found anywhere, set a fallback
+          setCurrentSubject({
+            name: "Subject Not Found",
+            code: "N/A",
+            description: "This subject does not exist in our database.",
+            instructor: "N/A",
+            credits: 0,
+            syllabusUrl: "#",
+            chapters: [],
+            previousYearQuestions: [],
+            videoLectures: [],
+            assignments: []
+          });
         }
-      } catch (error) {
-        console.error("Error parsing admin subjects:", error);
       }
+    } catch (error) {
+      console.error("Error loading subject:", error);
+      
+      // On error, fall back to local database
+      const foundSubject = subjectsDatabase[semId]?.[subjectId];
+      
+      if (foundSubject) {
+        setCurrentSubject(foundSubject);
+      } else {
+        // Set the fallback if nothing is found
+        setCurrentSubject({
+          name: "Subject Not Found",
+          code: "N/A",
+          description: "This subject does not exist in our database.",
+          instructor: "N/A",
+          credits: 0,
+          syllabusUrl: "#",
+          chapters: [],
+          previousYearQuestions: [],
+          videoLectures: [],
+          assignments: []
+        });
+      }
+    } finally {
+      setIsLoading(false);
     }
-    
-    // If not found, continue with your existing code to get subject from subjectsDatabase
-    // Your existing code below...
-    const foundSubject = subjectsDatabase[semId]?.[subjectId];
-    if (foundSubject) {
-      setCurrentSubject(foundSubject);
-    } else {
-      setCurrentSubject({
-        name: "Subject Not Found",
-        code: "N/A",
-        description: "This subject does not exist in our database.",
-        instructor: "N/A",
-        credits: 0,
-        syllabusUrl: "#",
-        chapters: [],
-        previousYearQuestions: [],
-        videoLectures: [],
-        assignments: []
-      });
-    }
-    
-    setIsLoading(false);
   };
   
   loadSubject();
 }, [semId, subjectId]);
-  const renderTabContent = () => {
-    if (!currentSubject) return <div>Loading content...</div>;
-    
-    switch (activeTab) {
-      case 'chapters':
-        return (
-          <div className="chapters-container">
-            <h3>Chapter Notes</h3>
-            {currentSubject.chapters && currentSubject.chapters.length > 0 ? (
-              currentSubject.chapters.map(chapter => (
-                <ChapterResources 
-                  key={chapter.id} 
-                  chapter={{
-                    ...chapter,
-                    driveEmbedUrl: chapter.driveEmbedUrl || '#'
-                  }} 
-                />
-              ))
-            ) : (
-              <div className="error-message">No chapters available for this subject</div>
-            )}
-          </div>
-        );
+
+const renderTabContent = () => {
+  if (!currentSubject) return <div>Loading content...</div>;
   
-      case 'previous-years':
-        return (
-          <div className="previous-years-container">
-            <h3>Previous Year Question Papers</h3>
-            {(currentSubject.previousYearQuestions || []).length > 0 ? (
-              currentSubject.previousYearQuestions.map(pyq => (
-                <div key={pyq.id} className="material-card pyq-item">
-                  <div className="material-icon pdf-icon"></div>
-                  <div className="material-content">
-                    <h4>{pyq.year} {pyq.semester} {pyq.type}</h4>
-                    <div className="material-actions">
-                      <a href={pyq.fileUrl || '#'} target="_blank" rel="noopener noreferrer" className="action-btn download-btn">View</a>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="error-message">No previous year questions available for this subject</div>
-            )}
-          </div>
-        );
-  
-      case 'assignments':
-        return (
-          <div className="assignments-container">
-            <h3>Assignments</h3>
-            {(currentSubject.assignments || []).length > 0 ? (
-              currentSubject.assignments.map(assignment => (
-                <div key={assignment.id} className="material-card assignment-item">
-                  <div className="material-icon pdf-icon"></div>
-                  <div className="material-content">
-                    <h4>{assignment.title}</h4>
-                    <p>{assignment.description}</p>
-                    <div className="material-meta">
-                      <span className="meta-item">Deadline: {assignment.deadline || 'N/A'}</span>
-                    </div>
-                  </div>
+  switch (activeTab) {
+    case 'chapters':
+      return (
+        <div className="chapters-container">
+          <h3>Chapter Notes</h3>
+          {currentSubject.chapters && currentSubject.chapters.length > 0 ? (
+            currentSubject.chapters.map(chapter => (
+              <ChapterResources 
+                key={chapter.id} 
+                chapter={{
+                  ...chapter,
+                  driveEmbedUrl: chapter.driveEmbedUrl || '#'
+                }} 
+              />
+            ))
+          ) : (
+            <div className="error-message">No chapters available for this subject</div>
+          )}
+        </div>
+      );
+
+    case 'previous-years':
+      return (
+        <div className="previous-years-container">
+          <h3>Previous Year Question Papers</h3>
+          {(currentSubject.previousYearQuestions || []).length > 0 ? (
+            currentSubject.previousYearQuestions.map(pyq => (
+              <div key={pyq.id} className="material-card pyq-item">
+                <div className="material-icon pdf-icon"></div>
+                <div className="material-content">
+                  <h4>{pyq.title || `${pyq.year} ${pyq.semester} ${pyq.type}`}</h4>
                   <div className="material-actions">
-                    <a href={assignment.fileUrl || '#'} target="_blank" rel="noopener noreferrer" className="action-btn download-btn">View</a>
+                    <a href={pyq.fileUrl || '#'} target="_blank" rel="noopener noreferrer" className="action-btn download-btn">View</a>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="error-message">No assignments available for this subject</div>
-            )}
-          </div>
-        );
-  
-      case 'video-lectures':
-        return (
-          <div className="video-lectures-container">
-            <h3>Video Lectures</h3>
-            {(currentSubject.videoLectures || []).length > 0 ? (
-              <div className="video-grid">
-                {currentSubject.videoLectures.map(video => (
-                  <div key={video.id} className="material-card video-item">
-                    <div className="video-container">
-                      <iframe 
-                        src={video.url.includes('embed') ? video.url : `https://www.youtube.com/embed/${getYouTubeID(video.url)}`}
-                        title={video.title}
-                        className="video-embed"
-                        width="100%"
-                        height="100%" 
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    </div>
-                    <div className="video-content">
-                      <h4 className="video-title">{video.title}</h4>
-                      <p className="video-description">{video.description}</p>
-                    </div>
+              </div>
+            ))
+          ) : (
+            <div className="error-message">No previous year questions available for this subject</div>
+          )}
+        </div>
+      );
+
+    case 'assignments':
+      return (
+        <div className="assignments-container">
+          <h3>Assignments</h3>
+          {(currentSubject.assignments || []).length > 0 ? (
+            currentSubject.assignments.map(assignment => (
+              <div key={assignment.id} className="material-card assignment-item">
+                <div className="material-icon pdf-icon"></div>
+                <div className="material-content">
+                  <h4>{assignment.title}</h4>
+                  <p>{assignment.description}</p>
+                  <div className="material-meta">
+                    <span className="meta-item">Deadline: {assignment.deadline || 'N/A'}</span>
                   </div>
-                ))}
+                </div>
+                <div className="material-actions">
+                  <a href={assignment.fileUrl || '#'} target="_blank" rel="noopener noreferrer" className="action-btn download-btn">View</a>
+                </div>
               </div>
-            ) : (
-              <div className="error-message">No video lectures available for this subject</div>
-            )}
-          </div>
-        );
-  
-      case 'ai-help':
-        return (
-          <div className="ai-help-section">
-            <div className="ai-assistant-header">
-              <div className="ai-icon"></div>
-              <div>
-                <h3>AI Learning Assistant</h3>
-                <p>Get instant help with your subject queries</p>
-              </div>
+            ))
+          ) : (
+            <div className="error-message">No assignments available for this subject</div>
+          )}
+        </div>
+      );
+
+    case 'video-lectures':
+      return (
+        <div className="video-lectures-container">
+          <h3>Video Lectures</h3>
+          {(currentSubject.videoLectures || []).length > 0 ? (
+            <div className="video-grid">
+              {currentSubject.videoLectures.map(video => (
+                <div key={video.id} className="material-card video-item">
+                  <div className="video-container">
+                    <iframe 
+                      src={video.url && video.url.includes('embed') ? video.url : 
+                          video.url ? `https://www.youtube.com/embed/${getYouTubeID(video.url)}` : '#'}
+                      title={video.title || 'Video Lecture'}
+                      className="video-embed"
+                      width="100%"
+                      height="100%" 
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                  <div className="video-content">
+                    <h4 className="video-title">{video.title || 'Untitled Video'}</h4>
+                    <p className="video-description">{video.description || 'No description available'}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="ai-chat-container">
+          ) : (
+            <div className="error-message">No video lectures available for this subject</div>
+          )}
+        </div>
+      );
+
+    case 'ai-help':
+      return (
+        <div className="ai-help-section">
+          <div className="ai-assistant-header">
+            <div className="ai-icon"></div>
+            <div>
+              <h3>AI Learning Assistant</h3>
+              <p>Get instant help with your subject queries</p>
+            </div>
+          </div>
+          <div className="ai-chat-container">
             <ChatbotEmbed />
-            </div>
-          </div>
-        );
-        
-      default:
-        return <div>Select a tab to view content</div>;
-    }
-  };
-
-  // Configure Disqus props
-  const disqusConfig = {
-    url: window.location.href,
-    identifier: `semester-${semId}-subject-${subjectId}`,
-    title: currentSubject ? `${currentSubject.name} - ${currentSubject.code}` : `Subject ${subjectId}`,
-  };
-
-  if (isLoading) {
-    return (
-      <div className="subject-page">
-        <div className="container">
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
-            <p>Loading subject content...</p>
           </div>
         </div>
-      </div>
-    );
+      );
+      
+    default:
+      return <div>Select a tab to view content</div>;
   }
+};
 
+// Configure Disqus props
+const disqusConfig = {
+  url: window.location.href,
+  identifier: `semester-${semId}-subject-${subjectId}`,
+  title: currentSubject ? `${currentSubject.name} - ${currentSubject.code || 'No Code'}` : `Subject ${subjectId}`,
+};
+
+if (isLoading) {
   return (
     <div className="subject-page">
-      <div className="subject-header-wrapper">
-        <div className="container">
-          <div className="subject-header">
-            <Link to={`/semester/${semId}`} className="back-link">
-              ← Back to Semester {semId}
-            </Link>
-            <div className="subject-headline">
-              <h1>{currentSubject?.name}</h1>
-              <div className="subject-meta">
-                <span className="subject-code">{currentSubject?.code}</span>
-                <span className="subject-instructor">Instructor: {currentSubject?.instructor}</span>
-                <span className="subject-credits">{currentSubject?.credits} Credits</span>
+      <div className="container">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Loading subject content...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+return (
+  <div className="subject-page">
+    <div className="subject-header-wrapper">
+      <div className="container">
+        <div className="subject-header">
+          <Link to={`/semester/${semId}`} className="back-link">
+            ← Back to Semester {semId}
+          </Link>
+          <div className="subject-headline">
+            <h1>{currentSubject?.name}</h1>
+            <div className="subject-meta">
+              <span className="subject-code">{currentSubject?.code || 'No Code'}</span>
+              <span className="subject-instructor">Instructor: {currentSubject?.instructor || 'Not assigned'}</span>
+              <span className="subject-credits">{currentSubject?.credits || 0} Credits</span>
+              {currentSubject?.syllabusUrl && (
                 <a 
-                  href={currentSubject?.syllabusUrl || "#"} 
+                  href={currentSubject.syllabusUrl} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="syllabus-btn"
@@ -1612,74 +1634,75 @@ useEffect(() => {
                   <span className="syllabus-icon"></span>
                   View Syllabus
                 </a>
-              </div>
+              )}
             </div>
-            <p className="subject-description">{currentSubject?.description}</p>
           </div>
+          <p className="subject-description">{currentSubject?.description || 'No description available'}</p>
         </div>
       </div>
-      
-      <div className="container">
-        <div className="subject-content">
-          <div className="tabs">
-            <button 
-              className={`tab ${activeTab === 'chapters' ? 'active' : ''}`}
-              onClick={() => setActiveTab('chapters')}
-            >
-              <span className="tab-icon chapters-icon"></span>
-              Chapters & Resources
-            </button>
-            <button 
-              className={`tab ${activeTab === 'previous-years' ? 'active' : ''}`}
-              onClick={() => setActiveTab('previous-years')}
-            >
-              <span className="tab-icon pyq-icon"></span>
-              Previous Years
-            </button>
-            <button 
-              className={`tab ${activeTab === 'assignments' ? 'active' : ''}`}
-              onClick={() => setActiveTab('assignments')}
-            >
-              <span className="tab-icon assignments-icon"></span>
-              Assignments
-            </button>
-            <button 
-              className={`tab ${activeTab === 'video-lectures' ? 'active' : ''}`}
-              onClick={() => setActiveTab('video-lectures')}
-            >
-              <span className="tab-icon videos-icon"></span>
-              Video Lectures
-            </button>
-            <button 
-              className={`tab ${activeTab === 'ai-help' ? 'active' : ''}`}
-              onClick={() => setActiveTab('ai-help')}
-            >
-              <span className="tab-icon ai-icon"></span>
-              AI Help
-            </button>
+    </div>
+    
+    <div className="container">
+      <div className="subject-content">
+        <div className="tabs">
+          <button 
+            className={`tab ${activeTab === 'chapters' ? 'active' : ''}`}
+            onClick={() => setActiveTab('chapters')}
+          >
+            <span className="tab-icon chapters-icon"></span>
+            Chapters & Resources
+          </button>
+          <button 
+            className={`tab ${activeTab === 'previous-years' ? 'active' : ''}`}
+            onClick={() => setActiveTab('previous-years')}
+          >
+            <span className="tab-icon pyq-icon"></span>
+            Previous Years
+          </button>
+          <button 
+            className={`tab ${activeTab === 'assignments' ? 'active' : ''}`}
+            onClick={() => setActiveTab('assignments')}
+          >
+            <span className="tab-icon assignments-icon"></span>
+            Assignments
+          </button>
+          <button 
+            className={`tab ${activeTab === 'video-lectures' ? 'active' : ''}`}
+            onClick={() => setActiveTab('video-lectures')}
+          >
+            <span className="tab-icon videos-icon"></span>
+            Video Lectures
+          </button>
+          <button 
+            className={`tab ${activeTab === 'ai-help' ? 'active' : ''}`}
+            onClick={() => setActiveTab('ai-help')}
+          >
+            <span className="tab-icon ai-icon"></span>
+            AI Help
+          </button>
+        </div>
+        
+        <div className="tab-content">
+          {renderTabContent()}
+        </div>
+        
+        {/* Discussion Forum Section - Below all tabs */}
+        <div className="discussion-section">
+          <div className="discussion-header">
+            <h3>Discussion Forum</h3>
+            <p>Discuss this subject with your classmates and instructors</p>
           </div>
-          
-          <div className="tab-content">
-            {renderTabContent()}
-          </div>
-          
-          {/* Discussion Forum Section - Below all tabs */}
-          <div className="discussion-section">
-            <div className="discussion-header">
-              <h3>Discussion Forum</h3>
-              <p>Discuss this subject with your classmates and instructors</p>
-            </div>
-            <div className="disqus-container">
-              <DiscussionEmbed
-                shortname='collegehelper-comments'
-                config={disqusConfig}
-              />
-            </div>
+          <div className="disqus-container">
+            <DiscussionEmbed
+              shortname='collegehelper-comments'
+              config={disqusConfig}
+            />
           </div>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default SubjectPage;
