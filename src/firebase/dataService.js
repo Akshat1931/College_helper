@@ -169,6 +169,90 @@ export const setUserAsAdmin = async (email) => {
       return null;
     }
   };
+  export const getAllAdmins = async () => {
+    try {
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where("isAdmin", "==", true));
+      const snapshot = await getDocs(q);
+      
+      const adminList = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+  
+      console.log("Raw Admin List from Firestore:", adminList); // Debug log
+      
+      return adminList;
+    } catch (error) {
+      console.error("Error fetching admin users:", error);
+      return [];
+    }
+  };
+  
+  // Remove admin status from a user
+  export const removeAdminStatus = async (userId) => {
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        isAdmin: false,
+        updatedAt: serverTimestamp()
+      });
+      return true;
+    } catch (error) {
+      console.error("Error removing admin status:", error);
+      return false;
+    }
+  };
+  
+  // Add a new admin by email
+  export const addAdminByEmail = async (email) => {
+    try {
+      // First, find the user with this email
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where("email", "==", email));
+      const querySnapshot = await getDocs(q);
+      
+      if (querySnapshot.empty) {
+        // No user found with this email
+        return {
+          success: false,
+          message: "No user found with this email."
+        };
+      }
+      
+      // Get the first matching user
+      const userDoc = querySnapshot.docs[0];
+      
+      // Check if user is already an admin
+      if (userDoc.data().isAdmin) {
+        return {
+          success: false,
+          message: "User is already an admin."
+        };
+      }
+      
+      // Update user to be an admin
+      await updateDoc(doc(db, 'users', userDoc.id), {
+        isAdmin: true,
+        updatedAt: serverTimestamp()
+      });
+      
+      return {
+        success: true,
+        message: "Admin status granted successfully.",
+        user: {
+          id: userDoc.id,
+          ...userDoc.data()
+        }
+      };
+    } catch (error) {
+      console.error("Error adding admin:", error);
+      return {
+        success: false,
+        message: "Failed to add admin. Please try again."
+      };
+    }
+  };
   
   // Add a new subject
   export const addSubject = async (subjectData) => {
@@ -666,6 +750,9 @@ export const addAssignment = async (subjectId, assignmentData) => {
     addAssignment,
     getAllSemesters,
     updateSemester,
+    getAllAdmins,
+    removeAdminStatus,
+    addAdminByEmail,
     deleteResourceFromSubject,
     initializeWithExampleData
   };
