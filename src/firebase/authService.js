@@ -54,7 +54,7 @@ import {
         picture: user.photoURL,
         isNewUser: true,
         createdAt: new Date(),
-        isAdmin: ['discordakshat04@gmail.com', 'your.other.admin@email.com'].includes(user.email)
+        isAdmin: ['discordakshat04@gmail.com','aryanawasthi1974@gmail.com', 'your.other.admin@email.com'].includes(user.email)
       };
       
       // Create the user document in Firestore
