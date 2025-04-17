@@ -1,8 +1,4 @@
-// src/services/DataService.js
-/**
- * Service for handling subject data persistence and retrieval
- * This uses localStorage, but could be updated to use a backend API
- */
+
 
 const STORAGE_KEYS = {
     SUBJECTS: 'collegeHelper_subjects',
