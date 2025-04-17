@@ -8,9 +8,11 @@ import {
     updateDoc,
     deleteDoc,
     query,
+    orderBy,
     where,
     Timestamp,
-    serverTimestamp
+    serverTimestamp,
+    writeBatch
   } from 'firebase/firestore';
   import { db } from './config';
   import { getHardCodedSubjects } from '../data/hardCodedSubjects';
@@ -84,44 +86,123 @@ import {
   
   
   // Get subjects for a specific semester
-  export const getSubjectsBySemester = async (semesterId) => {
-    try {
-      // Get subjects from Firebase
-      const subjectsRef = collection(db, SUBJECTS_COLLECTION);
-      const q = query(subjectsRef, where("semesterId", "==", parseInt(semesterId)));
-      const snapshot = await getDocs(q);
-      
-      // Convert to array
-      const firebaseSubjects = snapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id
-      }));
-      
-      // Get hard-coded subjects for this semester
-      const hardCodedSubjects = getHardCodedSubjects(parseInt(semesterId));
-      
-      // If we have Firebase subjects, merge them with hard-coded ones
-      if (firebaseSubjects.length > 0) {
-        // Use subject code as the unique identifier to prevent duplicates
-        const firebaseSubjectCodes = firebaseSubjects.map(subject => subject.code);
-        
-        // Filter out hard-coded subjects that have a Firebase version
-        const uniqueHardCodedSubjects = hardCodedSubjects.filter(
-          subject => !firebaseSubjectCodes.includes(subject.code)
-        );
-        
-        // Important change: Put hard-coded subjects first, then Firebase subjects
-        return [...uniqueHardCodedSubjects, ...firebaseSubjects];
+  // Add this function to your src/firebase/dataService.js file
+
+/**
+ * Updates the order of subjects within a semester
+ * @param {number} semesterId - The semester ID 
+ * @param {Array} orderedSubjects - Array of subjects in the new order
+ * @returns {Promise} - Promise that resolves when the update is complete
+ */
+export const updateSubjectsOrder = async (semesterId, orderedSubjects) => {
+  try {
+    // Create a batch to update all subjects at once for consistency
+    const batch = writeBatch(db);
+    
+    // Update each subject's displayOrder field
+    orderedSubjects.forEach((subject, index) => {
+      // Skip if the subject is from hardcoded data and not in Firebase
+      if (!subject.id || subject.id.startsWith('hardcoded_')) {
+        return;
       }
       
-      // If no Firebase subjects, return all hard-coded ones
-      return hardCodedSubjects;
-    } catch (error) {
-      console.error(`Error getting subjects for semester ${semesterId}:`, error);
-      // Fall back to hard-coded subjects on error
-      return getHardCodedSubjects(parseInt(semesterId));
+      const subjectRef = doc(db, SUBJECTS_COLLECTION, subject.id);
+      batch.update(subjectRef, { 
+        displayOrder: index,
+        updatedAt: serverTimestamp()
+      });
+    });
+    
+    // Commit the batch
+    await batch.commit();
+    
+    return true;
+  } catch (error) {
+    console.error(`Error updating subjects order for semester ${semesterId}:`, error);
+    throw error;
+  }
+};
+
+// Update your getSubjectsBySemester function to include ordering
+// Improved getSubjectsBySemester function with better error handling and logging
+export const getSubjectsBySemester = async (semesterId) => {
+  try {
+    console.log(`Fetching subjects for semester ${semesterId}`);
+    
+    // Convert semesterId to number if it's a string
+    const semesterIdNum = parseInt(semesterId);
+    
+    // Get subjects from Firebase
+    const subjectsRef = collection(db, SUBJECTS_COLLECTION);
+    let q;
+    
+    try {
+      // Try to query with orderBy - might fail if no displayOrder field exists
+      q = query(
+        subjectsRef,
+        where("semesterId", "==", semesterIdNum),
+        orderBy("displayOrder", "asc")
+      );
+    } catch (orderByError) {
+      console.warn("Error using orderBy - falling back to basic query:", orderByError);
+      // Fallback to basic query without ordering
+      q = query(
+        subjectsRef,
+        where("semesterId", "==", semesterIdNum)
+      );
     }
-  };
+    
+    const snapshot = await getDocs(q);
+    
+    // Convert to array
+    const firebaseSubjects = snapshot.docs.map(doc => ({
+      ...doc.data(),
+      id: doc.id
+    }));
+    
+    console.log(`Found ${firebaseSubjects.length} subjects in Firebase for semester ${semesterId}`);
+    
+    // Get hard-coded subjects for this semester
+    const hardCodedSubjects = getHardCodedSubjects(semesterIdNum);
+    console.log(`Found ${hardCodedSubjects.length} hardcoded subjects for semester ${semesterId}`);
+    
+    // If we have Firebase subjects, merge them with hard-coded ones
+    if (firebaseSubjects.length > 0) {
+      // Use subject code as the unique identifier to prevent duplicates
+      const firebaseSubjectCodes = firebaseSubjects.map(subject => subject.code);
+      
+      // Filter out hard-coded subjects that have a Firebase version
+      const uniqueHardCodedSubjects = hardCodedSubjects.filter(
+        subject => !firebaseSubjectCodes.includes(subject.code)
+      );
+      
+      console.log(`After filtering, using ${uniqueHardCodedSubjects.length} hardcoded subjects`);
+      
+      // Add displayOrder to hardcoded subjects if needed
+      const processedHardCodedSubjects = uniqueHardCodedSubjects.map((subject, index) => ({
+        ...subject,
+        displayOrder: -1000 + index // Give them negative display orders to show before Firebase subjects
+      }));
+      
+      // Important change: Put hard-coded subjects first, then Firebase subjects
+      const mergedSubjects = [...processedHardCodedSubjects, ...firebaseSubjects];
+      console.log(`Returning ${mergedSubjects.length} total subjects for semester ${semesterId}`);
+      
+      return mergedSubjects;
+    }
+    
+    // If no Firebase subjects, return all hard-coded ones
+    console.log(`No Firebase subjects, returning ${hardCodedSubjects.length} hardcoded subjects`);
+    return hardCodedSubjects;
+  } catch (error) {
+    console.error(`Error getting subjects for semester ${semesterId}:`, error);
+    
+    // Fall back to hard-coded subjects on error
+    const hardCodedSubjects = getHardCodedSubjects(parseInt(semesterId));
+    console.log(`Error fallback: Returning ${hardCodedSubjects.length} hardcoded subjects`);
+    return hardCodedSubjects;
+  }
+};
   // Add this to your dataService.js or create a new admin function
 export const setUserAsAdmin = async (email) => {
   try {
@@ -169,6 +250,7 @@ export const setUserAsAdmin = async (email) => {
       return null;
     }
   };
+  
   export const getAllAdmins = async () => {
     try {
       const usersRef = collection(db, 'users');
@@ -255,32 +337,46 @@ export const setUserAsAdmin = async (email) => {
   };
   
   // Add a new subject
-  export const addSubject = async (subjectData) => {
-    try {
-      // Create a new document with auto-generated ID
-      const newSubjectRef = doc(collection(db, SUBJECTS_COLLECTION));
-      
-      const subjectWithMetadata = {
-        ...subjectData,
-        chapters: [],
-        previousYearQuestions: [],
-        assignments: [],
-        videoLectures: [],
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      };
-      
-      await setDoc(newSubjectRef, subjectWithMetadata);
-      
-      return {
-        ...subjectWithMetadata,
-        id: newSubjectRef.id
-      };
-    } catch (error) {
-      console.error("Error adding subject:", error);
-      throw error;
-    }
-  };
+  // Update the addSubject function in dataService.js to ensure displayOrder is set
+export const addSubject = async (subjectData) => {
+  try {
+    console.log("Adding new subject:", subjectData.name);
+    
+    // Get current count of subjects for this semester to determine order
+    const subjectsRef = collection(db, SUBJECTS_COLLECTION);
+    const q = query(subjectsRef, where("semesterId", "==", parseInt(subjectData.semesterId)));
+    const snapshot = await getDocs(q);
+    const currentCount = snapshot.docs.length;
+    
+    console.log(`Current subject count for semester ${subjectData.semesterId}: ${currentCount}`);
+
+    // Create a new document with auto-generated ID
+    const newSubjectRef = doc(collection(db, SUBJECTS_COLLECTION));
+    
+    // Make sure we have displayOrder in the data
+    const subjectWithMetadata = {
+      ...subjectData,
+      displayOrder: currentCount, // This is important - makes sure new subjects appear at the end
+      chapters: [],
+      previousYearQuestions: [],
+      assignments: [],
+      videoLectures: [],
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+    
+    await setDoc(newSubjectRef, subjectWithMetadata);
+    console.log(`Subject ${subjectData.name} added with displayOrder ${currentCount}`);
+    
+    return {
+      ...subjectWithMetadata,
+      id: newSubjectRef.id
+    };
+  } catch (error) {
+    console.error("Error adding subject:", error);
+    throw error;
+  }
+};
   
   // Update existing subject
   export const updateSubject = async (subjectId, updatedData) => {
