@@ -28,8 +28,19 @@ const NetworkErrorNotification = ({
           <button 
             className="network-error-reload-btn"
             onClick={() => {
-              onReload && onReload();
-              window.location.reload();
+              // Check network status before reload
+              if (navigator.onLine) {
+                if (onReload) onReload();
+                window.location.reload();
+              } else {
+                // Still offline - show new notification
+                setIsVisible(false);
+                setTimeout(() => {
+                  // Create a new notification since this one is going away
+                  const event = new Event('refreshnetwork');
+                  window.dispatchEvent(event);
+                }, 100);
+              }
             }}
           >
             Reload
