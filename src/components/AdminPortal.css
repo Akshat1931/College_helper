@@ -701,6 +701,19 @@
   background-color: rgba(0, 0, 0, 0.05);
   color: var(--text-dark, #2d3748);
 }
+/* Add this to your AdminPortal.css file */
+.edit-modal input:focus,
+.edit-modal textarea:focus,
+.edit-modal select:focus {
+  outline: 2px solid var(--primary);
+  box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
+}
+
+/* This helps maintain focus state */
+.edit-modal .form-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
 
 .edit-modal-body {
   padding: 1.5rem;
