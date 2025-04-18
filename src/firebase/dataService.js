@@ -295,21 +295,52 @@ export const setUserAsAdmin = async (email) => {
   // Get a specific subject by ID
   export const getSubjectById = async (subjectId) => {
     try {
-      const subjectRef = doc(db, SUBJECTS_COLLECTION, subjectId);
-      const snapshot = await getDoc(subjectRef);
+      // First try to get the subject with the exact ID
+      const subjectRef = doc(db, 'subjects', subjectId);
+      const docSnap = await getDoc(subjectRef);
       
-      if (snapshot.exists()) {
-        return {
-          ...snapshot.data(),
-          id: snapshot.id
-        };
-      } else {
-        console.log(`Subject with ID ${subjectId} not found`);
-        return null;
+      if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() };
+      } 
+      
+      // If the ID is numeric, it might be stored with a different format
+      // Try with common prefixes or formats
+      if (!isNaN(parseInt(subjectId))) {
+        // Try with prefix (e.g., "subj_1" instead of just "1")
+        const possibleIds = [
+          `subj_${subjectId}`,
+          `subject_${subjectId}`,
+          `s${subjectId}`,
+          // Add other potential formats your app might use
+        ];
+        
+        // Try each possible format
+        for (const possibleId of possibleIds) {
+          const altRef = doc(db, 'subjects', possibleId);
+          const altSnap = await getDoc(altRef);
+          
+          if (altSnap.exists()) {
+            return { id: altSnap.id, ...altSnap.data() };
+          }
+        }
+        
+        // Try to query subjects by a numeric field instead
+        const subjectsRef = collection(db, 'subjects');
+        const q = query(subjectsRef, where('numericId', '==', parseInt(subjectId)));
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+          const doc = querySnapshot.docs[0];
+          return { id: doc.id, ...doc.data() };
+        }
       }
-    } catch (error) {
-      console.error(`Error getting subject ${subjectId}:`, error);
+      
+      // Fall back to default when subject is not found
+      console.error(`Subject with ID ${subjectId} not found after all attempts`);
       return null;
+    } catch (error) {
+      console.error("Error getting subject:", error);
+      throw error;
     }
   };
   
