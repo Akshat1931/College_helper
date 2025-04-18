@@ -1655,7 +1655,10 @@ const EditResourceModal = () => {
           <input 
             type="text" 
             value={editSubject?.name || ''}
-            onChange={(e) => setEditSubject({...editSubject, name: e.target.value})}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setEditSubject(prev => ({...prev, name:newValue}));
+            }}
             required
           />
         </div>
@@ -1665,7 +1668,10 @@ const EditResourceModal = () => {
           <input 
             type="text" 
             value={editSubject?.code || ''}
-            onChange={(e) => setEditSubject({...editSubject, code: e.target.value})}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setEditSubject(prev => ({...prev, name:newValue}));
+            }}
             required
           />
         </div>
@@ -1675,8 +1681,10 @@ const EditResourceModal = () => {
           <input 
             type="text" 
             value={editSubject?.icon || ''}
-            onChange={(e) => setEditSubject({...editSubject, icon: e.target.value})}
-            placeholder="📚 📝 🧮 ⚛️ 🔬"
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setEditSubject(prev => ({...prev, name:newValue}));
+            }}
             maxLength="2"
           />
         </div>
@@ -1685,7 +1693,10 @@ const EditResourceModal = () => {
           <label>Description</label>
           <textarea 
             value={editSubject?.description || ''}
-            onChange={(e) => setEditSubject({...editSubject, description: e.target.value})}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setEditSubject(prev => ({...prev, name:newValue}));
+            }}
             required
           />
         </div>
@@ -1695,7 +1706,10 @@ const EditResourceModal = () => {
           <input 
             type="text" 
             value={editSubject?.instructor || ''}
-            onChange={(e) => setEditSubject({...editSubject, instructor: e.target.value})}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setEditSubject(prev => ({...prev, name:newValue}));
+            }}
           />
         </div>
         
@@ -1704,8 +1718,10 @@ const EditResourceModal = () => {
           <input 
             type="number" 
             value={editSubject?.credits || 0}
-            onChange={(e) => setEditSubject({...editSubject, credits: parseInt(e.target.value)})}
-            min="1"
+            onChange={(e) => {
+  const newValue = e.target.value;
+  setEditSubject(prev => ({...prev, name:newValue}));
+}}
             max="6"
           />
         </div>
@@ -1714,7 +1730,10 @@ const EditResourceModal = () => {
           <label>Semester</label>
           <select 
             value={editSubject?.semesterId || ''}
-            onChange={(e) => setEditSubject({...editSubject, semesterId: parseInt(e.target.value)})}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setEditSubject(prev => ({...prev, name:newValue}));
+            }}
             required
           >
             {semesters.map(sem => (
@@ -1730,7 +1749,10 @@ const EditResourceModal = () => {
           <input 
             type="url" 
             value={editSubject?.syllabusUrl || ''}
-            onChange={(e) => setEditSubject({...editSubject, syllabusUrl: e.target.value})}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setEditSubject(prev => ({...prev, name:newValue}));
+            }}
             placeholder="https://drive.google.com/file/d/..."
           />
         </div>
