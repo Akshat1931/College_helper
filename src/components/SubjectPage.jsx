@@ -1506,16 +1506,16 @@ useEffect(() => {
   // Function to load subject data
   
   const loadSubject = async () => {
-    console.log("Starting to load subject with ID:", subjectId, "in semester:", semId);
-    console.log("Environment:", window.location.hostname);
+    // console.log("Starting to load subject with ID:", subjectId, "in semester:", semId);
+    // console.log("Environment:", window.location.hostname);
     
     try {
       setIsLoading(true);
       
       // Check what's available in the database
-      console.log("Subject database availability:", !!subjectsDatabase);
+      // console.log("Subject database availability:", !!subjectsDatabase);
       if (subjectsDatabase && semId) {
-        console.log("Available subjects in this semester:", Object.keys(subjectsDatabase[semId] || {}));
+        // console.log("Available subjects in this semester:", Object.keys(subjectsDatabase[semId] || {}));
       }
       
       // FIRST check if we have a hardcoded subject BEFORE trying Firebase
@@ -1524,12 +1524,12 @@ useEffect(() => {
       // Look for a hardcoded subject based on how your subjectsDatabase is structured
       if (subjectsDatabase && semId && subjectId) {
         foundSubject = subjectsDatabase[semId]?.[subjectId];
-        console.log("Direct lookup result:", foundSubject);
+        // console.log("Direct lookup result:", foundSubject);
         
         // If the ID is numeric and not found directly, look for a string version
         if (!foundSubject && !isNaN(parseInt(subjectId))) {
           foundSubject = subjectsDatabase[semId]?.[`${subjectId}`]; // Try string version
-          console.log("String version lookup result:", foundSubject);
+          // console.log("String version lookup result:", foundSubject);
         }
         
         // Check alternative formats if needed
@@ -1539,26 +1539,26 @@ useEffect(() => {
           foundSubject = Object.values(allSubjectsInSem).find(
             subject => subject.numericId === parseInt(subjectId)
           );
-          console.log("numericId lookup result:", foundSubject);
+          // console.log("numericId lookup result:", foundSubject);
         }
       }
       
       if (foundSubject) {
         // Hardcoded subject found, use it
-        console.log("Using hardcoded subject:", foundSubject);
+        // console.log("Using hardcoded subject:", foundSubject);
         setCurrentSubject(foundSubject);
       } else {
         // No hardcoded subject, try Firestore
-        console.log("No hardcoded subject found, trying Firestore");
+        // console.log("No hardcoded subject found, trying Firestore");
         const firestoreSubject = await getSubjectById(subjectId);
-        console.log("Firestore result:", firestoreSubject);
+        // console.log("Firestore result:", firestoreSubject);
         
         if (firestoreSubject) {
-          console.log("Setting subject from Firestore");
+          // console.log("Setting subject from Firestore");
           setCurrentSubject(firestoreSubject);
         } else {
           // Subject not found anywhere - set a default
-          console.log("Subject not found in hardcoded data or Firestore");
+          // console.log("Subject not found in hardcoded data or Firestore");
           setCurrentSubject({
             id: subjectId,
             name: "Subject Not Found",
@@ -1588,7 +1588,7 @@ useEffect(() => {
         
         // Fallback to local data or default
         const foundSubject = subjectsDatabase[semId]?.[subjectId];
-        console.log("Fallback subject from local data:", foundSubject);
+        // console.log("Fallback subject from local data:", foundSubject);
         setCurrentSubject(foundSubject || {
           name: "Connection Error",
           description: "Unable to load subject. Check your internet connection."
@@ -1602,7 +1602,7 @@ useEffect(() => {
       
     } finally {
       // CRITICAL: This ensures loading state is reset regardless of success or failure
-      console.log("Ending subject loading process");
+      // console.log("Ending subject loading process");
       setIsLoading(false);
     }
   };
@@ -1610,7 +1610,7 @@ useEffect(() => {
   if (subjectId) {
     loadSubject();
   } else {
-    console.log("No subject ID provided, skipping load");
+    // console.log("No subject ID provided, skipping load");
     setIsLoading(false);
   }
 }, [subjectId]);
