@@ -158,6 +158,7 @@ export const updateSubjectsOrder = async (semesterId, orderedSubjects) => {
 
 // Update your getSubjectsBySemester function to include ordering
 // Improved getSubjectsBySemester function with better error handling and logging
+// Improved getSubjectsBySemester function with hardcoded subjects first
 export const getSubjectsBySemester = async (semesterId) => {
   try {
     console.group('🔍 Get Subjects by Semester Diagnostics');
@@ -166,7 +167,23 @@ export const getSubjectsBySemester = async (semesterId) => {
     // Ensure semesterId is a number
     const semesterIdNum = Number(semesterId);
 
-    // Get subjects from Firebase
+    // Get hard-coded subjects for this semester FIRST
+    const hardCodedSubjects = getHardCodedSubjects(semesterIdNum);
+    
+    // Add display order to hardcoded subjects to ensure they come FIRST
+    // Use negative numbers to ensure they're always at the top
+    const hardCodedSubjectsWithOrder = hardCodedSubjects.map((subject, index) => ({
+      ...subject,
+      displayOrder: -1000 + index // Use negative values to keep them at the top
+    }));
+    
+    console.log('Hardcoded Subjects with Order:', hardCodedSubjectsWithOrder.map(s => ({
+      id: s.id,
+      name: s.name,
+      displayOrder: s.displayOrder
+    })));
+
+    // Get subjects from Firebase SECOND (these will come after hardcoded ones)
     const subjectsRef = collection(db, SUBJECTS_COLLECTION);
     let q;
     
@@ -194,35 +211,28 @@ export const getSubjectsBySemester = async (semesterId) => {
       return {
         ...data,
         id: doc.id,
-        displayOrder: Number(data.displayOrder || 0)
+        displayOrder: Number(data.displayOrder || 0) + 1000 // Add 1000 to push them after hardcoded
       };
     });
 
-    console.log('Firebase Subjects Raw:', firebaseSubjects.map(s => ({
+    console.log('Firebase Subjects Raw (with adjusted order):', firebaseSubjects.map(s => ({
       id: s.id,
       name: s.name,
       semesterId: s.semesterId,
       displayOrder: s.displayOrder
     })));
     
-    // Get hard-coded subjects for this semester
-    const hardCodedSubjects = getHardCodedSubjects(semesterIdNum);
-    
-    console.log('Hardcoded Subjects:', hardCodedSubjects.map(s => ({
-      id: s.id,
-      name: s.name,
-      semesterId: s.semesterId
-    })));
-    
-    // Merge and de-duplicate subjects
+    // Merge subjects - hardcoded first, then Firebase subjects
     const mergedSubjects = [
-      ...firebaseSubjects,
-      ...hardCodedSubjects.filter(hc => 
-        !firebaseSubjects.some(fb => fb.code === hc.code)
+      ...hardCodedSubjectsWithOrder,
+      ...firebaseSubjects.filter(fb => 
+        !hardCodedSubjectsWithOrder.some(hc => 
+          (fb.code && hc.code && fb.code === hc.code) || fb.id === hc.id
+        )
       )
     ];
 
-    // Sort by display order
+    // Sort by display order (should keep hardcoded at top due to negative values)
     const sortedSubjects = mergedSubjects.sort((a, b) => 
       (Number(a.displayOrder) || 0) - (Number(b.displayOrder) || 0)
     );
@@ -230,7 +240,6 @@ export const getSubjectsBySemester = async (semesterId) => {
     console.log('Final Merged and Sorted Subjects:', sortedSubjects.map(s => ({
       id: s.id,
       name: s.name,
-      semesterId: s.semesterId,
       displayOrder: s.displayOrder
     })));
 
@@ -246,7 +255,10 @@ export const getSubjectsBySemester = async (semesterId) => {
     console.groupEnd();
     
     // Fallback to hard-coded subjects if everything else fails
-    return getHardCodedSubjects(Number(semesterId));
+    return getHardCodedSubjects(Number(semesterId)).map((subject, index) => ({
+      ...subject,
+      displayOrder: -1000 + index // Keep them at the top even in fallback
+    }));
   }
 };
 
