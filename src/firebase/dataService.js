@@ -18,6 +18,8 @@ import {
   import { getHardCodedSubjects } from '../data/hardCodedSubjects';
   
   // Collection names
+  const USERS_COLLECTION = 'users';
+
   const SUBJECTS_COLLECTION = 'subjects';
   const SEMESTERS_COLLECTION = 'semesters';
   
@@ -350,7 +352,7 @@ export const setUserAsAdmin = async (email) => {
   export const addAdminByEmail = async (email) => {
     try {
       // First, find the user with this email
-      const usersRef = collection(db, 'users');
+      const usersRef = collection(db, USERS_COLLECTION);
       const q = query(usersRef, where("email", "==", email));
       const querySnapshot = await getDocs(q);
       
@@ -358,7 +360,7 @@ export const setUserAsAdmin = async (email) => {
         // No user found with this email
         return {
           success: false,
-          message: "No user found with this email."
+          message: "No user found with this email. The user must log in at least once before they can be made an admin."
         };
       }
       
@@ -374,7 +376,7 @@ export const setUserAsAdmin = async (email) => {
       }
       
       // Update user to be an admin
-      await updateDoc(doc(db, 'users', userDoc.id), {
+      await updateDoc(doc(db, USERS_COLLECTION, userDoc.id), {
         isAdmin: true,
         updatedAt: serverTimestamp()
       });

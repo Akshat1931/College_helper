@@ -386,6 +386,24 @@
   padding: 2rem;
   box-shadow: var(--shadow-sm);
 }
+/* Add to AdminPortal.css */
+.admin-message {
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+
+.admin-message.success {
+  background-color: rgba(67, 182, 115, 0.1);
+  color: #43b673;
+  border: 1px solid rgba(67, 182, 115, 0.3);
+}
+
+.admin-message.error {
+  background-color: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
 /* Add these styles to your AdminPortal.css file */
 
 /* Subject item styles */
