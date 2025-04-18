@@ -188,46 +188,112 @@ const handleRemoveAdmin = async (userId) => {
   // Add this function to your AdminPortal.jsx component
 
 // NEW: Handle reordering of subjects
+// Improved Subject Reordering Function
+// Flexible Subject Reordering Function
 const handleSubjectReorder = async (semesterId, subjectId, direction) => {
   try {
-    // Get all subjects for this semester
-    const semesterSubjects = getSubjectsBySemester(semesterId);
+    console.group('🔍 Subject Reordering Diagnostic');
+    console.log('Input Parameters:', { semesterId, subjectId, direction });
+
+    // Get subjects for this semester only, from the current state
+    const semesterSubjects = subjects
+      .filter(subject => subject.semesterId === semesterId)
+      .sort((a, b) => {
+        // Ensure numeric sorting by displayOrder
+        const orderA = typeof a.displayOrder === 'number' ? a.displayOrder : 999;
+        const orderB = typeof b.displayOrder === 'number' ? b.displayOrder : 999;
+        return orderA - orderB;
+      });
     
+    console.log('Filtered Semester Subjects:', semesterSubjects.map(s => ({
+      id: s.id, 
+      name: s.name, 
+      displayOrder: s.displayOrder
+    })));
+
     // Find the current index of the subject
-    const currentIndex = semesterSubjects.findIndex(subject => subject.id === subjectId);
-    if (currentIndex === -1) return;
+    const currentIndex = semesterSubjects.findIndex(subject => 
+      String(subject.id) === String(subjectId)
+    );
+
+    console.log('Current Index:', currentIndex);
     
-    // Determine new index based on direction
-    const newIndex = direction === 'up' 
-      ? Math.max(0, currentIndex - 1) 
-      : Math.min(semesterSubjects.length - 1, currentIndex + 1);
+    // Validate index
+    if (currentIndex === -1) {
+      console.error(`❌ Subject with ID ${subjectId} not found in semester ${semesterId}`);
+      console.groupEnd();
+      alert('Subject not found in this semester.');
+      return;
+    }
     
-    // If the index didn't change, do nothing
-    if (newIndex === currentIndex) return;
+    // Determine new index
+    let newIndex;
+    if (direction === 'up') {
+      if (currentIndex <= 0) {
+        console.log('❗ Cannot move subject up further - already at top');
+        console.groupEnd();
+        alert('This subject is already at the top of the list.');
+        return;
+      }
+      newIndex = currentIndex - 1;
+    } else if (direction === 'down') {
+      if (currentIndex >= semesterSubjects.length - 1) {
+        console.log('❗ Cannot move subject down further - already at bottom');
+        console.groupEnd();
+        alert('This subject is already at the bottom of the list.');
+        return;
+      }
+      newIndex = currentIndex + 1;
+    }
+
+    console.log('New Index:', newIndex);
     
     // Create a new array with the reordered items
-    const newArray = [...semesterSubjects];
-    const [movedItem] = newArray.splice(currentIndex, 1);
-    newArray.splice(newIndex, 0, movedItem);
+    const reorderedSubjects = [...semesterSubjects];
     
+    // Swap the items
+    [reorderedSubjects[currentIndex], reorderedSubjects[newIndex]] = 
+      [reorderedSubjects[newIndex], reorderedSubjects[currentIndex]];
+    
+    // Update the displayOrder values
+    reorderedSubjects.forEach((subject, index) => {
+      subject.displayOrder = index;
+    });
+    
+    console.log('Reordered Subjects:', reorderedSubjects.map(s => ({
+      id: s.id, 
+      name: s.name, 
+      displayOrder: s.displayOrder
+    })));
+
     // Show loading state
     setIsLoading(true);
     
-    // Update in Firebase - implement updateSubjectsOrder in dataService.js
-    await updateSubjectsOrder(semesterId, newArray);
+    // Update in Firebase
+    await updateSubjectsOrder(semesterId, reorderedSubjects);
     
-    // Refresh all subjects after reordering
-    const allSubjects = await getAllSubjects();
-    setSubjects(allSubjects);
+    // IMPORTANT: Update the local subjects state
+    // First, get all subjects that are NOT in this semester
+    const otherSubjects = subjects.filter(subject => subject.semesterId !== semesterId);
+    
+    // Then, create a new merged array with the reordered subjects
+    const updatedAllSubjects = [...otherSubjects, ...reorderedSubjects];
+    
+    // Update the component state
+    setSubjects(updatedAllSubjects);
     
     setIsLoading(false);
+    
+    console.log('✅ Subject order updated successfully');
+    console.groupEnd();
   } catch (error) {
-    console.error('Error reordering subject:', error);
-    alert('Failed to reorder subject. Please try again.');
+    console.error('❌ Detailed Reordering Error:', error);
+    console.groupEnd();
+    
+    alert('Failed to reorder subjects. Please try again.');
     setIsLoading(false);
   }
 };
-
   // Handle chapter submission
   const handleChapterSubmit = async (e) => {
     e.preventDefault();
@@ -1207,42 +1273,56 @@ const EditResourceModal = () => {
   <div className="admin-section">
     <h2>View Subjects Data</h2>
     <div className="admin-data-view">
-      {semesters.map(semester => (
-        <div key={semester.id} id={`semester-${semester.id}`} className="semester-data">
-          <h3>{semester.name}</h3>
-          {getSubjectsBySemester(semester.id).length > 0 ? (
-            getSubjectsBySemester(semester.id).map((subject, index) => (
-              <div key={subject.id} className="subject-item">
-                <div className="item-content">
-                  <span className="item-title">{subject.name} ({subject.code})</span>
-                </div>
-                <div className="item-actions">
-                  {/* Reorder buttons - similar to other resources */}
-                  <div className="reorder-buttons">
-                    <button 
-                      className="reorder-btn up"
-                      onClick={() => handleSubjectReorder(semester.id, subject.id, 'up')}
-                      disabled={index === 0}
-                      title="Move Up"
-                    >
-                      ↑
-                    </button>
-                    <button 
-                      className="reorder-btn down"
-                      onClick={() => handleSubjectReorder(semester.id, subject.id, 'down')}
-                      disabled={index === (getSubjectsBySemester(semester.id).length - 1)}
-                      title="Move Down"
-                    >
-                      ↓
-                    </button>
-                  </div>
-                  <button 
-                    className="delete-btn" 
-                    onClick={() => deleteSubjectHandler(subject.id)}
-                  >
-                    Delete Subject
-                  </button>
-                </div>
+    {semesters.map(semester => (
+  <div key={semester.id} id={`semester-${semester.id}`} className="semester-data">
+    <h3>{semester.name}</h3>
+    {/* Replace the existing way you get subjects with this approach */}
+    {(() => {
+      // Get and sort subjects for this semester inside the render function
+      const semesterSubjects = subjects
+        .filter(subject => subject.semesterId === semester.id)
+        .sort((a, b) => {
+          // Ensure numeric sorting by displayOrder
+          const orderA = typeof a.displayOrder === 'number' ? a.displayOrder : 999;
+          const orderB = typeof b.displayOrder === 'number' ? b.displayOrder : 999;
+          return orderA - orderB;
+        });
+      
+      console.log(`Rendering ${semesterSubjects.length} subjects for semester ${semester.id}`);
+      
+      return semesterSubjects.length > 0 ? (
+        semesterSubjects.map((subject, index) => (
+          <div key={subject.id} className="subject-item">
+            <div className="item-content">
+              <span className="item-title">{subject.name} ({subject.code}) - Order: {subject.displayOrder}</span>
+            </div>
+            <div className="item-actions">
+              {/* Reorder buttons */}
+              <div className="reorder-buttons">
+                <button 
+                  className="reorder-btn up"
+                  onClick={() => handleSubjectReorder(semester.id, subject.id, 'up')}
+                  disabled={index === 0}
+                  title="Move Up"
+                >
+                  ↑
+                </button>
+                <button 
+                  className="reorder-btn down"
+                  onClick={() => handleSubjectReorder(semester.id, subject.id, 'down')}
+                  disabled={index === (semesterSubjects.length - 1)}
+                  title="Move Down"
+                >
+                  ↓
+                </button>
+              </div>
+              <button 
+                className="delete-btn" 
+                onClick={() => deleteSubjectHandler(subject.id)}
+              >
+                Delete Subject
+              </button>
+            </div>
                 
                 {/* Chapters Section */}
                 <div className="subject-chapters">
@@ -1433,13 +1513,14 @@ const EditResourceModal = () => {
                     <p>No previous year questions added yet</p>
                   )}
                 </div>
-              </div>
-            ))
-          ) : (
-            <p>No subjects added for this semester yet</p>
-          )}
-        </div>
-      ))}
+                </div>
+        ))
+      ) : (
+        <p>No subjects added for this semester yet</p>
+      );
+    })()}
+  </div>
+))}
     </div>
   </div>
 )}

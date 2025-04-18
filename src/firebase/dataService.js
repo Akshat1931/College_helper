@@ -94,19 +94,43 @@ import {
  * @param {Array} orderedSubjects - Array of subjects in the new order
  * @returns {Promise} - Promise that resolves when the update is complete
  */
+// Improved updateSubjectsOrder function for dataService.js
 export const updateSubjectsOrder = async (semesterId, orderedSubjects) => {
   try {
-    // Create a batch to update all subjects at once for consistency
+    console.group('🔍 Subjects Order Update Diagnostics');
+    console.log('Semester ID:', semesterId);
+    console.log('Original Subjects:', orderedSubjects.map(s => ({
+      id: s.id, 
+      name: s.name, 
+      currentOrder: s.displayOrder
+    })));
+    
+    // Create a batch to update all subjects at once
     const batch = writeBatch(db);
     
-    // Update each subject's displayOrder field
-    orderedSubjects.forEach((subject, index) => {
-      // Skip if the subject is from hardcoded data and not in Firebase
-      if (!subject.id || subject.id.startsWith('hardcoded_')) {
-        return;
-      }
-      
+    // First, collect valid subjects that need reordering
+    const validSubjects = orderedSubjects.filter(
+      subject => subject.id && !subject.id.startsWith('hardcoded_')
+    );
+    
+    // If fewer than 2 subjects, no need to reorder
+    if (validSubjects.length < 2) {
+      console.log('Not enough subjects to reorder');
+      console.groupEnd();
+      return false;
+    }
+    
+    // Sort subjects by their current displayOrder
+    const sortedSubjects = [...validSubjects].sort((a, b) => 
+      (a.displayOrder || 0) - (b.displayOrder || 0)
+    );
+    
+    // Swap the display orders explicitly
+    sortedSubjects.forEach((subject, index) => {
       const subjectRef = doc(db, SUBJECTS_COLLECTION, subject.id);
+      
+      console.log(`Updating subject: ${subject.name}, New Order: ${index}`);
+      
       batch.update(subjectRef, { 
         displayOrder: index,
         updatedAt: serverTimestamp()
@@ -116,10 +140,19 @@ export const updateSubjectsOrder = async (semesterId, orderedSubjects) => {
     // Commit the batch
     await batch.commit();
     
+    console.log('✅ Subjects order updated successfully');
+    console.groupEnd();
+    
     return true;
   } catch (error) {
-    console.error(`Error updating subjects order for semester ${semesterId}:`, error);
-    throw error;
+    console.error('❌ Subjects Order Update Error:', {
+      semesterId,
+      errorMessage: error.message,
+      errorStack: error.stack
+    });
+    console.groupEnd();
+    
+    throw error; // Re-throw to allow calling function to handle
   }
 };
 
@@ -127,17 +160,18 @@ export const updateSubjectsOrder = async (semesterId, orderedSubjects) => {
 // Improved getSubjectsBySemester function with better error handling and logging
 export const getSubjectsBySemester = async (semesterId) => {
   try {
-    console.log(`Fetching subjects for semester ${semesterId}`);
+    console.group('🔍 Get Subjects by Semester Diagnostics');
+    console.log('Requested Semester ID:', semesterId);
     
-    // Convert semesterId to number if it's a string
-    const semesterIdNum = parseInt(semesterId);
-    
+    // Ensure semesterId is a number
+    const semesterIdNum = Number(semesterId);
+
     // Get subjects from Firebase
     const subjectsRef = collection(db, SUBJECTS_COLLECTION);
     let q;
     
     try {
-      // Try to query with orderBy - might fail if no displayOrder field exists
+      // Query for subjects with matching semesterId
       q = query(
         subjectsRef,
         where("semesterId", "==", semesterIdNum),
@@ -154,55 +188,69 @@ export const getSubjectsBySemester = async (semesterId) => {
     
     const snapshot = await getDocs(q);
     
-    // Convert to array
-    const firebaseSubjects = snapshot.docs.map(doc => ({
-      ...doc.data(),
-      id: doc.id
-    }));
-    
-    console.log(`Found ${firebaseSubjects.length} subjects in Firebase for semester ${semesterId}`);
+    // Convert to array and log detailed information
+    const firebaseSubjects = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+        displayOrder: Number(data.displayOrder || 0)
+      };
+    });
+
+    console.log('Firebase Subjects Raw:', firebaseSubjects.map(s => ({
+      id: s.id,
+      name: s.name,
+      semesterId: s.semesterId,
+      displayOrder: s.displayOrder
+    })));
     
     // Get hard-coded subjects for this semester
     const hardCodedSubjects = getHardCodedSubjects(semesterIdNum);
-    console.log(`Found ${hardCodedSubjects.length} hardcoded subjects for semester ${semesterId}`);
     
-    // If we have Firebase subjects, merge them with hard-coded ones
-    if (firebaseSubjects.length > 0) {
-      // Use subject code as the unique identifier to prevent duplicates
-      const firebaseSubjectCodes = firebaseSubjects.map(subject => subject.code);
-      
-      // Filter out hard-coded subjects that have a Firebase version
-      const uniqueHardCodedSubjects = hardCodedSubjects.filter(
-        subject => !firebaseSubjectCodes.includes(subject.code)
-      );
-      
-      console.log(`After filtering, using ${uniqueHardCodedSubjects.length} hardcoded subjects`);
-      
-      // Add displayOrder to hardcoded subjects if needed
-      const processedHardCodedSubjects = uniqueHardCodedSubjects.map((subject, index) => ({
-        ...subject,
-        displayOrder: -1000 + index // Give them negative display orders to show before Firebase subjects
-      }));
-      
-      // Important change: Put hard-coded subjects first, then Firebase subjects
-      const mergedSubjects = [...processedHardCodedSubjects, ...firebaseSubjects];
-      console.log(`Returning ${mergedSubjects.length} total subjects for semester ${semesterId}`);
-      
-      return mergedSubjects;
-    }
+    console.log('Hardcoded Subjects:', hardCodedSubjects.map(s => ({
+      id: s.id,
+      name: s.name,
+      semesterId: s.semesterId
+    })));
     
-    // If no Firebase subjects, return all hard-coded ones
-    console.log(`No Firebase subjects, returning ${hardCodedSubjects.length} hardcoded subjects`);
-    return hardCodedSubjects;
+    // Merge and de-duplicate subjects
+    const mergedSubjects = [
+      ...firebaseSubjects,
+      ...hardCodedSubjects.filter(hc => 
+        !firebaseSubjects.some(fb => fb.code === hc.code)
+      )
+    ];
+
+    // Sort by display order
+    const sortedSubjects = mergedSubjects.sort((a, b) => 
+      (Number(a.displayOrder) || 0) - (Number(b.displayOrder) || 0)
+    );
+
+    console.log('Final Merged and Sorted Subjects:', sortedSubjects.map(s => ({
+      id: s.id,
+      name: s.name,
+      semesterId: s.semesterId,
+      displayOrder: s.displayOrder
+    })));
+
+    console.groupEnd();
+    
+    return sortedSubjects;
   } catch (error) {
-    console.error(`Error getting subjects for semester ${semesterId}:`, error);
+    console.error('❌ Error Getting Subjects by Semester:', {
+      semesterId,
+      errorMessage: error.message,
+      errorStack: error.stack
+    });
+    console.groupEnd();
     
-    // Fall back to hard-coded subjects on error
-    const hardCodedSubjects = getHardCodedSubjects(parseInt(semesterId));
-    console.log(`Error fallback: Returning ${hardCodedSubjects.length} hardcoded subjects`);
-    return hardCodedSubjects;
+    // Fallback to hard-coded subjects if everything else fails
+    return getHardCodedSubjects(Number(semesterId));
   }
 };
+
+
   // Add this to your dataService.js or create a new admin function
 export const setUserAsAdmin = async (email) => {
   try {
