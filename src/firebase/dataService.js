@@ -29,7 +29,7 @@ import {
     const snapshot = await getDocs(semestersRef);
     
     if (snapshot.empty) {
-      console.log('No semesters found, initializing defaults');
+      // console.log('No semesters found, initializing defaults');
       const defaultSemesters = [];
       
       for (let i = 1; i <= 8; i++) {
@@ -99,13 +99,13 @@ import {
 // Improved updateSubjectsOrder function for dataService.js
 export const updateSubjectsOrder = async (semesterId, orderedSubjects) => {
   try {
-    console.group('🔍 Subjects Order Update Diagnostics');
-    console.log('Semester ID:', semesterId);
-    console.log('Original Subjects:', orderedSubjects.map(s => ({
-      id: s.id, 
-      name: s.name, 
-      currentOrder: s.displayOrder
-    })));
+    // console.group('🔍 Subjects Order Update Diagnostics');
+    // console.log('Semester ID:', semesterId);
+    // console.log('Original Subjects:', orderedSubjects.map(s => ({
+    //   id: s.id, 
+    //   name: s.name, 
+    //   currentOrder: s.displayOrder
+    // })));
     
     // Create a batch to update all subjects at once
     const batch = writeBatch(db);
@@ -117,7 +117,7 @@ export const updateSubjectsOrder = async (semesterId, orderedSubjects) => {
     
     // If fewer than 2 subjects, no need to reorder
     if (validSubjects.length < 2) {
-      console.log('Not enough subjects to reorder');
+      // console.log('Not enough subjects to reorder');
       console.groupEnd();
       return false;
     }
@@ -131,7 +131,7 @@ export const updateSubjectsOrder = async (semesterId, orderedSubjects) => {
     sortedSubjects.forEach((subject, index) => {
       const subjectRef = doc(db, SUBJECTS_COLLECTION, subject.id);
       
-      console.log(`Updating subject: ${subject.name}, New Order: ${index}`);
+      // console.log(`Updating subject: ${subject.name}, New Order: ${index}`);
       
       batch.update(subjectRef, { 
         displayOrder: index,
@@ -147,11 +147,11 @@ export const updateSubjectsOrder = async (semesterId, orderedSubjects) => {
     
     return true;
   } catch (error) {
-    console.error('❌ Subjects Order Update Error:', {
-      semesterId,
-      errorMessage: error.message,
-      errorStack: error.stack
-    });
+    // console.error('❌ Subjects Order Update Error:', {
+    //   semesterId,
+    //   errorMessage: error.message,
+    //   errorStack: error.stack
+    // });
     console.groupEnd();
     
     throw error; // Re-throw to allow calling function to handle
@@ -217,12 +217,12 @@ export const getSubjectsBySemester = async (semesterId) => {
       };
     });
 
-    console.log('Firebase Subjects Raw (with adjusted order):', firebaseSubjects.map(s => ({
-      id: s.id,
-      name: s.name,
-      semesterId: s.semesterId,
-      displayOrder: s.displayOrder
-    })));
+    // console.log('Firebase Subjects Raw (with adjusted order):', firebaseSubjects.map(s => ({
+    //   id: s.id,
+    //   name: s.name,
+    //   semesterId: s.semesterId,
+    //   displayOrder: s.displayOrder
+    // })));
     
     // Merge subjects - hardcoded first, then Firebase subjects
     // const mergedSubjects = [
@@ -241,11 +241,11 @@ export const getSubjectsBySemester = async (semesterId) => {
       (Number(a.displayOrder) || 0) - (Number(b.displayOrder) || 0)
     );
 
-    console.log('Final Merged and Sorted Subjects:', sortedSubjects.map(s => ({
-      id: s.id,
-      name: s.name,
-      displayOrder: s.displayOrder
-    })));
+    // console.log('Final Merged and Sorted Subjects:', sortedSubjects.map(s => ({
+    //   id: s.id,
+    //   name: s.name,
+    //   displayOrder: s.displayOrder
+    // })));
 
     console.groupEnd();
     
@@ -358,7 +358,7 @@ export const setUserAsAdmin = async (email) => {
         ...doc.data()
       }));
   
-      console.log("Raw Admin List from Firestore:", adminList); // Debug log
+      // console.log("Raw Admin List from Firestore:", adminList); // Debug log
       
       return adminList;
     } catch (error) {
@@ -853,11 +853,11 @@ export const addAssignment = async (subjectId, assignmentData) => {
   };
   export const debugResourceAddition = async (subjectId, resourceType, resourceData) => {
     console.group('🔍 Resource Addition Diagnostics');
-    console.log('Input Parameters:', { 
-      subjectId, 
-      resourceType, 
-      resourceData 
-    });
+    // console.log('Input Parameters:', { 
+    //   subjectId, 
+    //   resourceType, 
+    //   resourceData 
+    // });
   
     try {
       // Validate critical inputs
@@ -890,7 +890,7 @@ export const addAssignment = async (subjectId, assignmentData) => {
   
       // Get current subject data
       const currentSubjectData = subjectDoc.data();
-      console.log('Current Subject Data:', currentSubjectData);
+      // console.log('Current Subject Data:', currentSubjectData);
   
       // Validate resource type and field
       const resourceTypeMap = {

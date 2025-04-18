@@ -355,8 +355,8 @@ const handleRemoveAdmin = async (userId, userEmail) => {
 // Flexible Subject Reordering Function
 const handleSubjectReorder = async (semesterId, subjectId, direction) => {
   try {
-    console.group('🔍 Subject Reordering Diagnostic');
-    console.log('Input Parameters:', { semesterId, subjectId, direction });
+    // console.group('🔍 Subject Reordering Diagnostic');
+    // console.log('Input Parameters:', { semesterId, subjectId, direction });
 
     // Get subjects for this semester only, from the current state
     const semesterSubjects = subjects
@@ -368,18 +368,18 @@ const handleSubjectReorder = async (semesterId, subjectId, direction) => {
         return orderA - orderB;
       });
     
-    console.log('Filtered Semester Subjects:', semesterSubjects.map(s => ({
-      id: s.id, 
-      name: s.name, 
-      displayOrder: s.displayOrder
-    })));
+    // console.log('Filtered Semester Subjects:', semesterSubjects.map(s => ({
+    //   id: s.id, 
+    //   name: s.name, 
+    //   displayOrder: s.displayOrder
+    // })));
 
     // Find the current index of the subject
     const currentIndex = semesterSubjects.findIndex(subject => 
       String(subject.id) === String(subjectId)
     );
 
-    console.log('Current Index:', currentIndex);
+    // console.log('Current Index:', currentIndex);
     
     // Validate index
     if (currentIndex === -1) {
@@ -393,7 +393,7 @@ const handleSubjectReorder = async (semesterId, subjectId, direction) => {
     let newIndex;
     if (direction === 'up') {
       if (currentIndex <= 0) {
-        console.log('❗ Cannot move subject up further - already at top');
+        // console.log('❗ Cannot move subject up further - already at top');
         console.groupEnd();
         alert('This subject is already at the top of the list.');
         return;
@@ -401,7 +401,7 @@ const handleSubjectReorder = async (semesterId, subjectId, direction) => {
       newIndex = currentIndex - 1;
     } else if (direction === 'down') {
       if (currentIndex >= semesterSubjects.length - 1) {
-        console.log('❗ Cannot move subject down further - already at bottom');
+        // console.log('❗ Cannot move subject down further - already at bottom');
         console.groupEnd();
         alert('This subject is already at the bottom of the list.');
         return;
@@ -409,7 +409,7 @@ const handleSubjectReorder = async (semesterId, subjectId, direction) => {
       newIndex = currentIndex + 1;
     }
 
-    console.log('New Index:', newIndex);
+    // console.log('New Index:', newIndex);
     
     // Create a new array with the reordered items
     const reorderedSubjects = [...semesterSubjects];
@@ -423,11 +423,11 @@ const handleSubjectReorder = async (semesterId, subjectId, direction) => {
       subject.displayOrder = index;
     });
     
-    console.log('Reordered Subjects:', reorderedSubjects.map(s => ({
-      id: s.id, 
-      name: s.name, 
-      displayOrder: s.displayOrder
-    })));
+    // console.log('Reordered Subjects:', reorderedSubjects.map(s => ({
+    //   id: s.id, 
+    //   name: s.name, 
+    //   displayOrder: s.displayOrder
+    // })));
 
     // Show loading state
     setIsLoading(true);
@@ -447,7 +447,7 @@ const handleSubjectReorder = async (semesterId, subjectId, direction) => {
     
     setIsLoading(false);
     
-    console.log('✅ Subject order updated successfully');
+    // console.log('✅ Subject order updated successfully');
     console.groupEnd();
   } catch (error) {
     console.error('❌ Detailed Reordering Error:', error);
@@ -525,18 +525,18 @@ const handleSubjectReorder = async (semesterId, subjectId, direction) => {
       
       // Comprehensive logging for debugging
       console.group('🔍 Resource Submission Diagnostics');
-      console.log('Admin Status:', { 
-        isLoggedIn: isLoggedIn, 
-        isAdmin: isAdmin,
-        userEmail: userProfile?.email 
-      });
-      console.log('Resource Details:', { 
-        type: newResource.type,
-        subjectId: newResource.subjectId,
-        title: newResource.title, 
-        description: newResource.description, 
-        url: newResource.url 
-      });
+      // console.log('Admin Status:', { 
+      //   isLoggedIn: isLoggedIn, 
+      //   isAdmin: isAdmin,
+      //   userEmail: userProfile?.email 
+      // });
+      // console.log('Resource Details:', { 
+      //   type: newResource.type,
+      //   subjectId: newResource.subjectId,
+      //   title: newResource.title, 
+      //   description: newResource.description, 
+      //   url: newResource.url 
+      // });
       
       // Enhanced URL validation
       const validateUrl = (url, type) => {
@@ -596,7 +596,7 @@ const handleSubjectReorder = async (semesterId, subjectId, direction) => {
           throw new Error(`Invalid resource type: ${newResource.type}`);
       }
       
-      console.log('Updated Subject:', updatedSubject);
+      // console.log('Updated Subject:', updatedSubject);
       console.groupEnd();
       
       // Update subjects state
@@ -828,29 +828,29 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
     }
   };
   // NEW: Edit Resource Modal Component
-const EditResourceModal = () => {
-  if (!editModalOpen || !editItem) return null;
-  
-  // Form field change handler
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
+  const EditResourceModal = () => {
+    if (!editModalOpen || !editItem) return null;
     
-    // Special handling for URL fields
-    if (name === 'driveEmbedUrl' || name === 'fileUrl' || name === 'url') {
-      // Normalize Google Drive URLs
-      const normalizedValue = normalizeGoogleDriveUrl(value);
-      setEditItem(prev => ({
-        ...prev,
-        [name]: normalizedValue
-      }));
-    } else {
-      // Regular handling for other fields
-      setEditItem(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-  };
+    // Form field change handler
+    const handleEditChange = (e) => {
+      const { name, value } = e.target;
+      
+      // Special handling for URL fields
+      if (name === 'driveEmbedUrl' || name === 'fileUrl' || name === 'url') {
+        // Normalize Google Drive URLs
+        const normalizedValue = normalizeGoogleDriveUrl(value);
+        setEditItem(prev => ({
+          ...prev,
+          [name]: normalizedValue
+        }));
+      } else {
+        // Regular handling for other fields
+        setEditItem(prev => ({
+          ...prev,
+          [name]: value
+        }));
+      }
+    };
   
   // Different fields based on resource type
   const renderFormFields = () => {
@@ -1722,7 +1722,7 @@ const EditResourceModal = () => {
       </div>
       {editModalOpen && <EditResourceModal />}
       {/* Add this right before the final closing </div> tag */}
-{editSubjectModalOpen && (
+      {editSubjectModalOpen && (
   <div className="modal-overlay">
     <div className="edit-modal">
       <div className="edit-modal-header">
@@ -1731,121 +1731,137 @@ const EditResourceModal = () => {
       </div>
       
       <div className="edit-modal-body">
-      <div className="form-group">
-  <label>Subject Name</label>
-  <input 
-    type="text" 
-    name="name"
-    value={editSubject?.name || ''}
-    onChange={(e) => {
-      const newValue = e.target.value;
-      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
-    }}
-    required
-  />
-</div>
+        <div className="form-group">
+          <label>Subject Name</label>
+          <input 
+            type="text" 
+            name="name"
+            value={editSubject?.name || ''}
+            onChange={(e) => {
+              setEditSubject(prev => ({
+                ...prev,
+                [e.target.name]: e.target.value
+              }));
+            }}
+            required
+          />
+        </div>
         
-<div className="form-group">
-  <label>Subject Code</label>
-  <input 
-    type="text" 
-    name="code"
-    value={editSubject?.code || ''}
-    onChange={(e) => {
-      const newValue = e.target.value;
-      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
-    }}
-    required
-  />
-</div>
+        <div className="form-group">
+          <label>Subject Code</label>
+          <input 
+            type="text" 
+            name="code"
+            value={editSubject?.code || ''}
+            onChange={(e) => {
+              setEditSubject(prev => ({
+                ...prev,
+                [e.target.name]: e.target.value
+              }));
+            }}
+            required
+          />
+        </div>
         
-<div className="form-group">
-  <label>Subject Icon (Emoji)</label>
-  <input 
-    type="text" 
-    name="icon"
-    value={editSubject?.icon || ''}
-    onChange={(e) => {
-      const newValue = e.target.value;
-      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
-    }}
-    maxLength="2"
-  />
-</div>
+        <div className="form-group">
+          <label>Subject Icon (Emoji)</label>
+          <input 
+            type="text" 
+            name="icon"
+            value={editSubject?.icon || ''}
+            onChange={(e) => {
+              setEditSubject(prev => ({
+                ...prev,
+                [e.target.name]: e.target.value
+              }));
+            }}
+            maxLength="2"
+          />
+        </div>
         
-<div className="form-group">
-  <label>Description</label>
-  <textarea 
-    name="description"
-    value={editSubject?.description || ''}
-    onChange={(e) => {
-      const newValue = e.target.value;
-      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
-    }}
-    required
-  />
-</div>
+        <div className="form-group">
+          <label>Description</label>
+          <textarea 
+            name="description"
+            value={editSubject?.description || ''}
+            onChange={(e) => {
+              setEditSubject(prev => ({
+                ...prev,
+                [e.target.name]: e.target.value
+              }));
+            }}
+            required
+          />
+        </div>
 
-<div className="form-group">
-  <label>Instructor</label>
-  <input 
-    type="text" 
-    name="instructor"
-    value={editSubject?.instructor || ''}
-    onChange={(e) => {
-      const newValue = e.target.value;
-      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
-    }}
-  />
-</div>
+        <div className="form-group">
+          <label>Instructor</label>
+          <input 
+            type="text" 
+            name="instructor"
+            value={editSubject?.instructor || ''}
+            onChange={(e) => {
+              setEditSubject(prev => ({
+                ...prev,
+                [e.target.name]: e.target.value
+              }));
+            }}
+          />
+        </div>
 
-<div className="form-group">
-  <label>Credits</label>
-  <input 
-    type="number" 
-    name="credits"
-    value={editSubject?.credits || 0}
-    onChange={(e) => {
-      const newValue = parseInt(e.target.value);
-      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
-    }}
-    max="6"
-  />
-</div>
+        <div className="form-group">
+          <label>Credits</label>
+          <input 
+            type="number" 
+            name="credits"
+            value={editSubject?.credits || 0}
+            onChange={(e) => {
+              setEditSubject(prev => ({
+                ...prev,
+                [e.target.name]: parseInt(e.target.value)
+              }));
+            }}
+            max="6"
+          />
+        </div>
 
-<div className="form-group">
-  <label>Semester</label>
-  <select 
-    name="semesterId"
-    value={editSubject?.semesterId || ''}
-    onChange={(e) => {
-      const newValue = parseInt(e.target.value);
-      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
-    }}
-    required
-  >
-    {semesters.map(sem => (
-      <option key={sem.id} value={sem.id}>
-        {sem.name}
-      </option>
-    ))}
-  </select>
-</div>
+        <div className="form-group">
+          <label>Semester</label>
+          <select 
+            name="semesterId"
+            value={editSubject?.semesterId || ''}
+            onChange={(e) => {
+              setEditSubject(prev => ({
+                ...prev,
+                [e.target.name]: parseInt(e.target.value)
+              }));
+            }}
+            required
+          >
+            {semesters.map(sem => (
+              <option key={sem.id} value={sem.id}>
+                {sem.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-<div className="form-group">
-  <label>Syllabus URL (Google Drive)</label>
-  <input 
-    type="url" 
-    name="syllabusUrl"
-    value={editSubject?.syllabusUrl || ''}
-    onChange={(e) => {
-      const newValue = e.target.value;
-      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
-    }}
-    placeholder="https://drive.google.com/file/d/..."
-  />
-</div>
-</div>
+        <div className="form-group">
+          <label>Syllabus URL (Google Drive)</label>
+          <input 
+            type="url" 
+            name="syllabusUrl"
+            value={editSubject?.syllabusUrl || ''}
+            onChange={(e) => {
+              setEditSubject(prev => ({
+                ...prev,
+                [e.target.name]: e.target.value
+              }));
+            }}
+            placeholder="https://drive.google.com/file/d/..."
+          />
+        </div>
+      </div>
       
       <div className="edit-modal-footer">
         <button className="cancel-btn" onClick={closeEditSubjectModal}>Cancel</button>
@@ -1854,6 +1870,7 @@ const EditResourceModal = () => {
     </div>
   </div>
 )}
+
     </div>
   );
 };
