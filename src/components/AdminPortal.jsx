@@ -1,9 +1,7 @@
-
-// src/components/AdminPortal.jsx
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import './AdminPortal.css';
-
+import { isNetworkError, showNetworkErrorNotification } from '../utils/networkErrorHandler.jsx';
 // Import Firebase services
 import {
   getAllSubjects,
@@ -27,6 +25,7 @@ const OWNER_EMAILS = [
   'discordakshat04@gmail.com', 
   'akshatvaidik@gmail.com'
 ];
+
 const AdminPortal = () => {
   const { userProfile, isLoggedIn, isAdmin, loading } = useUser();
   const [activeTab, setActiveTab] = useState('subjects');
@@ -95,33 +94,39 @@ const AdminPortal = () => {
         setIsLoading(false);
       } catch (error) {
         console.error("Error loading admin data:", error);
+        
+        // Import at the top of the file
+       
+        
+        if (isNetworkError(error)) {
+          showNetworkErrorNotification({
+            message: 'Unable to load admin data. Please check your internet connection.'
+          });
+        } else {
+          alert('An unexpected error occurred. Please try again later.');
+        }
+        
         setIsLoading(false);
       }
     };
     
-    // Only run when loading state changes
-    if (!loading) {
-      loadData();
-    }
-  }, [loading]);
+    // Call the load data function
+    loadData();
+  }, []); // Empty dependency array to ru
+  
   
   // Separate function to fetch admins
 // Modify handleAddAdmin to refresh the admin list after adding
 const handleAddAdmin = async (e) => {
   e.preventDefault();
   
-  // Check if the current user is an owner
-  if (!isOwner) {
-    alert('Only the owner can add new admins.');
-    return;
-  }
-  
   try {
     setIsLoading(true);
+    
     const result = await addAdminByEmail(newAdminEmail);
     
     if (result.success) {
-      // Immediately refetch the admin list to ensure latest data
+      // Immediately refetch the admin list
       const updatedAdminList = await getAllAdmins();
       setAdmins(updatedAdminList);
       
@@ -130,12 +135,19 @@ const handleAddAdmin = async (e) => {
     } else {
       alert(result.message);
     }
-  } catch (error) {
-    console.error("Error adding admin:", error);
-    alert("Failed to add admin. Please try again.");
-  } finally {
-    setIsLoading(false);
-  }
+  }catch (error) {
+      console.error("Error adding admin:", error);
+      
+      if (isNetworkError(error)) {
+        showNetworkErrorNotification({
+          message: 'Unable to add admin. Please check your internet connection.'
+        });
+      } else {
+        alert('An unexpected error occurred. Please try again later.');
+      }
+      
+      setIsLoading(false);
+    }
 };
 // Similar modification for handleRemoveAdmin
 const handleRemoveAdmin = async (userId, userEmail) => {
@@ -146,6 +158,11 @@ const handleRemoveAdmin = async (userId, userEmail) => {
   }
 
   // Prevent removing owner admins
+  const OWNER_EMAILS = [
+    'discordakshat04@gmail.com', 
+    'akshatvaidik@gmail.com'
+  ];
+
   if (OWNER_EMAILS.includes(userEmail)) {
     alert('Cannot remove owner admin status.');
     return;
@@ -158,6 +175,7 @@ const handleRemoveAdmin = async (userId, userEmail) => {
   if (confirmRemove) {
     try {
       setIsLoading(true);
+      
       const success = await removeAdminStatus(userId);
       
       if (success) {
@@ -171,8 +189,15 @@ const handleRemoveAdmin = async (userId, userEmail) => {
       }
     } catch (error) {
       console.error("Error removing admin:", error);
-      alert("Failed to remove admin. Please try again.");
-    } finally {
+      
+      if (isNetworkError(error)) {
+        showNetworkErrorNotification({
+          message: 'Unable to remove admin. Please check your internet connection.'
+        });
+      } else {
+        alert('An unexpected error occurred. Please try again later.');
+      }
+      
       setIsLoading(false);
     }
   }

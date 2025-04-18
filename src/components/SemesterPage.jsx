@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import './SemesterPage.css';
 import { getSubjectsBySemester } from '../firebase/dataService';
 import { getHardCodedSubjects } from '../data/hardCodedSubjects';
+import { isNetworkError, showNetworkErrorNotification } from '../utils/networkErrorHandler.jsx';
 
 function SemesterPage() {
   const { semId } = useParams();
@@ -58,27 +59,34 @@ function SemesterPage() {
   useEffect(() => {
     // Function to load subjects data
     const loadSubjectsData = async () => {
-      setIsLoading(true);
-      
+      setIsLoading(true); // show spinner at the start
+  
       try {
-        // Get subjects for this semester from Firebase
+        // Get subjects from Firebase
         const semesterSubjects = await getSubjectsBySemester(semesterNumber);
-        setAllSubjects(semesterSubjects);
-        
-        setIsLoading(false);
+        setAllSubjects(semesterSubjects); // use fetched data
       } catch (error) {
         console.error("Error loading semester subjects:", error);
-        
-        // Fallback to hard-coded subjects if Firebase fails
+  
+        // Check if it's a network error
+        if (isNetworkError(error)) {
+          showNetworkErrorNotification({
+            message: 'Unable to load semester subjects. Please check your internet connection.'
+          });
+        } else {
+          alert('Failed to load subjects. Using default data.');
+        }
+  
+        // Always fall back to hard-coded subjects if there's an error
         const hardCodedSubjects = getHardCodedSubjects(semesterNumber);
         setAllSubjects(hardCodedSubjects);
-        
-        setIsLoading(false);
+      } finally {
+        setIsLoading(false); // ✅ always hide spinner, no matter what
       }
     };
-    
+  
     loadSubjectsData();
-  }, [semId, semesterNumber]);
+  }, [semesterNumber]);
   
   // Function to get the built-in subjects for a specific semester
   

@@ -1,0 +1,66 @@
+/* src/components/NetworkErrorNotification.css */
+.network-error-notification {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    background-color: #ff4d4d;
+    color: white;
+    padding: 10px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .network-error-content {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+  
+  .network-error-icon {
+    margin-right: 10px;
+    font-size: 1.2rem;
+  }
+  
+  .network-error-message {
+    flex-grow: 1;
+    font-size: 0.9rem;
+  }
+  
+  .network-error-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .network-error-reload-btn,
+  .network-error-close-btn {
+    background: white;
+    color: #ff4d4d;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+  }
+  
+  .network-error-reload-btn:hover,
+  .network-error-close-btn:hover {
+    background-color: rgba(255,255,255,0.9);
+  }
