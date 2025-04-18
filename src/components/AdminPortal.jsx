@@ -956,6 +956,7 @@ const EditResourceModal = () => {
   <div className="admin-section admin-management">
     <h2>Admin Management</h2>
     
+    {/* Add New Admin Form */}
     <div className="add-admin-section">
             <h3>Add New Admin</h3>
             <form onSubmit={handleAddAdmin} className="admin-form">
@@ -993,11 +994,13 @@ const EditResourceModal = () => {
                         <p>{admin.email}</p>
                       </div>
                     </div>
-                    {/* Only show remove button to owners, and not for current user or owners */}
-                    {isOwner && admin.id !== userProfile?.id && (
+                    {/* Show remove button to owners */}
+                    {isOwner && (
                       <button 
                         className="remove-admin-btn" 
                         onClick={() => handleRemoveAdmin(admin.id, admin.email)}
+                        // Disable for owner's own account
+                        disabled={admin.id === userProfile?.id}
                       >
                         Remove Admin
                       </button>
