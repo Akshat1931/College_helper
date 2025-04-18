@@ -80,6 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+window.addEventListener('refreshnetwork', () => {
+  if (!navigator.onLine) {
+    showNetworkErrorNotification({
+      message: 'Still offline. Please check your network connection.'
+    });
+  }
+});
+
+// Keep your existing online/offline listeners
 window.addEventListener('online', () => {
   // Remove any existing network error notifications
   const notificationRoot = document.getElementById('network-error-root');
