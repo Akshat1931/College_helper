@@ -1,4 +1,3 @@
-// src/components/AdminPortal.jsx - Updated to use Firebase
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import './AdminPortal.css';
@@ -18,24 +17,22 @@ import {
   addAdminByEmail,
   removeAdminStatus,
   deleteResourceFromSubject,
-  updateSubject // Add this import
+  updateSubject
 } from '../firebase/dataService';
 
-
 const AdminPortal = () => {
-  const { userProfile, isLoggedIn, isAdmin, loading } = useUser();
+  const { userProfile, isLoggedIn, isAdmin, isOwner, loading } = useUser(); // Added isOwner
   const [activeTab, setActiveTab] = useState('subjects');
   const [subjects, setSubjects] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  // Add these new state variables after your existing ones
-const [editModalOpen, setEditModalOpen] = useState(false);
-const [editItem, setEditItem] = useState(null);
-const [editItemType, setEditItemType] = useState('');
-const [editSubjectId, setEditSubjectId] = useState('');
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editItem, setEditItem] = useState(null);
+  const [editItemType, setEditItemType] = useState('');
+  const [editSubjectId, setEditSubjectId] = useState('');
 
-const [admins, setAdmins] = useState([]);
-const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [admins, setAdmins] = useState([]);
+  const [newAdminEmail, setNewAdminEmail] = useState('');
   
   // Form states
   const [newSubject, setNewSubject] = useState({
@@ -126,7 +123,24 @@ const handleAddAdmin = async (e) => {
 };
 
 // Similar modification for handleRemoveAdmin
-const handleRemoveAdmin = async (userId) => {
+const handleRemoveAdmin = async (userId, userEmail) => {
+  // First, check if the current user is the owner
+  if (!isOwner) {
+    alert('Only the owner can remove admin status.');
+    return;
+  }
+
+  // Prevent removing the owner
+  const OWNER_EMAILS = [
+    'discordakshat04@gmail.com', 
+    'akshatvaidik@gmail.com'
+  ];
+  
+  if (OWNER_EMAILS.includes(userEmail)) {
+    alert('Cannot remove owner admin status.');
+    return;
+  }
+
   const confirmRemove = window.confirm(
     "Are you sure you want to remove this admin's status?"
   );
@@ -942,62 +956,61 @@ const EditResourceModal = () => {
   <div className="admin-section admin-management">
     <h2>Admin Management</h2>
     
-    {/* Add New Admin Form */}
     <div className="add-admin-section">
-      <h3>Add New Admin</h3>
-      <form onSubmit={handleAddAdmin} className="admin-form">
-        <div className="form-group">
-          <label>Email Address</label>
-          <input 
-            type="email" 
-            value={newAdminEmail}
-            onChange={(e) => setNewAdminEmail(e.target.value)}
-            placeholder="Enter user's email"
-            required
-          />
-        </div>
-        <button type="submit" className="admin-submit-btn" disabled={isLoading}>
-          {isLoading ? 'Adding...' : 'Add Admin'}
-        </button>
-      </form>
-    </div>
-    
-    {/* Current Admins List */}
-    <div className="current-admins-section">
-      <h3>Current Admins</h3>
-      {admins.length > 0 ? (
-        <div className="admin-list">
-          {admins.map(admin => (
-            <div key={admin.id} className="admin-item">
-              <div className="admin-info">
-                <img 
-                  src={admin.picture} 
-                  alt={admin.name} 
-                  className="admin-avatar"
+            <h3>Add New Admin</h3>
+            <form onSubmit={handleAddAdmin} className="admin-form">
+              <div className="form-group">
+                <label>Email Address</label>
+                <input 
+                  type="email" 
+                  value={newAdminEmail}
+                  onChange={(e) => setNewAdminEmail(e.target.value)}
+                  placeholder="Enter user's email"
+                  required
                 />
-                <div className="admin-details">
-                  <h4>{admin.name}</h4>
-                  <p>{admin.email}</p>
-                </div>
               </div>
-              {/* Only allow removing if not the current user */}
-              {admin.id !== userProfile?.id && (
-                <button 
-                  className="remove-admin-btn" 
-                  onClick={() => handleRemoveAdmin(admin.id)}
-                >
-                  Remove Admin
-                </button>
-              )}
-            </div>
-          ))}
+              <button type="submit" className="admin-submit-btn" disabled={isLoading || !isOwner}>
+                {isLoading ? 'Adding...' : 'Add Admin'}
+              </button>
+            </form>
+          </div>
+          
+          {/* Current Admins List */}
+          <div className="current-admins-section">
+            <h3>Current Admins</h3>
+            {admins.length > 0 ? (
+              <div className="admin-list">
+                {admins.map(admin => (
+                  <div key={admin.id} className="admin-item">
+                    <div className="admin-info">
+                      <img 
+                        src={admin.picture} 
+                        alt={admin.name} 
+                        className="admin-avatar"
+                      />
+                      <div className="admin-details">
+                        <h4>{admin.name}</h4>
+                        <p>{admin.email}</p>
+                      </div>
+                    </div>
+                    {/* Only show remove button to owners, and not for current user or owners */}
+                    {isOwner && admin.id !== userProfile?.id && (
+                      <button 
+                        className="remove-admin-btn" 
+                        onClick={() => handleRemoveAdmin(admin.id, admin.email)}
+                      >
+                        Remove Admin
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No other admins found.</p>
+            )}
+          </div>
         </div>
-      ) : (
-        <p>No other admins found.</p>
       )}
-    </div>
-  </div>
-)}
   {activeTab === 'subjects' && (
     <div className="admin-section">
       <h2>Add New Subject</h2>
