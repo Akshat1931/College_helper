@@ -72,7 +72,7 @@ function Navbar() {
     }
   }
 
-  // Function to handle avatar click - always redirect to profile
+  // Function to handle avatar click - always redirect to profiles
   function handleAvatarClick() {
     navigate('/complete-profile');
     
