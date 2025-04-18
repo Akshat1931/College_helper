@@ -4,6 +4,7 @@ import { DiscussionEmbed } from 'disqus-react';
 import ChapterResources from './ChapterResources';
 import ChatbotEmbed from './ChatbotEmbed';
 import { getSubjectById } from '../firebase/dataService';
+import { isNetworkError, showNetworkErrorNotification } from '../utils/networkErrorHandler.jsx';
 import './SubjectPage.css';
 
 function SubjectPage() {
@@ -1503,69 +1504,54 @@ function SubjectPage() {
 
 useEffect(() => {
   // Function to load subject data
+  
   const loadSubject = async () => {
-    setIsLoading(true);
-    
     try {
+      setIsLoading(true);
+      
       // First try to get the subject from Firebase
       const firestoreSubject = await getSubjectById(subjectId);
       
       if (firestoreSubject) {
-        console.log("Found subject in Firestore:", firestoreSubject);
         setCurrentSubject(firestoreSubject);
       } else {
-        // If not found in Firestore, check local database
-        console.log("Subject not found in Firestore, checking local database");
+        // Fallback to local database or default subject
         const foundSubject = subjectsDatabase[semId]?.[subjectId];
-        
-        if (foundSubject) {
-          setCurrentSubject(foundSubject);
-        } else {
-          // Not found anywhere, set a fallback
-          setCurrentSubject({
-            name: "Subject Not Found",
-            code: "N/A",
-            description: "This subject does not exist in our database.",
-            instructor: "N/A",
-            credits: 0,
-            syllabusUrl: "#",
-            chapters: [],
-            previousYearQuestions: [],
-            videoLectures: [],
-            assignments: []
-          });
-        }
+        setCurrentSubject(foundSubject || {
+          name: "Subject Not Found",
+          description: "Unable to load subject details."
+        });
       }
     } catch (error) {
       console.error("Error loading subject:", error);
       
-      // On error, fall back to local database
-      const foundSubject = subjectsDatabase[semId]?.[subjectId];
+      // Import at the top of the file
       
-      if (foundSubject) {
-        setCurrentSubject(foundSubject);
+      
+      if (isNetworkError(error)) {
+        showNetworkErrorNotification({
+          message: 'Unable to load subject details. Please check your internet connection.'
+        });
+        
+        // Fallback to local data or default
+        const foundSubject = subjectsDatabase[semId]?.[subjectId];
+        setCurrentSubject(foundSubject || {
+          name: "Connection Error",
+          description: "Unable to load subject. Check your internet connection."
+        });
       } else {
-        // Set the fallback if nothing is found
         setCurrentSubject({
-          name: "Subject Not Found",
-          code: "N/A",
-          description: "This subject does not exist in our database.",
-          instructor: "N/A",
-          credits: 0,
-          syllabusUrl: "#",
-          chapters: [],
-          previousYearQuestions: [],
-          videoLectures: [],
-          assignments: []
+          name: "Error Loading Subject",
+          description: "An unexpected error occurred. Please try again later."
         });
       }
-    } finally {
+      
       setIsLoading(false);
     }
   };
   
   loadSubject();
-}, [semId, subjectId]);
+}, [subjectId, semId]);
 
 const renderTabContent = () => {
   if (!currentSubject) return <div>Loading content...</div>;

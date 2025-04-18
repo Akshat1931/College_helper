@@ -1,4 +1,5 @@
 // src/main.jsx
+// src/main.jsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
@@ -6,6 +7,10 @@ import App from './App.jsx';
 import './styles/DisableGoogleAnimations.css';
 import './index.css';
 import './App.css';
+
+// Import network error handling
+import { showNetworkErrorNotification } from './utils/networkErrorHandler.jsx';
+
 
 // Add global listener to prevent animations
 document.addEventListener('DOMContentLoaded', () => {
@@ -72,6 +77,20 @@ document.addEventListener('DOMContentLoaded', () => {
   observer.observe(document.body, {
     childList: true,
     subtree: true
+  });
+});
+
+window.addEventListener('online', () => {
+  // Remove any existing network error notifications
+  const notificationRoot = document.getElementById('network-error-root');
+  if (notificationRoot) {
+    notificationRoot.remove();
+  }
+});
+
+window.addEventListener('offline', () => {
+  showNetworkErrorNotification({
+    message: 'Internet connection lost. Please check your network.'
   });
 });
 
