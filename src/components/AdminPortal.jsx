@@ -1731,113 +1731,121 @@ const EditResourceModal = () => {
       </div>
       
       <div className="edit-modal-body">
-        <div className="form-group">
-          <label>Subject Name</label>
-          <input 
-            type="text" 
-            value={editSubject?.name || ''}
-            onChange={(e) => {
-              const newValue = e.target.value;
-              setEditSubject(prev => ({...prev, name:newValue}));
-            }}
-            required
-          />
-        </div>
+      <div className="form-group">
+  <label>Subject Name</label>
+  <input 
+    type="text" 
+    name="name"
+    value={editSubject?.name || ''}
+    onChange={(e) => {
+      const newValue = e.target.value;
+      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
+    }}
+    required
+  />
+</div>
         
-        <div className="form-group">
-          <label>Subject Code</label>
-          <input 
-            type="text" 
-            value={editSubject?.code || ''}
-            onChange={(e) => {
-              const newValue = e.target.value;
-              setEditSubject(prev => ({...prev, name:newValue}));
-            }}
-            required
-          />
-        </div>
+<div className="form-group">
+  <label>Subject Code</label>
+  <input 
+    type="text" 
+    name="code"
+    value={editSubject?.code || ''}
+    onChange={(e) => {
+      const newValue = e.target.value;
+      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
+    }}
+    required
+  />
+</div>
         
-        <div className="form-group">
-          <label>Subject Icon (Emoji)</label>
-          <input 
-            type="text" 
-            value={editSubject?.icon || ''}
-            onChange={(e) => {
-              const newValue = e.target.value;
-              setEditSubject(prev => ({...prev, name:newValue}));
-            }}
-            maxLength="2"
-          />
-        </div>
+<div className="form-group">
+  <label>Subject Icon (Emoji)</label>
+  <input 
+    type="text" 
+    name="icon"
+    value={editSubject?.icon || ''}
+    onChange={(e) => {
+      const newValue = e.target.value;
+      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
+    }}
+    maxLength="2"
+  />
+</div>
         
-        <div className="form-group">
-          <label>Description</label>
-          <textarea 
-            value={editSubject?.description || ''}
-            onChange={(e) => {
-              const newValue = e.target.value;
-              setEditSubject(prev => ({...prev, name:newValue}));
-            }}
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label>Instructor</label>
-          <input 
-            type="text" 
-            value={editSubject?.instructor || ''}
-            onChange={(e) => {
-              const newValue = e.target.value;
-              setEditSubject(prev => ({...prev, name:newValue}));
-            }}
-          />
-        </div>
-        
-        <div className="form-group">
-          <label>Credits</label>
-          <input 
-            type="number" 
-            value={editSubject?.credits || 0}
-            onChange={(e) => {
-  const newValue = e.target.value;
-  setEditSubject(prev => ({...prev, name:newValue}));
-}}
-            max="6"
-          />
-        </div>
-        
-        <div className="form-group">
-          <label>Semester</label>
-          <select 
-            value={editSubject?.semesterId || ''}
-            onChange={(e) => {
-              const newValue = e.target.value;
-              setEditSubject(prev => ({...prev, name:newValue}));
-            }}
-            required
-          >
-            {semesters.map(sem => (
-              <option key={sem.id} value={sem.id}>
-                {sem.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="form-group">
-          <label>Syllabus URL (Google Drive)</label>
-          <input 
-            type="url" 
-            value={editSubject?.syllabusUrl || ''}
-            onChange={(e) => {
-              const newValue = e.target.value;
-              setEditSubject(prev => ({...prev, name:newValue}));
-            }}
-            placeholder="https://drive.google.com/file/d/..."
-          />
-        </div>
-      </div>
+<div className="form-group">
+  <label>Description</label>
+  <textarea 
+    name="description"
+    value={editSubject?.description || ''}
+    onChange={(e) => {
+      const newValue = e.target.value;
+      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
+    }}
+    required
+  />
+</div>
+
+<div className="form-group">
+  <label>Instructor</label>
+  <input 
+    type="text" 
+    name="instructor"
+    value={editSubject?.instructor || ''}
+    onChange={(e) => {
+      const newValue = e.target.value;
+      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
+    }}
+  />
+</div>
+
+<div className="form-group">
+  <label>Credits</label>
+  <input 
+    type="number" 
+    name="credits"
+    value={editSubject?.credits || 0}
+    onChange={(e) => {
+      const newValue = parseInt(e.target.value);
+      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
+    }}
+    max="6"
+  />
+</div>
+
+<div className="form-group">
+  <label>Semester</label>
+  <select 
+    name="semesterId"
+    value={editSubject?.semesterId || ''}
+    onChange={(e) => {
+      const newValue = parseInt(e.target.value);
+      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
+    }}
+    required
+  >
+    {semesters.map(sem => (
+      <option key={sem.id} value={sem.id}>
+        {sem.name}
+      </option>
+    ))}
+  </select>
+</div>
+
+<div className="form-group">
+  <label>Syllabus URL (Google Drive)</label>
+  <input 
+    type="url" 
+    name="syllabusUrl"
+    value={editSubject?.syllabusUrl || ''}
+    onChange={(e) => {
+      const newValue = e.target.value;
+      setEditSubject(prev => ({...prev, [e.target.name]: newValue}));
+    }}
+    placeholder="https://drive.google.com/file/d/..."
+  />
+</div>
+</div>
       
       <div className="edit-modal-footer">
         <button className="cancel-btn" onClick={closeEditSubjectModal}>Cancel</button>
