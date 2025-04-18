@@ -110,6 +110,35 @@ input, textarea {
   font-size: 1.1rem;
   color: var(--text-light);
 }
+@media screen and (max-width: 768px) {
+  .nav-menu {
+    width: 100%;
+    max-width: 250px;
+    right: -100%;
+  }
+  
+  /* Fix for Android layout */
+  .app-container, 
+  .landing-container,
+  .main-content {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  /* Ensure proper container behavior */
+  .container {
+    width: 100%;
+    padding: 0 15px;
+    overflow: hidden;
+  }
+  
+  /* Fix for menu items */
+  .nav-link {
+    width: 100%;
+    text-align: center;
+  }
+}
 
 @media (max-width: 768px) {
   .section-header h2 {
