@@ -119,7 +119,68 @@ const saveSubjectEdit = async () => {
   });
 
   // Load data
- 
+  const normalizeGoogleDriveUrl = (url) => {
+    if (!url) return url;
+  
+    // Trim whitespace
+    url = url.trim();
+  
+    // Patterns for different Google Drive URL formats
+    const patterns = [
+      // Direct file view link
+      /https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)\/(view|edit|preview)\??/,
+      
+      // Folder link
+      /https:\/\/drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)\??/,
+      
+      // Open link
+      /https:\/\/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/,
+
+      /https:\/\/docs\.google\.com\/document\/d\/([a-zA-Z0-9_-]+)\/edit\?usp=sharing(&.+)?/,
+      
+      // Docs link
+      /https:\/\/docs\.google\.com\/document\/d\/([a-zA-Z0-9_-]+)\/(edit|view|preview)\??/,
+      
+      // Sheets link
+      /https:\/\/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9_-]+)\/(edit|view|preview)\??/,
+      
+      // Presentation link
+      /https:\/\/docs\.google\.com\/presentation\/d\/([a-zA-Z0-9_-]+)\/(edit|view|preview)\??/
+    ];
+  
+    // Try each pattern
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) {
+        const fileId = match[1];
+        // Return a standardized view link
+        return `https://drive.google.com/file/d/${fileId}/view`;
+      }
+    }
+  
+    // If no match found, return original URL
+    return url;
+  };
+  
+  // Modify the input handlers in the component
+  const handleChapterUrlChange = (e) => {
+    const rawUrl = e.target.value;
+    const normalizedUrl = normalizeGoogleDriveUrl(rawUrl);
+    setNewChapter({...newChapter, driveEmbedUrl: normalizedUrl});
+  };
+  
+  const handleResourceUrlChange = (e) => {
+    const rawUrl = e.target.value;
+    
+    // For video, keep YouTube URL validation
+    if (newResource.type === 'video') {
+      setNewResource({...newResource, url: rawUrl});
+    } else {
+      // For other resources (PYQ, assignments), normalize Google Drive URL
+      const normalizedUrl = normalizeGoogleDriveUrl(rawUrl);
+      setNewResource({...newResource, url: normalizedUrl});
+    }
+  };
     
   useEffect(() => {
     const loadData = async () => {
@@ -767,10 +828,22 @@ const EditResourceModal = () => {
   // Form field change handler
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-    setEditItem(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    // Special handling for URL fields
+    if (name === 'driveEmbedUrl' || name === 'fileUrl' || name === 'url') {
+      // Normalize Google Drive URLs
+      const normalizedValue = normalizeGoogleDriveUrl(value);
+      setEditItem(prev => ({
+        ...prev,
+        [name]: normalizedValue
+      }));
+    } else {
+      // Regular handling for other fields
+      setEditItem(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
   
   // Different fields based on resource type
@@ -1192,7 +1265,8 @@ const EditResourceModal = () => {
             <input 
               type="url" 
               value={newSubject.syllabusUrl}
-              onChange={e => setNewSubject({...newSubject, syllabusUrl: e.target.value})}
+              onChange={handleChapterUrlChange}
+
               placeholder="https://drive.google.com/file/d/..."
             />
           </div>
@@ -1264,7 +1338,8 @@ const EditResourceModal = () => {
                   <input 
                     type="url" 
                     value={newChapter.driveEmbedUrl}
-                    onChange={e => setNewChapter({...newChapter, driveEmbedUrl: e.target.value})}
+                    onChange={handleChapterUrlChange}
+
                     placeholder="https://drive.google.com/file/d/..."
                     required
                   />
@@ -1353,7 +1428,7 @@ const EditResourceModal = () => {
                   <input 
                     type="url" 
                     value={newResource.url}
-                    onChange={e => setNewResource({...newResource, url: e.target.value})}
+                    onChange={handleResourceUrlChange}
                     placeholder={newResource.type === 'video' ? 'https://www.youtube.com/embed/...' : 'https://drive.google.com/file/d/...'}
                     required
                   />
