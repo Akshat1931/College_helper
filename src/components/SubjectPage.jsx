@@ -1509,21 +1509,60 @@ useEffect(() => {
     try {
       setIsLoading(true);
       
-      // First try to get the subject from Firebase
-      const firestoreSubject = await getSubjectById(subjectId);
+      // FIRST check if we have a hardcoded subject BEFORE trying Firebase
+      // This is the important change - prioritize local hardcoded subjects
+      let foundSubject = null;
       
-      if (firestoreSubject) {
-        setCurrentSubject(firestoreSubject);
+      // Look for a hardcoded subject based on how your subjectsDatabase is structured
+      if (subjectsDatabase && semId && subjectId) {
+        foundSubject = subjectsDatabase[semId]?.[subjectId];
+        
+        // If the ID is numeric and not found directly, look for a string version
+        if (!foundSubject && !isNaN(parseInt(subjectId))) {
+          foundSubject = subjectsDatabase[semId]?.[`${subjectId}`]; // Try string version
+        }
+        
+        // Check alternative formats if needed
+        if (!foundSubject) {
+          // Look for subject by numericId property if that's how your data is structured
+          const allSubjectsInSem = subjectsDatabase[semId] || {};
+          foundSubject = Object.values(allSubjectsInSem).find(
+            subject => subject.numericId === parseInt(subjectId)
+          );
+        }
+      }
+      
+      if (foundSubject) {
+        // Hardcoded subject found, use it
+        console.log("Using hardcoded subject:", foundSubject);
+        setCurrentSubject(foundSubject);
       } else {
-        // Fallback to local database or default subject
-        const foundSubject = subjectsDatabase[semId]?.[subjectId];
-        setCurrentSubject(foundSubject || {
-          name: "Subject Not Found",
-          description: "Unable to load subject details."
-        });
+        // No hardcoded subject, try Firestore
+        const firestoreSubject = await getSubjectById(subjectId);
+        
+        if (firestoreSubject) {
+          setCurrentSubject(firestoreSubject);
+        } else {
+          // Subject not found anywhere - set a default
+          console.log("Subject not found in hardcoded data or Firestore");
+          setCurrentSubject({
+            id: subjectId,
+            name: "Subject Not Found",
+            description: "This subject could not be found.",
+            topics: []
+            // Add other default properties as needed
+          });
+        }
       }
     } catch (error) {
       console.error("Error loading subject:", error);
+      setCurrentSubject({
+        id: subjectId,
+        name: "Error Loading Subject",
+        description: "There was an error loading this subject.",
+        topics: []
+        // Add other default properties as needed
+      });
       
       // Import at the top of the file
       
@@ -1546,12 +1585,19 @@ useEffect(() => {
         });
       }
       
+    } finally {
+      // CRITICAL: This ensures loading state is reset regardless of success or failure
       setIsLoading(false);
     }
   };
   
-  loadSubject();
-}, [subjectId, semId]);
+  if (subjectId) {
+    loadSubject();
+  } else {
+    setIsLoading(false);
+  }
+}, [subjectId]);
+
 
 const renderTabContent = () => {
   if (!currentSubject) return <div>Loading content...</div>;
