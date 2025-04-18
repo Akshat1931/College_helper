@@ -1265,7 +1265,7 @@ const EditResourceModal = () => {
             <input 
               type="url" 
               value={newSubject.syllabusUrl}
-              onChange={handleChapterUrlChange}
+              onChange={e => setNewSubject({...newSubject, syllabusUrl: e.target.value})}
 
               placeholder="https://drive.google.com/file/d/..."
             />
