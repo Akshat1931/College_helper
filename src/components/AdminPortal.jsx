@@ -9,6 +9,7 @@ import {
   addSubject,
   deleteSubject,
   addChapter,
+  
   addVideoLecture,
   updateSubjectsOrder,
   addPreviousYearQuestion,
@@ -36,6 +37,12 @@ const AdminPortal = () => {
   const [editItem, setEditItem] = useState(null);
   const [editItemType, setEditItemType] = useState('');
   const [editSubjectId, setEditSubjectId] = useState('');
+  
+// Add these new state variables at the top of your AdminPortal component
+const [editSubjectModalOpen, setEditSubjectModalOpen] = useState(false);
+const [editSubject, setEditSubject] = useState(null);
+
+
 
   const [admins, setAdmins] = useState([]);
   const [newAdminEmail, setNewAdminEmail] = useState('');
@@ -43,6 +50,46 @@ const AdminPortal = () => {
   // Check if the current user is an owner
   const isOwner = OWNER_EMAILS.includes(userProfile?.email);
   
+  // Add these three functions near your other handler functions like handleReorder, openEditModal, etc.
+// For example, below your existing handleResourceReorder or openEditModal functions
+
+const openEditSubjectModal = (subjectId, subject) => {
+  setEditSubject({...subject});
+  setEditSubjectModalOpen(true);
+};
+
+const closeEditSubjectModal = () => {
+  setEditSubjectModalOpen(false);
+  setEditSubject(null);
+};
+
+const saveSubjectEdit = async () => {
+  if (!editSubject) {
+    closeEditSubjectModal();
+    return;
+  }
+  
+  try {
+    setIsLoading(true);
+    
+    // Update the subject in Firebase
+    const updatedSubject = await updateSubject(editSubject.id, editSubject);
+    
+    // Update local state
+    const updatedSubjects = subjects.map(subject => 
+      subject.id === editSubject.id ? updatedSubject : subject
+    );
+    
+    setSubjects(updatedSubjects);
+    setIsLoading(false);
+    closeEditSubjectModal();
+    alert('Subject updated successfully!');
+  } catch (error) {
+    console.error('Error updating subject:', error);
+    alert('Failed to update subject. Please try again.');
+    setIsLoading(false);
+  }
+};
   // Form states
   const [newSubject, setNewSubject] = useState({
     name: '',
@@ -1352,32 +1399,42 @@ const EditResourceModal = () => {
               <span className="item-title">{subject.name} ({subject.code}) - Order: {subject.displayOrder}</span>
             </div>
             <div className="item-actions">
-              {/* Reorder buttons */}
-              <div className="reorder-buttons">
-                <button 
-                  className="reorder-btn up"
-                  onClick={() => handleSubjectReorder(semester.id, subject.id, 'up')}
-                  disabled={index === 0}
-                  title="Move Up"
-                >
-                  ↑
-                </button>
-                <button 
-                  className="reorder-btn down"
-                  onClick={() => handleSubjectReorder(semester.id, subject.id, 'down')}
-                  disabled={index === (semesterSubjects.length - 1)}
-                  title="Move Down"
-                >
-                  ↓
-                </button>
-              </div>
-              <button 
-                className="delete-btn" 
-                onClick={() => deleteSubjectHandler(subject.id)}
-              >
-                Delete Subject
-              </button>
-            </div>
+  {/* Reorder buttons */}
+  <div className="reorder-buttons">
+    <button 
+      className="reorder-btn up"
+      onClick={() => handleSubjectReorder(semester.id, subject.id, 'up')}
+      disabled={index === 0}
+      title="Move Up"
+    >
+      ↑
+    </button>
+    <button 
+      className="reorder-btn down"
+      onClick={() => handleSubjectReorder(semester.id, subject.id, 'down')}
+      disabled={index === (semesterSubjects.length - 1)}
+      title="Move Down"
+    >
+      ↓
+    </button>
+  </div>
+  
+  {/* Edit and delete buttons */}
+  <button 
+    className="edit-btn" 
+    onClick={() => openEditSubjectModal(subject.id, subject)}
+    title="Edit Subject"
+  >
+    Edit
+  </button>
+  
+  <button 
+    className="delete-btn" 
+    onClick={() => deleteSubjectHandler(subject.id)}
+  >
+    Delete Subject
+  </button>
+</div>
                 
                 {/* Chapters Section */}
                 <div className="subject-chapters">
@@ -1583,6 +1640,109 @@ const EditResourceModal = () => {
         </div>
       </div>
       {editModalOpen && <EditResourceModal />}
+      {/* Add this right before the final closing </div> tag */}
+{editSubjectModalOpen && (
+  <div className="modal-overlay">
+    <div className="edit-modal">
+      <div className="edit-modal-header">
+        <h3>Edit Subject</h3>
+        <button className="close-modal-btn" onClick={closeEditSubjectModal}>×</button>
+      </div>
+      
+      <div className="edit-modal-body">
+        <div className="form-group">
+          <label>Subject Name</label>
+          <input 
+            type="text" 
+            value={editSubject?.name || ''}
+            onChange={(e) => setEditSubject({...editSubject, name: e.target.value})}
+            required
+          />
+        </div>
+        
+        <div className="form-group">
+          <label>Subject Code</label>
+          <input 
+            type="text" 
+            value={editSubject?.code || ''}
+            onChange={(e) => setEditSubject({...editSubject, code: e.target.value})}
+            required
+          />
+        </div>
+        
+        <div className="form-group">
+          <label>Subject Icon (Emoji)</label>
+          <input 
+            type="text" 
+            value={editSubject?.icon || ''}
+            onChange={(e) => setEditSubject({...editSubject, icon: e.target.value})}
+            placeholder="📚 📝 🧮 ⚛️ 🔬"
+            maxLength="2"
+          />
+        </div>
+        
+        <div className="form-group">
+          <label>Description</label>
+          <textarea 
+            value={editSubject?.description || ''}
+            onChange={(e) => setEditSubject({...editSubject, description: e.target.value})}
+            required
+          />
+        </div>
+        
+        <div className="form-group">
+          <label>Instructor</label>
+          <input 
+            type="text" 
+            value={editSubject?.instructor || ''}
+            onChange={(e) => setEditSubject({...editSubject, instructor: e.target.value})}
+          />
+        </div>
+        
+        <div className="form-group">
+          <label>Credits</label>
+          <input 
+            type="number" 
+            value={editSubject?.credits || 0}
+            onChange={(e) => setEditSubject({...editSubject, credits: parseInt(e.target.value)})}
+            min="1"
+            max="6"
+          />
+        </div>
+        
+        <div className="form-group">
+          <label>Semester</label>
+          <select 
+            value={editSubject?.semesterId || ''}
+            onChange={(e) => setEditSubject({...editSubject, semesterId: parseInt(e.target.value)})}
+            required
+          >
+            {semesters.map(sem => (
+              <option key={sem.id} value={sem.id}>
+                {sem.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="form-group">
+          <label>Syllabus URL (Google Drive)</label>
+          <input 
+            type="url" 
+            value={editSubject?.syllabusUrl || ''}
+            onChange={(e) => setEditSubject({...editSubject, syllabusUrl: e.target.value})}
+            placeholder="https://drive.google.com/file/d/..."
+          />
+        </div>
+      </div>
+      
+      <div className="edit-modal-footer">
+        <button className="cancel-btn" onClick={closeEditSubjectModal}>Cancel</button>
+        <button className="save-btn" onClick={saveSubjectEdit}>Save Changes</button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };
