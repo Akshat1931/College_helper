@@ -1,3 +1,5 @@
+
+// src/components/AdminPortal.jsx
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import './AdminPortal.css';
@@ -20,8 +22,13 @@ import {
   updateSubject
 } from '../firebase/dataService';
 
+// Define owner emails
+const OWNER_EMAILS = [
+  'discordakshat04@gmail.com', 
+  'akshatvaidik@gmail.com'
+];
 const AdminPortal = () => {
-  const { userProfile, isLoggedIn, isAdmin, isOwner, loading } = useUser(); // Added isOwner
+  const { userProfile, isLoggedIn, isAdmin, loading } = useUser();
   const [activeTab, setActiveTab] = useState('subjects');
   const [subjects, setSubjects] = useState([]);
   const [semesters, setSemesters] = useState([]);
@@ -33,6 +40,9 @@ const AdminPortal = () => {
 
   const [admins, setAdmins] = useState([]);
   const [newAdminEmail, setNewAdminEmail] = useState('');
+  
+  // Check if the current user is an owner
+  const isOwner = OWNER_EMAILS.includes(userProfile?.email);
   
   // Form states
   const [newSubject, setNewSubject] = useState({
@@ -100,6 +110,12 @@ const AdminPortal = () => {
 const handleAddAdmin = async (e) => {
   e.preventDefault();
   
+  // Check if the current user is an owner
+  if (!isOwner) {
+    alert('Only the owner can add new admins.');
+    return;
+  }
+  
   try {
     setIsLoading(true);
     const result = await addAdminByEmail(newAdminEmail);
@@ -121,21 +137,15 @@ const handleAddAdmin = async (e) => {
     setIsLoading(false);
   }
 };
-
 // Similar modification for handleRemoveAdmin
 const handleRemoveAdmin = async (userId, userEmail) => {
-  // First, check if the current user is the owner
+  // First, check if the current user is an owner
   if (!isOwner) {
     alert('Only the owner can remove admin status.');
     return;
   }
 
-  // Prevent removing the owner
-  const OWNER_EMAILS = [
-    'discordakshat04@gmail.com', 
-    'akshatvaidik@gmail.com'
-  ];
-  
+  // Prevent removing owner admins
   if (OWNER_EMAILS.includes(userEmail)) {
     alert('Cannot remove owner admin status.');
     return;
@@ -952,29 +962,31 @@ const EditResourceModal = () => {
         </div>
         
 <div className="admin-content">
-  {activeTab === 'admin-management' && (
-  <div className="admin-section admin-management">
-    <h2>Admin Management</h2>
-    
-    {/* Add New Admin Form */}
-    <div className="add-admin-section">
-            <h3>Add New Admin</h3>
-            <form onSubmit={handleAddAdmin} className="admin-form">
-              <div className="form-group">
-                <label>Email Address</label>
-                <input 
-                  type="email" 
-                  value={newAdminEmail}
-                  onChange={(e) => setNewAdminEmail(e.target.value)}
-                  placeholder="Enter user's email"
-                  required
-                />
-              </div>
-              <button type="submit" className="admin-submit-btn" disabled={isLoading || !isOwner}>
-                {isLoading ? 'Adding...' : 'Add Admin'}
-              </button>
-            </form>
-          </div>
+{activeTab === 'admin-management' && (
+        <div className="admin-section admin-management">
+          <h2>Admin Management</h2>
+          
+          {/* Add New Admin Form - Only visible to owners */}
+          {isOwner && (
+            <div className="add-admin-section">
+              <h3>Add New Admin</h3>
+              <form onSubmit={handleAddAdmin} className="admin-form">
+                <div className="form-group">
+                  <label>Email Address</label>
+                  <input 
+                    type="email" 
+                    value={newAdminEmail}
+                    onChange={(e) => setNewAdminEmail(e.target.value)}
+                    placeholder="Enter user's email"
+                    required
+                  />
+                </div>
+                <button type="submit" className="admin-submit-btn" disabled={isLoading}>
+                  {isLoading ? 'Adding...' : 'Add Admin'}
+                </button>
+              </form>
+            </div>
+          )}
           
           {/* Current Admins List */}
           <div className="current-admins-section">
@@ -992,15 +1004,17 @@ const EditResourceModal = () => {
                       <div className="admin-details">
                         <h4>{admin.name}</h4>
                         <p>{admin.email}</p>
+                        {/* Highlight owners */}
+                        {OWNER_EMAILS.includes(admin.email) && (
+                          <span className="owner-badge">Owner</span>
+                        )}
                       </div>
                     </div>
-                    {/* Show remove button to owners */}
-                    {isOwner && (
+                    {/* Show remove button only if current user is an owner and not removing themselves */}
+                    {isOwner && admin.id !== userProfile?.id && (
                       <button 
                         className="remove-admin-btn" 
                         onClick={() => handleRemoveAdmin(admin.id, admin.email)}
-                        // Disable for owner's own account
-                        disabled={admin.id === userProfile?.id}
                       >
                         Remove Admin
                       </button>
