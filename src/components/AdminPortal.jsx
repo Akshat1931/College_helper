@@ -124,6 +124,12 @@ const saveSubjectEdit = async () => {
   
     // Trim whitespace
     url = url.trim();
+
+    const folderMatch = url.match(/https:\/\/drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)/);
+  if (folderMatch) {
+    // Return the folder URL as is, or standardize it if needed
+    return `https://drive.google.com/drive/folders/${folderMatch[1]}`;
+  }
   
     // Patterns for different Google Drive URL formats
     const patterns = [
