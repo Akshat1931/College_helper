@@ -12,6 +12,7 @@ import ResourceSubmission from './components/ResourceSubmission'; // Import the 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AboutPage from './components/AboutPage';
+import { Analytics } from "@vercel/analytics/react";
 import './App.css';
 
 function ScrollToTop() {
@@ -49,6 +50,7 @@ function App() {
           </div>
           <Footer />
         </div>
+        <Analytics />
       </Router>
     </UserProvider>
   );
