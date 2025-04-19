@@ -20,7 +20,9 @@ import {
   deleteResourceFromSubject,
   updateSubject
 } from '../firebase/dataService';
-
+// Import new AdminSubmissions component
+import AdminSubmissions from './AdminSubmissions';
+import './AdminSubmissions.css';
 // Define owner emails
 const OWNER_EMAILS = [
   'discordakshat04@gmail.com', 
@@ -44,6 +46,7 @@ const AdminPortal = () => {
 
   const [admins, setAdmins] = useState([]);
   const [newAdminEmail, setNewAdminEmail] = useState('');
+  
   
   // Check if the current user is an owner
   const isOwner = OWNER_EMAILS.includes(userProfile?.email);
@@ -850,6 +853,12 @@ const AdminPortal = () => {
 >
   Admin Management
 </button>
+<button 
+  className={`admin-tab ${activeTab === 'submissions' ? 'active' : ''}`}
+  onClick={() => setActiveTab('submissions')}
+>
+  Resource Submissions
+</button>
         </div>
         
 <div className="admin-content">
@@ -918,6 +927,10 @@ const AdminPortal = () => {
             )}
           </div>
         </div>
+      )}
+      {/* New User Submissions Tab */}
+      {activeTab === 'submissions' && (
+        <AdminSubmissions />
       )}
   {activeTab === 'subjects' && (
     <div className="admin-section">

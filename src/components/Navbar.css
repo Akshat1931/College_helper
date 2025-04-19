@@ -1,4 +1,4 @@
-/* src/components/Navbar.css */
+/* src/components/Navbar.css - Add styles for submit link */
 .navbar {
   background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -46,6 +46,7 @@
 .nav-menu {
   display: flex;
   gap: 2.5rem;
+  padding: 25px;
 }
 
 .nav-link {
@@ -158,6 +159,35 @@
   color: white;
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
+}
+
+/* New styles for submit link */
+.submit-link {
+  background: rgba(74, 108, 247, 0.1);
+  color: var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-right: 1rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.submit-link:hover {
+  background: rgba(74, 108, 247, 0.2);
+  transform: translateY(-2px);
+}
+
+.admin-link {
+  background: rgba(74, 108, 247, 0.1);
+  color: var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-right: 1rem;
+  transition: all 0.3s ease;
 }
 
 /* Google login button style fix for mobile */
