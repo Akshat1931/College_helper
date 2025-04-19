@@ -163,15 +163,14 @@
 
 /* New styles for submit link */
 .submit-link {
-  background: rgba(74, 108, 247, 0.1);
-  color: var(--primary);
+  background: rgba(67, 182, 115, 0.1);
+  color: #43b673;
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
   font-weight: 500;
   font-size: 0.9rem;
-  margin-right: 1rem;
-  transition: all 0.3s ease;
   text-decoration: none;
+  transition: all 0.3s ease;
 }
 
 .submit-link:hover {
