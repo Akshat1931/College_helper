@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import { getAllSemesters, getSubjectsBySemester } from '../firebase/dataService';
 import { submitResource } from '../firebase/submissionService';
+import LoginOverlay from './LoginOverlay';
 import './ResourceSubmission.css';
 
 function ResourceSubmission() {
@@ -11,6 +12,7 @@ function ResourceSubmission() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
+  const [showLoginOverlay, setShowLoginOverlay] = useState(false);
   
   const [formData, setFormData] = useState({
     semesterId: '',
@@ -19,7 +21,6 @@ function ResourceSubmission() {
     title: '',
     description: '',
     url: '',
-    // Completely remove file field
   });
 
   // Load semesters and subjects
@@ -72,6 +73,13 @@ function ResourceSubmission() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check if user is logged in - if not, show login overlay
+    if (!isLoggedIn) {
+      setShowLoginOverlay(true);
+      return;
+    }
+    
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -89,19 +97,13 @@ function ResourceSubmission() {
       return;
     }
 
-    if (!isLoggedIn) {
-      setError("You must be logged in to submit resources.");
-      setLoading(false);
-      return;
-    }
-
     try {
       // Add user info to the submission
       const submission = {
         ...formData,
-        userId: userProfile.id,
-        userName: userProfile.name || userProfile.fullName,
-        userEmail: userProfile.email,
+        userId: userProfile?.id,
+        userName: userProfile?.name || userProfile?.fullName || "Guest User",
+        userEmail: userProfile?.email || "guest@example.com",
         submittedAt: new Date(),
         status: 'pending'
       };
@@ -128,6 +130,11 @@ function ResourceSubmission() {
     }
   };
 
+  // Function to close the login overlay
+  const closeLoginOverlay = () => {
+    setShowLoginOverlay(false);
+  };
+
   return (
     <div className="resource-submission">
       <div className="submission-header">
@@ -135,149 +142,157 @@ function ResourceSubmission() {
         <p>Share your knowledge with your peers! Submit study materials, notes, or links for review.</p>
       </div>
 
-      {!isLoggedIn ? (
-        <div className="login-notice">
-          <p>Please log in to submit resources.</p>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="submission-form">
-          {success && (
-            <div className="success-message">
-              Resource submitted successfully! It will be reviewed by an admin before being published.
-            </div>
-          )}
-
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="semester">Semester</label>
-              <select 
-                id="semester" 
-                name="semesterId" 
-                value={formData.semesterId} 
-                onChange={handleSemesterChange}
-                required
-              >
-                <option value="">Select Semester</option>
-                {semesters.map(semester => (
-                  <option key={semester.id} value={semester.id}>
-                    {semester.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="subject">Subject</label>
-              <select 
-                id="subject" 
-                name="subjectId" 
-                value={formData.subjectId} 
-                onChange={handleInputChange}
-                required
-                disabled={!formData.semesterId}
-              >
-                <option value="">
-                  {formData.semesterId 
-                    ? 'Select Subject' 
-                    : 'Select Semester First'}
-                </option>
-                {subjects.map(subject => (
-                  <option key={subject.id} value={subject.id}>
-                    {subject.name} {subject.code ? `(${subject.code})` : ''}
-                  </option>
-                ))}
-              </select>
-            </div>
+      {/* Info banner for non-logged in users */}
+      {!isLoggedIn && (
+        <div className="login-info-banner">
+          <div className="info-icon">ℹ️</div>
+          <div className="info-content">
+            <p>You'll need to sign in to complete your submission. Fill out the form and click submit when ready.</p>
           </div>
+        </div>
+      )}
 
+      {/* Always show the form, regardless of login status */}
+      <form onSubmit={handleSubmit} className="submission-form">
+        {success && (
+          <div className="success-message">
+            Resource submitted successfully! It will be reviewed by an admin before being published.
+          </div>
+        )}
+
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
+
+        <div className="form-row">
           <div className="form-group">
-            <label htmlFor="resourceType">Resource Type</label>
+            <label htmlFor="semester">Semester</label>
             <select 
-              id="resourceType" 
-              name="resourceType" 
-              value={formData.resourceType} 
-              onChange={handleInputChange}
+              id="semester" 
+              name="semesterId" 
+              value={formData.semesterId} 
+              onChange={handleSemesterChange}
               required
             >
-              <option value="chapter">Chapter / Notes</option>
-              <option value="video">Video Lecture</option>
-              <option value="pyq">Previous Year Question</option>
-              <option value="assignment">Assignment</option>
+              <option value="">Select Semester</option>
+              {semesters.map(semester => (
+                <option key={semester.id} value={semester.id}>
+                  {semester.name}
+                </option>
+              ))}
             </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="title">
-              {formData.resourceType === 'pyq' 
-                ? 'Year & Semester' 
-                : 'Resource Title'}
-            </label>
-            <input 
-              type="text" 
-              id="title" 
-              name="title" 
-              value={formData.title} 
+            <label htmlFor="subject">Subject</label>
+            <select 
+              id="subject" 
+              name="subjectId" 
+              value={formData.subjectId} 
               onChange={handleInputChange}
-              placeholder={formData.resourceType === 'pyq' 
-                ? 'e.g., 2023 End-Sem' 
-                : 'Enter resource title'}
               required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <textarea 
-              id="description" 
-              name="description" 
-              value={formData.description} 
-              onChange={handleInputChange}
-              placeholder="Briefly describe this resource..."
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="url">
-              {formData.resourceType === 'video' 
-                ? 'YouTube Video URL' 
-                : 'Google Drive or Resource URL'}
-            </label>
-            <input 
-              type="url" 
-              id="url" 
-              name="url" 
-              value={formData.url} 
-              onChange={handleInputChange}
-              placeholder={formData.resourceType === 'video' 
-                ? 'https://www.youtube.com/watch?v=...' 
-                : 'https://drive.google.com/file/d/...'}
-              required
-            />
-            <span className="form-hint">
-              {formData.resourceType === 'video' 
-                ? 'Please provide a YouTube video link' 
-                : 'Preferably a Google Drive link that anyone can view'}
-            </span>
-          </div>
-
-          <div className="submission-actions">
-            <button 
-              type="submit" 
-              className="submit-button"
-              disabled={loading}
+              disabled={!formData.semesterId}
             >
-              {loading ? 'Submitting...' : 'Submit Resource'}
-            </button>
+              <option value="">
+                {formData.semesterId 
+                  ? 'Select Subject' 
+                  : 'Select Semester First'}
+              </option>
+              {subjects.map(subject => (
+                <option key={subject.id} value={subject.id}>
+                  {subject.name} {subject.code ? `(${subject.code})` : ''}
+                </option>
+              ))}
+            </select>
           </div>
-        </form>
-      )}
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="resourceType">Resource Type</label>
+          <select 
+            id="resourceType" 
+            name="resourceType" 
+            value={formData.resourceType} 
+            onChange={handleInputChange}
+            required
+          >
+            <option value="chapter">Chapter / Notes</option>
+            <option value="video">Video Lecture</option>
+            <option value="pyq">Previous Year Question</option>
+            <option value="assignment">Assignment</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="title">
+            {formData.resourceType === 'pyq' 
+              ? 'Year & Semester' 
+              : 'Resource Title'}
+          </label>
+          <input 
+            type="text" 
+            id="title" 
+            name="title" 
+            value={formData.title} 
+            onChange={handleInputChange}
+            placeholder={formData.resourceType === 'pyq' 
+              ? 'e.g., 2023 End-Sem' 
+              : 'Enter resource title'}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="description">Description</label>
+          <textarea 
+            id="description" 
+            name="description" 
+            value={formData.description} 
+            onChange={handleInputChange}
+            placeholder="Briefly describe this resource..."
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="url">
+            {formData.resourceType === 'video' 
+              ? 'YouTube Video URL' 
+              : 'Google Drive or Resource URL'}
+          </label>
+          <input 
+            type="url" 
+            id="url" 
+            name="url" 
+            value={formData.url} 
+            onChange={handleInputChange}
+            placeholder={formData.resourceType === 'video' 
+              ? 'https://www.youtube.com/watch?v=...' 
+              : 'https://drive.google.com/file/d/...'}
+            required
+          />
+          <span className="form-hint">
+            {formData.resourceType === 'video' 
+              ? 'Please provide a YouTube video link' 
+              : 'Preferably a Google Drive link that anyone can view'}
+          </span>
+        </div>
+
+        <div className="submission-actions">
+          <button 
+            type="submit" 
+            className="submit-button"
+            disabled={loading}
+          >
+            {loading ? 'Submitting...' : isLoggedIn ? 'Submit Resource' : 'Sign in & Submit'}
+          </button>
+        </div>
+      </form>
+
+      {/* Login overlay */}
+      {showLoginOverlay && <LoginOverlay onClose={closeLoginOverlay} />}
     </div>
   );
 }

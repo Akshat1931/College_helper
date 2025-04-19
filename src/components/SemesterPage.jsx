@@ -87,9 +87,6 @@ function SemesterPage() {
   
     loadSubjectsData();
   }, [semesterNumber]);
-  
-  // Function to get the built-in subjects for a specific semester
-  
 
   const currentSemInfo = semesterInfo[semesterNumber] || {
     title: `Semester ${semesterNumber}`,
@@ -161,11 +158,7 @@ function SemesterPage() {
           ))}
         </div>
         
-        <div className="semester-help">
-          <h3>Need Help?</h3>
-          <p>Our AI learning assistant is available 24/7 to help with any subject in this semester.</p>
-          <button className="ai-help-btn">Ask AI Assistant</button>
-        </div>
+        {/* AI Help section removed from here */}
       </div>
     </div>
   );

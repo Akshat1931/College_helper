@@ -1,0 +1,143 @@
+/* src/components/LoginOverlay.css */
+.login-overlay-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; /* Use viewport width */
+    height: 100vh; /* Use viewport height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* Very high z-index */
+  }
+  
+  .login-overlay-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7); /* Darker background */
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+  }
+  
+  .login-overlay-modal {
+    position: relative;
+    width: 90%;
+    max-width: 450px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    z-index: 10000; /* Above backdrop */
+    animation: modalFadeIn 0.3s ease-out;
+  }
+  
+  .login-overlay-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: #718096;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    z-index: 10001;
+  }
+  
+  .login-overlay-close:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #2d3748;
+  }
+  
+  .login-overlay-content {
+    padding: 2.5rem;
+    text-align: center;
+  }
+  
+  .login-overlay-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .login-overlay-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #2d3748;
+  }
+  
+  .login-overlay-content p {
+    color: #718096;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+  
+  .login-overlay-actions {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .login-overlay-footer {
+    font-size: 0.85rem !important;
+    color: #a0aec0 !important;
+    margin-top: 1rem !important;
+  }
+  
+  .login-overlay-footer a {
+    color: #4a6cf7;
+    text-decoration: none;
+  }
+  
+  .login-overlay-footer a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Body class to prevent scrolling */
+  body.overlay-open {
+    overflow: hidden !important;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+  
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .login-overlay-modal {
+      width: 95%;
+      margin: 0 auto;
+    }
+    
+    .login-overlay-content {
+      padding: 2rem 1.5rem;
+    }
+    
+    .login-overlay-content h2 {
+      font-size: 1.5rem;
+    }
+    
+    .login-overlay-content p {
+      font-size: 1rem;
+    }
+  }
