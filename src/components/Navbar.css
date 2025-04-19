@@ -241,7 +241,21 @@
   .nav-menu.active {
     right: 0;
   }
-  
+  /* Hide submit-link on mobile view */
+@media (max-width: 1024px) {
+  .submit-link {
+    display: none; /* Hide in navbar */
+  }
+
+  /* Show it inside mobile menu instead */
+  .nav-menu .submit-link {
+    display: block;
+    margin: 0.5rem 0;
+    text-align: center;
+    background: rgba(67, 182, 115, 0.05);
+    width: 100%;
+  }
+}
   .nav-link {
     font-size: 1.2rem;
     padding: 1rem 0;
