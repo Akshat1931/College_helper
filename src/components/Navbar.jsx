@@ -1,4 +1,4 @@
-// src/components/Navbar.jsx - Add admin link to navbar
+// src/components/Navbar.jsx - Add submit link to navbar
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { userProfile, isLoggedIn, isAdmin, logout } = useUser(); // Add isAdmin
+  const { userProfile, isLoggedIn, isAdmin, logout } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -128,6 +128,15 @@ function Navbar() {
             {/* Only show the username on desktop */}
             {!isMobile && <span>{userProfile?.name}</span>}
             
+            {/* Submit resources link */}
+            <Link 
+              to="/submit" 
+              className="submit-link"
+              onClick={handleNavLinkClick}
+            >
+              Submit Resources
+            </Link>
+            
             {/* Add admin link if user is admin */}
             {isAdmin && (
               <Link 
@@ -161,6 +170,10 @@ function Navbar() {
           <Link to="/#semesters" className="nav-link" onClick={handleNavLinkClick}>Semesters</Link>
           <Link to="/about" className="nav-link" onClick={handleNavLinkClick}>About</Link>
           <Link to="#" className="nav-link" onClick={handleNavLinkClick}>Contact</Link>
+          {/* Add Submit Resources in mobile menu */}
+          {isLoggedIn && isMobile && (
+            <Link to="/submit" className="nav-link" onClick={handleNavLinkClick}>Submit Resources</Link>
+          )}
           {/* Add admin link in mobile menu if user is admin */}
           {isAdmin && isMobile && (
             <Link to="/admin" className="nav-link" onClick={handleNavLinkClick}>Admin Portal</Link>

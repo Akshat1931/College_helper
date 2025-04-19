@@ -1,4 +1,4 @@
-// src/App.jsx - Add the AdminPortal route
+// src/App.jsx - Add the ResourceSubmission route
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -7,7 +7,8 @@ import { UserProvider } from './context/UserContext';
 import SemesterPage from './components/SemesterPage';
 import SubjectPage from './components/SubjectPage';
 import CompleteProfilePage from './components/CompleteProfilePage';
-import AdminPortal from './components/AdminPortal'; // Import the new component
+import AdminPortal from './components/AdminPortal';
+import ResourceSubmission from './components/ResourceSubmission'; // Import the new component
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AboutPage from './components/AboutPage';
@@ -42,7 +43,8 @@ function App() {
               <Route path="/semester/:semId" element={<SemesterPage />} />
               <Route path="/semester/:semId/subject/:subjectId" element={<SubjectPage />} />
               <Route path="/about" element={<AboutPage />} />
-              <Route path="/admin" element={<AdminPortal />} /> {/* New admin route */}
+              <Route path="/admin" element={<AdminPortal />} />
+              <Route path="/submit" element={<ResourceSubmission />} /> {/* New submission route */}
             </Routes>
           </div>
           <Footer />

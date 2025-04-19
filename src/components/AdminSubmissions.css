@@ -1,0 +1,251 @@
+/* src/components/AdminSubmissions.css */
+.submissions-section {
+    padding: 2rem;
+  }
+  
+  .submissions-section h2 {
+    margin-bottom: 1.5rem;
+    color: var(--text-dark);
+    position: relative;
+    display: inline-block;
+  }
+  
+  .submissions-section h2:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 40px;
+    height: 3px;
+    background: var(--gradient-primary);
+    border-radius: 3px;
+  }
+  
+  .no-submissions {
+    padding: 2rem;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: var(--radius-md);
+    color: var(--text-light);
+  }
+  
+  .submission-card {
+    background: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: var(--transition);
+  }
+  
+  .submission-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+  
+  .submission-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(74, 108, 247, 0.03);
+  }
+  
+  .submission-header h3 {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 1.2rem;
+  }
+  
+  .submission-status {
+    padding: 0.4rem 0.8rem;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .submission-status.pending {
+    background: rgba(255, 194, 52, 0.1);
+    color: #ffc234;
+  }
+  
+  .submission-status.approved {
+    background: rgba(67, 182, 115, 0.1);
+    color: #43b673;
+  }
+  
+  .submission-status.rejected {
+    background: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+  }
+  
+  .submission-details {
+    padding: 1.5rem;
+  }
+  
+  .detail-row {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .detail-label {
+    width: 140px;
+    font-weight: 600;
+    color: var(--text-dark);
+    flex-shrink: 0;
+  }
+  
+  .detail-value {
+    flex: 1;
+    color: var(--text-light);
+  }
+  
+  .detail-value.description {
+    white-space: pre-line;
+  }
+  
+  .detail-value.url {
+    word-break: break-word;
+    color: var(--primary);
+    text-decoration: none;
+  }
+  
+  .detail-value.url:hover {
+    text-decoration: underline;
+  }
+  
+  .resource-type {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    background: rgba(74, 108, 247, 0.1);
+    color: var(--primary);
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+  
+  .subject-select {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.6rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+  }
+  
+  .subject-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+  }
+  
+  .submission-actions {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    background: rgba(0, 0, 0, 0.02);
+  }
+  
+  .submission-actions button {
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+  }
+  
+  .approve-btn {
+    background: var(--gradient-primary);
+    color: white;
+  }
+  
+  .approve-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .approve-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .reject-btn {
+    background: rgba(255, 107, 107, 0.8);
+    color: white;
+  }
+  
+  .reject-btn:hover:not(:disabled) {
+    background: rgba(255, 107, 107, 1);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .delete-btn {
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--text-dark);
+  }
+  
+  .delete-btn:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
+  
+  .reject-confirm-btn {
+    background: rgba(255, 107, 107, 0.8);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .reject-confirm-btn:hover:not(:disabled) {
+    background: rgba(255, 107, 107, 1);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .reject-confirm-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .submissions-section {
+      padding: 1.5rem;
+    }
+    
+    .detail-row {
+      flex-direction: column;
+      margin-bottom: 1.5rem;
+    }
+    
+    .detail-label {
+      width: 100%;
+      margin-bottom: 0.3rem;
+    }
+    
+    .subject-select {
+      max-width: 100%;
+    }
+    
+    .submission-actions {
+      flex-direction: column;
+    }
+    
+    .submission-actions button {
+      width: 100%;
+    }
+  }
