@@ -38,11 +38,9 @@ const AdminPortal = () => {
   const [editItemType, setEditItemType] = useState('');
   const [editSubjectId, setEditSubjectId] = useState('');
   
-// Add these new state variables at the top of your AdminPortal component
-const [editSubjectModalOpen, setEditSubjectModalOpen] = useState(false);
-const [editSubject, setEditSubject] = useState(null);
-
-
+  // Add these new state variables at the top of your AdminPortal component
+  const [editSubjectModalOpen, setEditSubjectModalOpen] = useState(false);
+  const [editSubject, setEditSubject] = useState(null);
 
   const [admins, setAdmins] = useState([]);
   const [newAdminEmail, setNewAdminEmail] = useState('');
@@ -51,45 +49,46 @@ const [editSubject, setEditSubject] = useState(null);
   const isOwner = OWNER_EMAILS.includes(userProfile?.email);
   
   // Add these three functions near your other handler functions like handleReorder, openEditModal, etc.
-// For example, below your existing handleResourceReorder or openEditModal functions
+  // For example, below your existing handleResourceReorder or openEditModal functions
 
-const openEditSubjectModal = (subjectId, subject) => {
-  setEditSubject({...subject});
-  setEditSubjectModalOpen(true);
-};
+  const openEditSubjectModal = (subjectId, subject) => {
+    setEditSubject({...subject});
+    setEditSubjectModalOpen(true);
+  };
 
-const closeEditSubjectModal = () => {
-  setEditSubjectModalOpen(false);
-  setEditSubject(null);
-};
+  const closeEditSubjectModal = () => {
+    setEditSubjectModalOpen(false);
+    setEditSubject(null);
+  };
 
-const saveSubjectEdit = async () => {
-  if (!editSubject) {
-    closeEditSubjectModal();
-    return;
-  }
+  const saveSubjectEdit = async () => {
+    if (!editSubject) {
+      closeEditSubjectModal();
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      
+      // Update the subject in Firebase
+      const updatedSubject = await updateSubject(editSubject.id, editSubject);
+      
+      // Update local state
+      const updatedSubjects = subjects.map(subject => 
+        subject.id === editSubject.id ? updatedSubject : subject
+      );
+      
+      setSubjects(updatedSubjects);
+      setIsLoading(false);
+      closeEditSubjectModal();
+      alert('Subject updated successfully!');
+    } catch (error) {
+      console.error('Error updating subject:', error);
+      alert('Failed to update subject. Please try again.');
+      setIsLoading(false);
+    }
+  };
   
-  try {
-    setIsLoading(true);
-    
-    // Update the subject in Firebase
-    const updatedSubject = await updateSubject(editSubject.id, editSubject);
-    
-    // Update local state
-    const updatedSubjects = subjects.map(subject => 
-      subject.id === editSubject.id ? updatedSubject : subject
-    );
-    
-    setSubjects(updatedSubjects);
-    setIsLoading(false);
-    closeEditSubjectModal();
-    alert('Subject updated successfully!');
-  } catch (error) {
-    console.error('Error updating subject:', error);
-    alert('Failed to update subject. Please try again.');
-    setIsLoading(false);
-  }
-};
   // Form states
   const [newSubject, setNewSubject] = useState({
     name: '',
@@ -126,10 +125,10 @@ const saveSubjectEdit = async () => {
     url = url.trim();
 
     const folderMatch = url.match(/https:\/\/drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)/);
-  if (folderMatch) {
-    // Return the folder URL as is, or standardize it if needed
-    return `https://drive.google.com/drive/folders/${folderMatch[1]}`;
-  }
+    if (folderMatch) {
+      // Return the folder URL as is, or standardize it if needed
+      return `https://drive.google.com/drive/folders/${folderMatch[1]}`;
+    }
   
     // Patterns for different Google Drive URL formats
     const patterns = [
@@ -209,9 +208,6 @@ const saveSubjectEdit = async () => {
       } catch (error) {
         console.error("Error loading admin data:", error);
         
-        // Import at the top of the file
-       
-        
         if (isNetworkError(error)) {
           showNetworkErrorNotification({
             message: 'Unable to load admin data. Please check your internet connection.'
@@ -226,96 +222,98 @@ const saveSubjectEdit = async () => {
     
     // Call the load data function
     loadData();
-  }, []); // Empty dependency array to ru
+  }, []); // Empty dependency array to run once on mount
   
   
   // Separate function to fetch admins
-// Modify handleAddAdmin to refresh the admin list after adding
-const handleAddAdmin = async (e) => {
-  e.preventDefault();
-  
-  try {
-    setIsLoading(true);
+  // Modify handleAddAdmin to refresh the admin list after adding
+  const handleAddAdmin = async (e) => {
+    e.preventDefault();
     
-    const result = await addAdminByEmail(newAdminEmail);
-    
-    if (result.success) {
-      // Immediately refetch the admin list
-      const updatedAdminList = await getAllAdmins();
-      setAdmins(updatedAdminList);
-      
-      setNewAdminEmail('');
-      alert('Admin added successfully!');
-    } else {
-      alert(result.message);
-    }
-  }catch (error) {
-      console.error("Error adding admin:", error);
-      
-      if (isNetworkError(error)) {
-        showNetworkErrorNotification({
-          message: 'Unable to add admin. Please check your internet connection.'
-        });
-      } else {
-        alert('An unexpected error occurred. Please try again later.');
-      }
-      
-      setIsLoading(false);
-    }
-};
-// Similar modification for handleRemoveAdmin
-const handleRemoveAdmin = async (userId, userEmail) => {
-  // First, check if the current user is an owner
-  if (!isOwner) {
-    alert('Only the owner can remove admin status.');
-    return;
-  }
-
-  // Prevent removing owner admins
-  const OWNER_EMAILS = [
-    'discordakshat04@gmail.com', 
-    'akshatvaidik@gmail.com'
-  ];
-
-  if (OWNER_EMAILS.includes(userEmail)) {
-    alert('Cannot remove owner admin status.');
-    return;
-  }
-
-  const confirmRemove = window.confirm(
-    "Are you sure you want to remove this admin's status?"
-  );
-  
-  if (confirmRemove) {
     try {
       setIsLoading(true);
       
-      const success = await removeAdminStatus(userId);
+      const result = await addAdminByEmail(newAdminEmail);
       
-      if (success) {
+      if (result.success) {
         // Immediately refetch the admin list
         const updatedAdminList = await getAllAdmins();
         setAdmins(updatedAdminList);
         
-        alert('Admin status removed successfully!');
+        setNewAdminEmail('');
+        alert('Admin added successfully!');
       } else {
-        alert('Failed to remove admin status.');
+        alert(result.message);
       }
     } catch (error) {
-      console.error("Error removing admin:", error);
-      
-      if (isNetworkError(error)) {
-        showNetworkErrorNotification({
-          message: 'Unable to remove admin. Please check your internet connection.'
-        });
-      } else {
-        alert('An unexpected error occurred. Please try again later.');
+        console.error("Error adding admin:", error);
+        
+        if (isNetworkError(error)) {
+          showNetworkErrorNotification({
+            message: 'Unable to add admin. Please check your internet connection.'
+          });
+        } else {
+          alert('An unexpected error occurred. Please try again later.');
+        }
+        
+        setIsLoading(false);
       }
-      
-      setIsLoading(false);
+  };
+  
+  // Similar modification for handleRemoveAdmin
+  const handleRemoveAdmin = async (userId, userEmail) => {
+    // First, check if the current user is an owner
+    if (!isOwner) {
+      alert('Only the owner can remove admin status.');
+      return;
     }
-  }
-};
+
+    // Prevent removing owner admins
+    const OWNER_EMAILS = [
+      'discordakshat04@gmail.com', 
+      'akshatvaidik@gmail.com'
+    ];
+
+    if (OWNER_EMAILS.includes(userEmail)) {
+      alert('Cannot remove owner admin status.');
+      return;
+    }
+
+    const confirmRemove = window.confirm(
+      "Are you sure you want to remove this admin's status?"
+    );
+    
+    if (confirmRemove) {
+      try {
+        setIsLoading(true);
+        
+        const success = await removeAdminStatus(userId);
+        
+        if (success) {
+          // Immediately refetch the admin list
+          const updatedAdminList = await getAllAdmins();
+          setAdmins(updatedAdminList);
+          
+          alert('Admin status removed successfully!');
+        } else {
+          alert('Failed to remove admin status.');
+        }
+      } catch (error) {
+        console.error("Error removing admin:", error);
+        
+        if (isNetworkError(error)) {
+          showNetworkErrorNotification({
+            message: 'Unable to remove admin. Please check your internet connection.'
+          });
+        } else {
+          alert('An unexpected error occurred. Please try again later.');
+        }
+        
+        setIsLoading(false);
+      }
+    }
+  };
+  
   // Handle subject submission
   const handleSubjectSubmit = async (e) => {
     e.preventDefault();
@@ -348,115 +346,84 @@ const handleRemoveAdmin = async (userId, userEmail) => {
     }
   };
 
-  // Add this function to your AdminPortal.jsx component
-
-// NEW: Handle reordering of subjects
-// Improved Subject Reordering Function
-// Flexible Subject Reordering Function
-const handleSubjectReorder = async (semesterId, subjectId, direction) => {
-  try {
-    // console.group('🔍 Subject Reordering Diagnostic');
-    // console.log('Input Parameters:', { semesterId, subjectId, direction });
-
-    // Get subjects for this semester only, from the current state
-    const semesterSubjects = subjects
-      .filter(subject => subject.semesterId === semesterId)
-      .sort((a, b) => {
-        // Ensure numeric sorting by displayOrder
-        const orderA = typeof a.displayOrder === 'number' ? a.displayOrder : 999;
-        const orderB = typeof b.displayOrder === 'number' ? b.displayOrder : 999;
-        return orderA - orderB;
+  // NEW: Handle reordering of subjects
+  const handleSubjectReorder = async (semesterId, subjectId, direction) => {
+    try {
+      // Get subjects for this semester only, from the current state
+      const semesterSubjects = subjects
+        .filter(subject => subject.semesterId === semesterId)
+        .sort((a, b) => {
+          // Ensure numeric sorting by displayOrder
+          const orderA = typeof a.displayOrder === 'number' ? a.displayOrder : 999;
+          const orderB = typeof b.displayOrder === 'number' ? b.displayOrder : 999;
+          return orderA - orderB;
+        });
+      
+      // Find the current index of the subject
+      const currentIndex = semesterSubjects.findIndex(subject => 
+        String(subject.id) === String(subjectId)
+      );
+      
+      // Validate index
+      if (currentIndex === -1) {
+        console.error(`❌ Subject with ID ${subjectId} not found in semester ${semesterId}`);
+        alert('Subject not found in this semester.');
+        return;
+      }
+      
+      // Determine new index
+      let newIndex;
+      if (direction === 'up') {
+        if (currentIndex <= 0) {
+          alert('This subject is already at the top of the list.');
+          return;
+        }
+        newIndex = currentIndex - 1;
+      } else if (direction === 'down') {
+        if (currentIndex >= semesterSubjects.length - 1) {
+          alert('This subject is already at the bottom of the list.');
+          return;
+        }
+        newIndex = currentIndex + 1;
+      }
+      
+      // Create a new array with the reordered items
+      const reorderedSubjects = [...semesterSubjects];
+      
+      // Swap the items
+      [reorderedSubjects[currentIndex], reorderedSubjects[newIndex]] = 
+        [reorderedSubjects[newIndex], reorderedSubjects[currentIndex]];
+      
+      // Update the displayOrder values
+      reorderedSubjects.forEach((subject, index) => {
+        subject.displayOrder = index;
       });
-    
-    // console.log('Filtered Semester Subjects:', semesterSubjects.map(s => ({
-    //   id: s.id, 
-    //   name: s.name, 
-    //   displayOrder: s.displayOrder
-    // })));
-
-    // Find the current index of the subject
-    const currentIndex = semesterSubjects.findIndex(subject => 
-      String(subject.id) === String(subjectId)
-    );
-
-    // console.log('Current Index:', currentIndex);
-    
-    // Validate index
-    if (currentIndex === -1) {
-      console.error(`❌ Subject with ID ${subjectId} not found in semester ${semesterId}`);
-      console.groupEnd();
-      alert('Subject not found in this semester.');
-      return;
+      
+      // Show loading state
+      setIsLoading(true);
+      
+      // Update in Firebase
+      await updateSubjectsOrder(semesterId, reorderedSubjects);
+      
+      // IMPORTANT: Update the local subjects state
+      // First, get all subjects that are NOT in this semester
+      const otherSubjects = subjects.filter(subject => subject.semesterId !== semesterId);
+      
+      // Then, create a new merged array with the reordered subjects
+      const updatedAllSubjects = [...otherSubjects, ...reorderedSubjects];
+      
+      // Update the component state
+      setSubjects(updatedAllSubjects);
+      
+      setIsLoading(false);
+    } catch (error) {
+      console.error('❌ Detailed Reordering Error:', error);
+      
+      alert('Failed to reorder subjects. Please try again.');
+      setIsLoading(false);
     }
-    
-    // Determine new index
-    let newIndex;
-    if (direction === 'up') {
-      if (currentIndex <= 0) {
-        // console.log('❗ Cannot move subject up further - already at top');
-        console.groupEnd();
-        alert('This subject is already at the top of the list.');
-        return;
-      }
-      newIndex = currentIndex - 1;
-    } else if (direction === 'down') {
-      if (currentIndex >= semesterSubjects.length - 1) {
-        // console.log('❗ Cannot move subject down further - already at bottom');
-        console.groupEnd();
-        alert('This subject is already at the bottom of the list.');
-        return;
-      }
-      newIndex = currentIndex + 1;
-    }
-
-    // console.log('New Index:', newIndex);
-    
-    // Create a new array with the reordered items
-    const reorderedSubjects = [...semesterSubjects];
-    
-    // Swap the items
-    [reorderedSubjects[currentIndex], reorderedSubjects[newIndex]] = 
-      [reorderedSubjects[newIndex], reorderedSubjects[currentIndex]];
-    
-    // Update the displayOrder values
-    reorderedSubjects.forEach((subject, index) => {
-      subject.displayOrder = index;
-    });
-    
-    // console.log('Reordered Subjects:', reorderedSubjects.map(s => ({
-    //   id: s.id, 
-    //   name: s.name, 
-    //   displayOrder: s.displayOrder
-    // })));
-
-    // Show loading state
-    setIsLoading(true);
-    
-    // Update in Firebase
-    await updateSubjectsOrder(semesterId, reorderedSubjects);
-    
-    // IMPORTANT: Update the local subjects state
-    // First, get all subjects that are NOT in this semester
-    const otherSubjects = subjects.filter(subject => subject.semesterId !== semesterId);
-    
-    // Then, create a new merged array with the reordered subjects
-    const updatedAllSubjects = [...otherSubjects, ...reorderedSubjects];
-    
-    // Update the component state
-    setSubjects(updatedAllSubjects);
-    
-    setIsLoading(false);
-    
-    // console.log('✅ Subject order updated successfully');
-    console.groupEnd();
-  } catch (error) {
-    console.error('❌ Detailed Reordering Error:', error);
-    console.groupEnd();
-    
-    alert('Failed to reorder subjects. Please try again.');
-    setIsLoading(false);
-  }
-};
+  };
+  
   // Handle chapter submission
   const handleChapterSubmit = async (e) => {
     e.preventDefault();
@@ -501,7 +468,6 @@ const handleSubjectReorder = async (semesterId, subjectId, direction) => {
   };
   
   // Handle resource submission (videos, pyqs, assignments)
-  // Enhanced resource submission handlers with detailed error logging
   const handleResourceSubmit = async (e) => {
     e.preventDefault();
     
@@ -522,21 +488,6 @@ const handleSubjectReorder = async (semesterId, subjectId, direction) => {
     
     try {
       setIsLoading(true);
-      
-      // Comprehensive logging for debugging
-      console.group('🔍 Resource Submission Diagnostics');
-      // console.log('Admin Status:', { 
-      //   isLoggedIn: isLoggedIn, 
-      //   isAdmin: isAdmin,
-      //   userEmail: userProfile?.email 
-      // });
-      // console.log('Resource Details:', { 
-      //   type: newResource.type,
-      //   subjectId: newResource.subjectId,
-      //   title: newResource.title, 
-      //   description: newResource.description, 
-      //   url: newResource.url 
-      // });
       
       // Enhanced URL validation
       const validateUrl = (url, type) => {
@@ -596,9 +547,6 @@ const handleSubjectReorder = async (semesterId, subjectId, direction) => {
           throw new Error(`Invalid resource type: ${newResource.type}`);
       }
       
-      // console.log('Updated Subject:', updatedSubject);
-      console.groupEnd();
-      
       // Update subjects state
       const updatedSubjects = subjects.map(subject => 
         subject.id === newResource.subjectId ? updatedSubject : subject
@@ -636,127 +584,127 @@ const handleSubjectReorder = async (semesterId, subjectId, direction) => {
   };
 
   // NEW: Open the edit modal for a resource
-const openEditModal = (subjectId, resourceType, item) => {
-  setEditSubjectId(subjectId);
-  setEditItemType(resourceType);
-  setEditItem({...item});
-  setEditModalOpen(true);
-};
+  const openEditModal = (subjectId, resourceType, item) => {
+    setEditSubjectId(subjectId);
+    setEditItemType(resourceType);
+    setEditItem({...item});
+    setEditModalOpen(true);
+  };
 
-// NEW: Close the edit modal
-const closeEditModal = () => {
-  setEditModalOpen(false);
-  setEditItem(null);
-  setEditItemType('');
-  setEditSubjectId('');
-};
+  // NEW: Close the edit modal
+  const closeEditModal = () => {
+    setEditModalOpen(false);
+    setEditItem(null);
+    setEditItemType('');
+    setEditSubjectId('');
+  };
 
-// NEW: Save edits to a resource
-const saveResourceEdit = async () => {
-  if (!editItem || !editSubjectId || !editItemType) {
-    closeEditModal();
-    return;
-  }
-  
-  try {
-    setIsLoading(true);
-    
-    // Find the subject
-    const subject = subjects.find(s => s.id === editSubjectId);
-    if (!subject) {
-      throw new Error('Subject not found');
+  // NEW: Save edits to a resource
+  const saveResourceEdit = async () => {
+    if (!editItem || !editSubjectId || !editItemType) {
+      closeEditModal();
+      return;
     }
     
-    // Determine which array to update
-    let arrayKey;
-    switch(editItemType) {
-      case 'chapter': arrayKey = 'chapters'; break;
-      case 'video': arrayKey = 'videoLectures'; break;
-      case 'pyq': arrayKey = 'previousYearQuestions'; break;
-      case 'assignment': arrayKey = 'assignments'; break;
-      default:
-        throw new Error(`Invalid resource type: ${editItemType}`);
+    try {
+      setIsLoading(true);
+      
+      // Find the subject
+      const subject = subjects.find(s => s.id === editSubjectId);
+      if (!subject) {
+        throw new Error('Subject not found');
+      }
+      
+      // Determine which array to update
+      let arrayKey;
+      switch(editItemType) {
+        case 'chapter': arrayKey = 'chapters'; break;
+        case 'video': arrayKey = 'videoLectures'; break;
+        case 'pyq': arrayKey = 'previousYearQuestions'; break;
+        case 'assignment': arrayKey = 'assignments'; break;
+        default:
+          throw new Error(`Invalid resource type: ${editItemType}`);
+      }
+      
+      // Create updated array with edited item
+      const updatedArray = (subject[arrayKey] || []).map(item => 
+        item.id === editItem.id ? editItem : item
+      );
+      
+      // Update in Firebase
+      const updatedSubject = await updateSubject(editSubjectId, {
+        [arrayKey]: updatedArray
+      });
+      
+      // Update local state
+      const updatedSubjects = subjects.map(subject => 
+        subject.id === editSubjectId ? updatedSubject : subject
+      );
+      
+      setSubjects(updatedSubjects);
+      setIsLoading(false);
+      closeEditModal();
+      alert('Resource updated successfully!');
+    } catch (error) {
+      console.error('Error updating resource:', error);
+      alert('Failed to update resource. Please try again.');
+      setIsLoading(false);
     }
-    
-    // Create updated array with edited item
-    const updatedArray = (subject[arrayKey] || []).map(item => 
-      item.id === editItem.id ? editItem : item
-    );
-    
-    // Update in Firebase
-    const updatedSubject = await updateSubject(editSubjectId, {
-      [arrayKey]: updatedArray
-    });
-    
-    // Update local state
-    const updatedSubjects = subjects.map(subject => 
-      subject.id === editSubjectId ? updatedSubject : subject
-    );
-    
-    setSubjects(updatedSubjects);
-    setIsLoading(false);
-    closeEditModal();
-    alert('Resource updated successfully!');
-  } catch (error) {
-    console.error('Error updating resource:', error);
-    alert('Failed to update resource. Please try again.');
-    setIsLoading(false);
-  }
-};
+  };
 
-// NEW: Handle reordering of resources
-const handleResourceReorder = async (subjectId, resourceType, resourceId, direction) => {
-  try {
-    // Find the subject
-    const subject = subjects.find(s => s.id === subjectId);
-    if (!subject) return;
-    
-    // Determine which array to update
-    let arrayKey;
-    switch(resourceType) {
-      case 'chapter': arrayKey = 'chapters'; break;
-      case 'video': arrayKey = 'videoLectures'; break;
-      case 'pyq': arrayKey = 'previousYearQuestions'; break;
-      case 'assignment': arrayKey = 'assignments'; break;
-      default: return;
+  // NEW: Handle reordering of resources
+  const handleResourceReorder = async (subjectId, resourceType, resourceId, direction) => {
+    try {
+      // Find the subject
+      const subject = subjects.find(s => s.id === subjectId);
+      if (!subject) return;
+      
+      // Determine which array to update
+      let arrayKey;
+      switch(resourceType) {
+        case 'chapter': arrayKey = 'chapters'; break;
+        case 'video': arrayKey = 'videoLectures'; break;
+        case 'pyq': arrayKey = 'previousYearQuestions'; break;
+        case 'assignment': arrayKey = 'assignments'; break;
+        default: return;
+      }
+      
+      // Get the array
+      const resourceArray = subject[arrayKey] || [];
+      
+      // Find the item index
+      const itemIndex = resourceArray.findIndex(item => item.id === resourceId);
+      if (itemIndex === -1) return;
+      
+      // Determine new index based on direction
+      const newIndex = direction === 'up' 
+        ? Math.max(0, itemIndex - 1) 
+        : Math.min(resourceArray.length - 1, itemIndex + 1);
+      
+      // If the index didn't change, do nothing
+      if (newIndex === itemIndex) return;
+      
+      // Create a new array with the reordered items
+      const newArray = [...resourceArray];
+      const [movedItem] = newArray.splice(itemIndex, 1);
+      newArray.splice(newIndex, 0, movedItem);
+      
+      // Update in Firebase
+      const updatedSubject = await updateSubject(subjectId, {
+        [arrayKey]: newArray
+      });
+      
+      // Update local state
+      const updatedSubjects = subjects.map(subject => 
+        subject.id === subjectId ? updatedSubject : subject
+      );
+      
+      setSubjects(updatedSubjects);
+    } catch (error) {
+      console.error('Error reordering resource:', error);
+      alert('Failed to reorder resource. Please try again.');
     }
-    
-    // Get the array
-    const resourceArray = subject[arrayKey] || [];
-    
-    // Find the item index
-    const itemIndex = resourceArray.findIndex(item => item.id === resourceId);
-    if (itemIndex === -1) return;
-    
-    // Determine new index based on direction
-    const newIndex = direction === 'up' 
-      ? Math.max(0, itemIndex - 1) 
-      : Math.min(resourceArray.length - 1, itemIndex + 1);
-    
-    // If the index didn't change, do nothing
-    if (newIndex === itemIndex) return;
-    
-    // Create a new array with the reordered items
-    const newArray = [...resourceArray];
-    const [movedItem] = newArray.splice(itemIndex, 1);
-    newArray.splice(newIndex, 0, movedItem);
-    
-    // Update in Firebase
-    const updatedSubject = await updateSubject(subjectId, {
-      [arrayKey]: newArray
-    });
-    
-    // Update local state
-    const updatedSubjects = subjects.map(subject => 
-      subject.id === subjectId ? updatedSubject : subject
-    );
-    
-    setSubjects(updatedSubjects);
-  } catch (error) {
-    console.error('Error reordering resource:', error);
-    alert('Failed to reorder resource. Please try again.');
-  }
-};
+  };
 
   // Delete subject
   const deleteSubjectHandler = async (subjectId) => {
@@ -790,6 +738,8 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
       }
     }
   };
+  
+  // Delete a resource (chapter, video, assignment, pyq)
   
   // Delete a resource (chapter, video, assignment, pyq)
   const deleteResourceHandler = async (subjectId, resourceType, resourceId) => {
@@ -827,217 +777,7 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
       }
     }
   };
-  // NEW: Edit Resource Modal Component
-  const EditResourceModal = () => {
-    if (!editModalOpen || !editItem) return null;
-    
-    // Form field change handler
-    const handleEditChange = (e) => {
-      const { name, value } = e.target;
-      
-      // Special handling for URL fields
-      if (name === 'driveEmbedUrl' || name === 'fileUrl' || name === 'url') {
-        // Normalize Google Drive URLs
-        const normalizedValue = normalizeGoogleDriveUrl(value);
-        setEditItem(prev => ({
-          ...prev,
-          [name]: normalizedValue
-        }));
-      } else {
-        // Regular handling for other fields
-        setEditItem(prev => ({
-          ...prev,
-          [name]: value
-        }));
-      }
-    };
-  
-  // Different fields based on resource type
-  const renderFormFields = () => {
-    switch(editItemType) {
-      case 'chapter':
-        return (
-          <>
-            <div className="form-group">
-              <label>Chapter Title</label>
-              <input 
-                type="text" 
-                name="title"
-                value={editItem.title || ''}
-                onChange={handleEditChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Description</label>
-              <textarea 
-                name="description"
-                value={editItem.description || ''}
-                onChange={handleEditChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>Google Drive URL</label>
-              <input 
-                type="url" 
-                name="driveEmbedUrl"
-                value={editItem.driveEmbedUrl || ''}
-                onChange={handleEditChange}
-                placeholder="https://drive.google.com/file/d/..."
-              />
-              <small className="form-hint">Use the "Share" link from Google Drive</small>
-            </div>
-          </>
-        );
-        
-      case 'video':
-        return (
-          <>
-            <div className="form-group">
-              <label>Video Title</label>
-              <input 
-                type="text" 
-                name="title"
-                value={editItem.title || ''}
-                onChange={handleEditChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Description</label>
-              <textarea 
-                name="description"
-                value={editItem.description || ''}
-                onChange={handleEditChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>YouTube URL</label>
-              <input 
-                type="url" 
-                name="url"
-                value={editItem.url || ''}
-                onChange={handleEditChange}
-                placeholder="https://www.youtube.com/embed/..."
-              />
-              <small className="form-hint">Use the embed URL from YouTube (click Share &gt; Embed &gt; copy src URL)</small>
-            </div>
-          </>
-        );
-        
-      case 'pyq':
-        return (
-          <>
-            <div className="form-group">
-              <label>Year & Semester</label>
-              <input 
-                type="text" 
-                name="title"
-                value={editItem.title || ''}
-                onChange={handleEditChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Description</label>
-              <textarea 
-                name="description"
-                value={editItem.description || ''}
-                onChange={handleEditChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>Google Drive URL</label>
-              <input 
-                type="url" 
-                name="fileUrl"
-                value={editItem.fileUrl || ''}
-                onChange={handleEditChange}
-                placeholder="https://drive.google.com/file/d/..."
-              />
-            </div>
-          </>
-        );
-        
-      case 'assignment':
-        return (
-          <>
-            <div className="form-group">
-              <label>Assignment Title</label>
-              <input 
-                type="text" 
-                name="title"
-                value={editItem.title || ''}
-                onChange={handleEditChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Description</label>
-              <textarea 
-                name="description"
-                value={editItem.description || ''}
-                onChange={handleEditChange}
-              />
-            </div>
-            <div className="form-group">
-              <label>Google Drive URL</label>
-              <input 
-                type="url" 
-                name="fileUrl"
-                value={editItem.fileUrl || ''}
-                onChange={handleEditChange}
-                placeholder="https://drive.google.com/file/d/..."
-              />
-            </div>
-            <div className="form-group">
-              <label>Deadline</label>
-              <input 
-                type="text" 
-                name="deadline"
-                value={editItem.deadline || ''}
-                onChange={handleEditChange}
-                placeholder="e.g., May 15, 2025"
-              />
-            </div>
-          </>
-        );
-        
-      default:
-        return <p>Unknown resource type</p>;
-    }
-  };
-  
-  // Modal title based on resource type
-  const getModalTitle = () => {
-    switch(editItemType) {
-      case 'chapter': return 'Edit Chapter';
-      case 'video': return 'Edit Video Lecture';
-      case 'pyq': return 'Edit Previous Year Question';
-      case 'assignment': return 'Edit Assignment';
-      default: return 'Edit Resource';
-    }
-  };
-  
-  return (
-    <div className="modal-overlay">
-      <div className="edit-modal">
-        <div className="edit-modal-header">
-          <h3>{getModalTitle()}</h3>
-          <button className="close-modal-btn" onClick={closeEditModal}>×</button>
-        </div>
-        <div className="edit-modal-body">
-          {renderFormFields()}
-        </div>
-        <div className="edit-modal-footer">
-          <button className="cancel-btn" onClick={closeEditModal}>Cancel</button>
-          <button className="save-btn" onClick={saveResourceEdit}>Save Changes</button>
-        </div>
-      </div>
-    </div>
-  );
-};
-  
+
   // Filter subjects by semester
   const getSubjectsBySemester = (semId) => {
     return subjects.filter(subject => subject.semesterId === semId);
@@ -1720,7 +1460,16 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
           
         </div>
       </div>
-      {editModalOpen && <EditResourceModal />}
+      {editModalOpen && (
+  <EditResourceModal 
+    editItem={editItem}
+    editItemType={editItemType}
+    closeEditModal={closeEditModal}
+    saveResourceEdit={saveResourceEdit}
+    setEditItem={setEditItem}
+  />
+)}
+
       {/* Add this right before the final closing </div> tag */}
       {editSubjectModalOpen && (
   <div className="modal-overlay">
@@ -1738,10 +1487,12 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
             name="name"
             value={editSubject?.name || ''}
             onChange={(e) => {
-              setEditSubject(prev => ({
-                ...prev,
-                [e.target.name]: e.target.value
-              }));
+              // Create a complete copy of the subject first
+              const updatedSubject = {...editSubject};
+              // Update the specific field
+              updatedSubject.name = e.target.value;
+              // Set the state with the complete updated object
+              setEditSubject(updatedSubject);
             }}
             required
           />
@@ -1754,10 +1505,9 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
             name="code"
             value={editSubject?.code || ''}
             onChange={(e) => {
-              setEditSubject(prev => ({
-                ...prev,
-                [e.target.name]: e.target.value
-              }));
+              const updatedSubject = {...editSubject};
+              updatedSubject.code = e.target.value;
+              setEditSubject(updatedSubject);
             }}
             required
           />
@@ -1770,10 +1520,9 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
             name="icon"
             value={editSubject?.icon || ''}
             onChange={(e) => {
-              setEditSubject(prev => ({
-                ...prev,
-                [e.target.name]: e.target.value
-              }));
+              const updatedSubject = {...editSubject};
+              updatedSubject.icon = e.target.value;
+              setEditSubject(updatedSubject);
             }}
             maxLength="2"
           />
@@ -1785,10 +1534,9 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
             name="description"
             value={editSubject?.description || ''}
             onChange={(e) => {
-              setEditSubject(prev => ({
-                ...prev,
-                [e.target.name]: e.target.value
-              }));
+              const updatedSubject = {...editSubject};
+              updatedSubject.description = e.target.value;
+              setEditSubject(updatedSubject);
             }}
             required
           />
@@ -1801,10 +1549,9 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
             name="instructor"
             value={editSubject?.instructor || ''}
             onChange={(e) => {
-              setEditSubject(prev => ({
-                ...prev,
-                [e.target.name]: e.target.value
-              }));
+              const updatedSubject = {...editSubject};
+              updatedSubject.instructor = e.target.value;
+              setEditSubject(updatedSubject);
             }}
           />
         </div>
@@ -1816,10 +1563,9 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
             name="credits"
             value={editSubject?.credits || 0}
             onChange={(e) => {
-              setEditSubject(prev => ({
-                ...prev,
-                [e.target.name]: parseInt(e.target.value)
-              }));
+              const updatedSubject = {...editSubject};
+              updatedSubject.credits = parseInt(e.target.value);
+              setEditSubject(updatedSubject);
             }}
             max="6"
           />
@@ -1831,10 +1577,9 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
             name="semesterId"
             value={editSubject?.semesterId || ''}
             onChange={(e) => {
-              setEditSubject(prev => ({
-                ...prev,
-                [e.target.name]: parseInt(e.target.value)
-              }));
+              const updatedSubject = {...editSubject};
+              updatedSubject.semesterId = parseInt(e.target.value);
+              setEditSubject(updatedSubject);
             }}
             required
           >
@@ -1853,10 +1598,9 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
             name="syllabusUrl"
             value={editSubject?.syllabusUrl || ''}
             onChange={(e) => {
-              setEditSubject(prev => ({
-                ...prev,
-                [e.target.name]: e.target.value
-              }));
+              const updatedSubject = {...editSubject};
+              updatedSubject.syllabusUrl = e.target.value;
+              setEditSubject(updatedSubject);
             }}
             placeholder="https://drive.google.com/file/d/..."
           />
@@ -1876,3 +1620,202 @@ const handleResourceReorder = async (subjectId, resourceType, resourceId, direct
 };
 
 export default AdminPortal;
+
+const EditResourceModal = ({
+  editItem,
+  editItemType,
+  closeEditModal,
+  saveResourceEdit,
+  setEditItem
+}) => {
+  if (!editItem) return null;
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditItem(prevItem => ({
+      ...prevItem,
+      [name]: value
+    }));
+  };
+
+  const renderFormFields = () => {
+    switch (editItemType) {
+      case 'chapter':
+        return (
+          <>
+            <div className="form-group">
+              <label>Chapter Title</label>
+              <input
+                type="text"
+                name="title"
+                value={editItem.title || ''}
+                onChange={handleEditChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Description</label>
+              <textarea
+                name="description"
+                value={editItem.description || ''}
+                onChange={handleEditChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Google Drive URL</label>
+              <input
+                type="url"
+                name="driveEmbedUrl"
+                value={editItem.driveEmbedUrl || ''}
+                onChange={handleEditChange}
+                placeholder="https://drive.google.com/file/d/..."
+              />
+            </div>
+          </>
+        );
+
+      case 'video':
+        return (
+          <>
+            <div className="form-group">
+              <label>Video Title</label>
+              <input
+                type="text"
+                name="title"
+                value={editItem.title || ''}
+                onChange={handleEditChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Description</label>
+              <textarea
+                name="description"
+                value={editItem.description || ''}
+                onChange={handleEditChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>YouTube URL</label>
+              <input
+                type="url"
+                name="url"
+                value={editItem.url || ''}
+                onChange={handleEditChange}
+                placeholder="https://www.youtube.com/embed/..."
+              />
+            </div>
+          </>
+        );
+
+      case 'pyq':
+        return (
+          <>
+            <div className="form-group">
+              <label>Year & Semester</label>
+              <input
+                type="text"
+                name="title"
+                value={editItem.title || ''}
+                onChange={handleEditChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Description</label>
+              <textarea
+                name="description"
+                value={editItem.description || ''}
+                onChange={handleEditChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Google Drive URL</label>
+              <input
+                type="url"
+                name="fileUrl"
+                value={editItem.fileUrl || ''}
+                onChange={handleEditChange}
+                placeholder="https://drive.google.com/file/d/..."
+              />
+            </div>
+          </>
+        );
+
+      case 'assignment':
+        return (
+          <>
+            <div className="form-group">
+              <label>Assignment Title</label>
+              <input
+                type="text"
+                name="title"
+                value={editItem.title || ''}
+                onChange={handleEditChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Description</label>
+              <textarea
+                name="description"
+                value={editItem.description || ''}
+                onChange={handleEditChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Google Drive URL</label>
+              <input
+                type="url"
+                name="fileUrl"
+                value={editItem.fileUrl || ''}
+                onChange={handleEditChange}
+                placeholder="https://drive.google.com/file/d/..."
+              />
+            </div>
+            <div className="form-group">
+              <label>Deadline</label>
+              <input
+                type="text"
+                name="deadline"
+                value={editItem.deadline || ''}
+                onChange={handleEditChange}
+                placeholder="e.g., May 15, 2025"
+              />
+            </div>
+          </>
+        );
+
+      default:
+        return <p>Unknown resource type</p>;
+    }
+  };
+
+  const getModalTitle = () => {
+    switch (editItemType) {
+      case 'chapter': return 'Edit Chapter';
+      case 'video': return 'Edit Video Lecture';
+      case 'pyq': return 'Edit Previous Year Question';
+      case 'assignment': return 'Edit Assignment';
+      default: return 'Edit Resource';
+    }
+  };
+
+  return (
+    <div className="modal-overlay">
+      <div className="edit-modal">
+        <div className="edit-modal-header">
+          <h3>{getModalTitle()}</h3>
+          <button className="close-modal-btn" onClick={closeEditModal}>×</button>
+        </div>
+        <div className="edit-modal-body">
+          {renderFormFields()}
+        </div>
+        <div className="edit-modal-footer">
+          <button className="cancel-btn" onClick={closeEditModal}>Cancel</button>
+          <button className="save-btn" onClick={saveResourceEdit}>Save Changes</button>
+        </div>
+      </div>
+    </div>
+  );
+};
