@@ -110,6 +110,7 @@
   gap: 6px;
   cursor: pointer;
   z-index: 110;
+  padding-right: 10px;
 }
 
 .mobile-menu-icon span {
